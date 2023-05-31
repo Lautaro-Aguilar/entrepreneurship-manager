@@ -3,9 +3,7 @@ import supabase from "../supabase/supabase";
 import Error from "../types/ERROR";
 
 export async function getProducts(): Promise<SALE[] | Error> {
-  const { data: sales, error } = await supabase
-    .from("clientes_ventas")
-    .select("*");
+  const { data: sales, error } = await supabase.from("ventas").select("*");
 
   if (sales && !error) {
     const response: SALE[] = sales.map((sale) => {
