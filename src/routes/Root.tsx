@@ -1,12 +1,18 @@
-import Drawer from '../components/Drawer'
+import { Outlet } from "react-router-dom";
+import Drawer from "../components/Drawer";
+import { CssBaseline } from "@mui/material";
 const Root = () => {
   return (
-    <div className='root'>
-      <Drawer/>
-      <div className='content'>
+    <>
+      <CssBaseline />
+      <div className='root'>
+      <Drawer />
+        <div className='content'>
+          <Outlet />
+        </div>
       </div>
-    </div>
-  )
-}
+    </>
+  );
+};
 
-export default Root
+export default Root;

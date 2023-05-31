@@ -1,9 +1,9 @@
-.root{
+.root {
   display: flex;
   min-height: 100vh;
 }
 
-.content{
+.content {
   flex-grow: 1;
-  padding-top: 300px;
+  padding-top: 50px;
 }
