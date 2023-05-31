@@ -4,7 +4,7 @@ import Error from "../types/ERROR";
 
 export async function getCustomerSales(): Promise<CUSTOMER_SALES[] | Error> {
   const { data: customerSales, error } = await supabase
-    .from("productos")
+    .from("clientes_ventas")
     .select("*");
 
   if (customerSales && !error) {
