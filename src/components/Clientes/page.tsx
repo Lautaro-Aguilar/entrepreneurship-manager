@@ -48,7 +48,7 @@ function Clientes() {
       </Box>
       <ModalAgregar open={openModalAgregar} setOpen={setOpenModalAgregar}/>
       <ModalModificar open={openModalModificar} setOpen={setOpenModalModificar}/>
-      <ModalModificar open={openModalEliminar} setOpen={setOpenModalEliminar}/>
+      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar}/>
     </Container>
   );
 }
