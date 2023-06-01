@@ -1,14 +1,15 @@
 import CUSTOMER_SALES from "../types/CUSTOMER_SALES";
 import supabase from "../supabase/supabase";
-import Error from "../types/ERROR";
+import RESPONSE from "../types/RESPONSE";
 
-export async function getCustomerSales(): Promise<CUSTOMER_SALES[] | Error> {
+export async function getCustomerSales(): Promise<RESPONSE> {
   const { data: customerSales, error } = await supabase
     .from("clientes_ventas")
     .select("*");
 
-  if (customerSales && !error) {
-    const response: CUSTOMER_SALES[] = customerSales.map((csale) => {
+  let customerSalesResponse: CUSTOMER_SALES[] = [];
+  if (customerSales) {
+    customerSalesResponse = customerSales.map((csale) => {
       const newCSale: CUSTOMER_SALES = {
         apellido: csale.apellido,
         cantidad: csale.cantidad,
@@ -21,10 +22,9 @@ export async function getCustomerSales(): Promise<CUSTOMER_SALES[] | Error> {
       };
       return newCSale;
     });
-    return response;
   }
   return {
-    title: "Error en ventas",
-    message: "No se pudo obtener la lista de las ventas",
+    data: customerSalesResponse,
+    errors: error,
   };
 }

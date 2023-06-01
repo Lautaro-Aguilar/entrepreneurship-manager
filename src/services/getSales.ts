@@ -1,12 +1,13 @@
 import SALE from "../types/SALE";
 import supabase from "../supabase/supabase";
-import Error from "../types/ERROR";
+import RESPONSE from "../types/RESPONSE";
 
-export async function getProducts(): Promise<SALE[] | Error> {
+export async function getSales(): Promise<RESPONSE> {
   const { data: sales, error } = await supabase.from("ventas").select("*");
 
-  if (sales && !error) {
-    const response: SALE[] = sales.map((sale) => {
+  let salesResponse: SALE[] = [];
+  if (sales) {
+    salesResponse = sales.map((sale) => {
       const newProduct: SALE = {
         id: sale.id,
         id_cliente: sale.id_cliente,
@@ -17,10 +18,9 @@ export async function getProducts(): Promise<SALE[] | Error> {
       };
       return newProduct;
     });
-    return response;
   }
   return {
-    title: "Error en ventas",
-    message: "No se pudo obtener la lista de las ventas",
+    data: salesResponse,
+    errors: error,
   };
 }

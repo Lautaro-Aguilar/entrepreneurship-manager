@@ -1,14 +1,15 @@
 import PRODUCT from "../types/PRODUCT";
 import supabase from "../supabase/supabase";
-import Error from "../types/ERROR";
+import RESPONSE from "../types/RESPONSE";
 
-export async function getProducts(): Promise<PRODUCT[] | Error> {
+export async function getProducts(): Promise<RESPONSE> {
   const { data: products, error } = await supabase
     .from("productos")
     .select("*");
 
-  if (products && !error) {
-    const response: PRODUCT[] = products.map((product) => {
+  let productsResponse: PRODUCT[] = [];
+  if (products) {
+    productsResponse = products.map((product) => {
       const newProduct: PRODUCT = {
         id: product.id,
         nombre: product.nombre,
@@ -18,10 +19,11 @@ export async function getProducts(): Promise<PRODUCT[] | Error> {
       };
       return newProduct;
     });
-    return response;
   }
-  return {
-    title: "Error en productos",
-    message: "No se pudo obtener la lista de los productos",
+  const response = {
+    data: productsResponse,
+    errors: error,
   };
+
+  return response;
 }
