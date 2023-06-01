@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 
 const client = createClient(
-  process.env.SUPABASE_URL || "",
-  process.env.SUPABASE_KEY || ""
+  import.meta.env.VITE_SUPABASE_URL || "",
+  import.meta.env.VITE_SUPABASE_KEY || ""
 );
 
 export default client;
