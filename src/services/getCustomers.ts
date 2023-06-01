@@ -1,14 +1,15 @@
 import CUSTOMER from "../types/CUSTOMER";
 import supabase from "../supabase/supabase";
-import Error from "../types/ERROR";
+import RESPONSE from "../types/RESPONSE";
 
-export async function getClients(): Promise<CUSTOMER[] | Error> {
+export async function getClients(): Promise<RESPONSE> {
   const { data: customers, error } = await supabase
     .from("clientes")
     .select("*");
 
-  if (customers && !error) {
-    const response: CUSTOMER[] = customers.map((customer) => {
+  let customersResponse: CUSTOMER[] = [];
+  if (customers) {
+    customersResponse = customers.map((customer) => {
       const newCustomer: CUSTOMER = {
         id: customer.id,
         nombre: customer.nombre,
@@ -17,13 +18,11 @@ export async function getClients(): Promise<CUSTOMER[] | Error> {
         telefono: customer.telefono,
         inserted_at: customer.inserted_at,
       };
-
       return newCustomer;
     });
-    return response;
   }
   return {
-    title: "Error en clientes",
-    message: "No se pudo obtener la lista de los clientes",
+    data: customersResponse,
+    errors: error,
   };
 }
