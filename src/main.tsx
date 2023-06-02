@@ -8,6 +8,7 @@ import Clientes from "./components/Clientes/page";
 import Pedidos from "./components/Pedidos/page";
 import Productos from "./components/Productos/page";
 import Ventas from "./components/Ventas/page";
+import Inicio from "./components/Inicio/page";
 /* import App from './App' */
 
 const router = createBrowserRouter([
@@ -17,7 +18,8 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <div>Inicio</div>
+        path: "/Inicio",
+        element: <Inicio />,
       },
       {
         path: "/Clientes",
