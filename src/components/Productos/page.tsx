@@ -47,13 +47,17 @@ function Productos() {
       </Typography>
 
       <Box sx={{ width: "100%", my: 2 }}>
-        <Box className='ag-theme-alpine' style={{ height: 400, width: "100%" }}>
+        <Box
+          className='ag-theme-alpine-dark'
+          style={{ height: 400, width: "100%" }}
+        >
           <AgGridReact rowData={products} columnDefs={columnDefs} />
         </Box>
 
         <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
           <Button
             variant='contained'
+            color='info'
             size='large'
             onClick={() => setOpenModalAgregar(true)}
           >
