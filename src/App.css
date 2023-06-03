@@ -3,7 +3,36 @@
   min-height: 100vh;
 }
 
+.principal {
+  background-color: black;
+  background-image: url(/src/routes/imagen.jpg);
+  background-repeat: no-repeat;
+  object-fit: cover;
+}
+
 .content {
   flex-grow: 1;
+  min-height: 100%;
   padding-top: 64px;
+}
+
+.pruebaImagen {
+  position: relative;
+  background-image: url(components/Inicio/imagen.jpg);
+  background-position: center center;
+  background-size: cover;
+}
+
+.pruebaImagen::before {
+  content: "";
+  position: absolute; /* Establece posición absoluta */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+img {
+  z-index: 1;
 }
