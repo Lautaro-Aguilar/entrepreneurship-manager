@@ -1,6 +1,7 @@
 import CUSTOMER from "../types/CUSTOMER";
 import supabase from "../supabase/supabase";
 import RESPONSE from "../types/RESPONSE";
+import formatDate from "../utils/formatDate";
 
 export async function getClients(): Promise<RESPONSE> {
   const { data: customers, error } = await supabase
@@ -16,7 +17,7 @@ export async function getClients(): Promise<RESPONSE> {
         apellido: customer.apellido,
         direccion: customer.direccion,
         telefono: customer.telefono,
-        inserted_at: customer.inserted_at,
+        inserted_at: formatDate(new Date(customer.inserted_at))
       };
       return newCustomer;
     });

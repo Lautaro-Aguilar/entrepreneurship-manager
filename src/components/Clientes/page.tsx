@@ -1,25 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
 import ModalEliminar from "./ModalEliminar";
+import columnDefs from "./agGrid/columns";
+import CUSTOMER from "../../types/CUSTOMER";
+import { getClients } from "../../services/getCustomers";
 
 function Clientes() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
-  const [rowData] = useState([
-    { make: "Toyota", model: "Celica", price: 35000 },
-    { make: "Ford", model: "Mondeo", price: 32000 },
-    { make: "Porsche", model: "Boxster", price: 72000 },
-  ]);
+  const [clients, setClients] = useState<CUSTOMER[]>([])
+  const columns = columnDefs
 
-  const [columnDefs] = useState([
-    { field: "make" },
-    { field: "model" },
-    { field: "price" },
-  ]);
+  useEffect(() => {
+    getClients().then((response) => {
+      setClients(response.data)
+    })
+  }, [])
   return (
     <Container
       sx={{
@@ -38,7 +38,7 @@ function Clientes() {
           className='ag-theme-alpine-dark'
           style={{ height: 400, width: "100%" }}
         >
-          <AgGridReact rowData={rowData} columnDefs={columnDefs}></AgGridReact>
+          <AgGridReact rowData={clients} columnDefs={columns}></AgGridReact>
         </Box>
 
         <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
