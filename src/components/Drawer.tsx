@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Divider,
   List,
   ListItem,
   ListItemText,
@@ -13,14 +12,14 @@ import {
   ListItemIcon,
   ListItemButton,
 } from "@mui/material";
-import { Menu } from "@mui/icons-material";
+import { BookmarkAdded, Menu, Science } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import { useTheme } from "@emotion/react";
+
 const links = [
   {
     icono: <HomeIcon />,
@@ -43,9 +42,14 @@ const links = [
     title: "Productos",
   },
   {
-    icono: <BookmarkBorderIcon />,
+    icono: <BookmarkAdded />,
     href: "/Pedidos",
     title: "Pedidos",
+  },
+  {
+    icono: <Science />,
+    href: "/Components",
+    title: "Theme",
   },
 ];
 
@@ -76,23 +80,25 @@ function DrawerResponsive() {
       <Divider /> */}
       <List>
         {links.map(({ icono, href, title }, index) => (
-          <ListItem key={index} disablePadding sx={{ py: 1, px: 2 }}>
-            <ListItemButton>
-              <ListItemIcon sx={{ color: theme.palette.primary.main }}>
-                {icono}
-              </ListItemIcon>
-              <ListItemText>
-                <Typography
-                  variant='h5'
-                  fontWeight='medium'
-                  color='primary'
-                  component='h2'
-                >
-                  <Link to={href}>{title}</Link>
-                </Typography>
-              </ListItemText>
-            </ListItemButton>
-          </ListItem>
+          <Link to={href}>
+            <ListItem key={index} disablePadding sx={{ py: 1, px: 2 }}>
+              <ListItemButton>
+                <ListItemIcon sx={{ color: theme.palette.primary.main }}>
+                  {icono}
+                </ListItemIcon>
+                <ListItemText>
+                  <Typography
+                    variant='h5'
+                    fontWeight='medium'
+                    color='primary'
+                    component='h2'
+                  >
+                    {title}
+                  </Typography>
+                </ListItemText>
+              </ListItemButton>
+            </ListItem>
+          </Link>
         ))}
       </List>
     </div>
