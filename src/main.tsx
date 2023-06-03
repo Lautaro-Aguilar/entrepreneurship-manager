@@ -45,6 +45,18 @@ const router = createBrowserRouter([
 ]);
 
 const theme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#e85d04",
+    },
+    secondary: {
+      main: "#FFBA08",
+    },
+    info: {
+      main: "#1789FC",
+    },
+  },
   typography: {
     fontFamily: ["Rubik", "sans-serif"].join(","),
     fontWeightBold: 600,
@@ -69,17 +81,9 @@ const theme = createTheme({
     h6: {
       fontWeight: 300,
     },
-  },
-  palette: {
-    mode: "dark",
-    primary: {
-      main: "#e85d04",
-    },
-    secondary: {
-      main: "#FFBA08",
-    },
-    info: {
-      main: "#1789FC",
+    button: {
+      textTransform: "none",
+      color: 'white'
     },
   },
   components: {
@@ -92,7 +96,6 @@ const theme = createTheme({
         },
       },
     },
-    MuiTypography: {},
   },
 });
 
