@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -12,6 +12,7 @@ import { useTheme } from "@emotion/react";
 import PersonIcon from "@mui/icons-material/Person";
 import MapIcon from "@mui/icons-material/Map";
 import PhoneIcon from "@mui/icons-material/Phone";
+import CUSTOMER from "../../types/CUSTOMER";
 
 type ModalAgregarProps = {
   open: boolean;
@@ -19,8 +20,23 @@ type ModalAgregarProps = {
 };
 
 function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
-  const handleClose = () => setOpen(false);
   const theme = useTheme();
+  const handleClose = () => setOpen(false);
+  const [formData, setFormData] = useState<CUSTOMER>({
+    nombre: "",
+    apellido: "",
+    direccion: "",
+    telefono: ""
+  })
+
+  /* const handleSubmit = async (formData: CUSTOMER) => {
+  } */
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+    console.log(formData)
+  }
   return (
     <div>
       <Modal
@@ -57,8 +73,10 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
             <Box sx={{ display: "flex", gap: 3 }}>
               <TextField
                 required
-                variant='standard'
+                name="nombre"
                 label='Nombre'
+                variant='standard'
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -69,8 +87,10 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               />
               <TextField
                 required
-                variant='standard'
+                name="apellido"
                 label='Apellido'
+                variant='standard'
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -81,8 +101,10 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               />
             </Box>
             <TextField
-              variant='standard'
+              name="direccion"
               label='Direccion'
+              variant='standard'
+              onChange={handleChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position='start'>
@@ -92,8 +114,10 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               }}
             />
             <TextField
-              variant='standard'
+              name='telefono'
               label='Telefono'
+              variant='standard'
+              onChange={handleChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position='start'>
