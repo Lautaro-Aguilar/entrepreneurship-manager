@@ -10,35 +10,50 @@ import {
   AppBar,
   IconButton,
   Typography,
+  ListItemIcon,
+  ListItemButton,
 } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import HomeIcon from '@mui/icons-material/Home';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import { useTheme } from "@emotion/react";
 const links = [
   {
+    icono: <HomeIcon />,
     href: "/",
     title: "Inicio"
   },
   {
+    icono: <PeopleAltIcon />,
     href: "/Clientes",
     title: "Clientes",
   },
   {
+    icono: <PointOfSaleIcon />,
     href: "/Ventas",
     title: "Ventas"
   },
   {
+    icono: <LibraryBooksIcon />,
     href: "/Productos",
     title: "Productos"
   },
   {
+    icono: <BookmarkBorderIcon />,
     href: "/Pedidos",
     title: "Pedidos"
   }
 ];
 
 function DrawerResponsive() {
+  const theme = useTheme()
   const [mobileOpen, setMobileOpen] = useState(false);
   const drawerWidth = 240;
+  console.log(theme.palette.primary)
 
   const handleDrawerToggle = () => {
     console.log("toggle", !mobileOpen);
@@ -48,30 +63,37 @@ function DrawerResponsive() {
   const drawer = (
     <div>
       <Toolbar />
+      {/*     <Box sx={{ display: 'flex', flexDirection: "column", justifyContent: "center", textAlign: 'center', alignItems: 'center', pb: 2.5 }}>
+        <Typography variant="h6" fontWeight="bold" color="primary" component="h2" py={1} px={2}>
+          Entrepreneurship Manager
+        </Typography>
+        <Box sx={{ backgroundColor: theme.palette.primary.dark, px: 2.5, py: .5, borderRadius: 5 }}>
+          <Typography variant="body2" fontWeight="bold" color="white">
+            v0.0.1
+          </Typography>
+        </Box>
+      </Box>
+      <Divider /> */}
       <List>
-        {links.map(({ href, title }, index) => (
+        {links.map(({ icono, href, title }, index) => (
           <ListItem key={index} disablePadding sx={{ py: 1, px: 2 }}>
-            <ListItemText>
-              <Typography
-                variant="h5"
-                fontWeight="bold"
-                color="white"
-                component="h2"
-              >
-                <Link to={href}>{title}</Link>
-              </Typography>
-            </ListItemText>
+            <ListItemButton>
+              <ListItemIcon sx={{ color: theme.palette.primary.main }}>{icono}</ListItemIcon>
+              <ListItemText>
+                <Typography
+                  variant="h5"
+                  fontWeight="bold"
+                  color="primary"
+                  component="h2"
+                >
+                  <Link to={href}>{title}</Link>
+                </Typography>
+              </ListItemText>
+            </ListItemButton>
           </ListItem>
         ))}
       </List>
-      <Divider />
-      <List sx={{ position: "absolute", bottom: 0 }}>
-        {["Version 0.0.1", "Entrepreneurship Manager"].map((text, index) => (
-          <ListItem key={index} disablePadding>
-            <ListItemText>{text}</ListItemText>
-          </ListItem>
-        ))}
-      </List>
+
     </div>
   );
   return (
@@ -93,9 +115,16 @@ function DrawerResponsive() {
           >
             <Menu />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Entrepreneurship Manager
-          </Typography>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+            <Typography variant="h6" fontWeight="bold" color="primary" component="h2">
+              Entrepreneurship Manager
+            </Typography>
+            <Box sx={{ backgroundColor: theme.palette.primary.dark, px: 2.5, py: .5, borderRadius: 5 }}>
+              <Typography variant="body2" component="p" fontWeight="bold" color="white">
+                v0.0.1
+              </Typography>
+            </Box>
+          </Box>
         </Toolbar>
       </AppBar>
       <Box

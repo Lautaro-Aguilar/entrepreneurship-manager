@@ -9,6 +9,7 @@ import Pedidos from "./components/Pedidos/page";
 import Productos from "./components/Productos/page";
 import Ventas from "./components/Ventas/page";
 import Inicio from "./components/Inicio/page";
+import { createTheme, ThemeProvider } from "@mui/material";
 /* import App from './App' */
 
 const router = createBrowserRouter([
@@ -40,8 +41,22 @@ const router = createBrowserRouter([
   },
 ]);
 
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#e85d04',
+    },
+    secondary: {
+      main: '#FFBA08',
+    },
+  },
+})
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider theme={theme}>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>
 );
