@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Container, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
@@ -17,19 +24,27 @@ function useProducts() {
     precio: 0,
   });
 
+  const [isSnackBarOpen, setIsSnackBarOpen] = useState(false);
+
+  const openSnackBar = () => setIsSnackBarOpen(true);
+  const closeSnackBar = () => setIsSnackBarOpen(false);
+
   const openModal = () => setOpenModalModificar(true);
   const closeModal = () => setOpenModalModificar(false);
 
   const handleUpdateProduct = (product: PRODUCT) => {
     setSelectedProduct(product);
-    console.log(product);
     openModal();
   };
 
   const handleSubmitUpdate = (product: PRODUCT) => {
-    useCases
-      .update(product, product.id)
-      .then((response) => console.log("producto actualizado", response));
+    useCases.update(product, product.id).then(() => {
+      openSnackBar();
+      useCases
+        .getAll()
+        .then((response) => setProducts(response.data))
+        .then(() => closeModal());
+    });
   };
 
   useEffect(() => {
@@ -46,6 +61,8 @@ function useProducts() {
     selectedProduct,
     handleUpdateProduct,
     handleSubmitUpdate,
+    isSnackBarOpen,
+    closeSnackBar,
   };
 }
 
@@ -61,6 +78,8 @@ function Productos() {
     selectedProduct,
     handleUpdateProduct,
     handleSubmitUpdate,
+    closeSnackBar,
+    isSnackBarOpen,
   } = useProducts();
 
   const columns = buildColumns(handleUpdateProduct);
@@ -74,6 +93,19 @@ function Productos() {
         alignItems: "center",
       }}
     >
+      <Snackbar
+        open={isSnackBarOpen}
+        autoHideDuration={6000}
+        onClose={closeSnackBar}
+      >
+        <Alert
+          onClose={closeSnackBar}
+          severity='success'
+          sx={{ width: "100%" }}
+        >
+          Producto actualizado correctamente 👍
+        </Alert>
+      </Snackbar>
       <Typography variant='h3' component='h1'>
         Registro de Productos
       </Typography>
@@ -94,14 +126,6 @@ function Productos() {
             onClick={() => setOpenModalAgregar(true)}
           >
             Agregar
-          </Button>
-          <Button
-            variant='contained'
-            color='secondary'
-            size='large'
-            onClick={openModal}
-          >
-            Modificar
           </Button>
           <Button
             variant='contained'
