@@ -86,7 +86,7 @@ export async function updateCustomer(
   return response;
 }
 
-export async function deleteCustomer(id: number): Promise<RESPONSE> {
+export async function deleteCustomer(id?: number): Promise<RESPONSE> {
   const { data, error } = await supabase.from("clientes").delete().eq("id", id);
 
   const response = {

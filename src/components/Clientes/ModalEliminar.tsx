@@ -1,8 +1,10 @@
-import React from 'react'
-import { Box, Typography, Modal, Button, List, ListItem, ListItemText } from '@mui/material'
+import React, { useState } from 'react'
+import { Box, Typography, Modal, Button, List, ListItem, ListItemText, Snackbar } from '@mui/material'
 import styleModal from './styleModal';
 import { useTheme } from '@emotion/react';
 import CUSTOMER from '../../types/CUSTOMER';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import * as useCases from '../../services/customers.useCases'
 type ModalEliminarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -10,8 +12,33 @@ type ModalEliminarProps = {
 };
 
 function ModalEliminar({ open, setOpen, rowsSelected }: ModalEliminarProps) {
-  const handleClose = () => setOpen(false);
   const theme = useTheme()
+  const handleClose = () => setOpen(false);
+  const [alert, setAlert] = useState(false)
+
+  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+    props,
+    ref,
+  ) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+
+  const handleAlertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setAlert(false);
+  };
+
+  const handleSubmit = async () => {
+    for (const row of rowsSelected) {
+      await useCases.destroy(row.id)
+    }
+    setAlert(true)
+    handleClose()
+  }
+
   return (
     <div>
       <Modal
@@ -20,6 +47,7 @@ function ModalEliminar({ open, setOpen, rowsSelected }: ModalEliminarProps) {
       >
         <Box sx={styleModal}>
           <Box className="headerModal" px={2} py={1} borderRadius={"10px 10px 0px 0px"} bgcolor={theme.palette.error.dark} color="theme.palette.success.contrastText">
+            <input type="button" value="test" onClick={() => console.log(rowsSelected)} />
             <Typography id="modal-modal-title" variant="h6" fontWeight={600} component="h2">
               Eliminar cliente
             </Typography>
@@ -39,13 +67,18 @@ function ModalEliminar({ open, setOpen, rowsSelected }: ModalEliminarProps) {
               <Button variant="contained" color="error" onClick={handleClose}>
                 Cancelar
               </Button>
-              <Button variant="contained" color="success">
+              <Button variant="contained" color="success" onClick={() => handleSubmit()}>
                 Aceptar
               </Button>
             </Box>
           </Box>
         </Box>
       </Modal>
+      <Snackbar open={alert} autoHideDuration={6000} onClose={handleAlertClose}>
+        <Alert onClose={handleAlertClose} severity="success" sx={{ width: '100%' }}>
+          Cliente eliminado correctamente!
+        </Alert>
+      </Snackbar>
     </div >
   )
 }
