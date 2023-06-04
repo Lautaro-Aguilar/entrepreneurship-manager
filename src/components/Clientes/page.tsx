@@ -5,9 +5,9 @@ import ModalAgregar from "./ModalAgregar";
 import ModalEliminar from "./ModalEliminar";
 import ModalModificar from "./ModalModificar";
 import CUSTOMER from "../../types/CUSTOMER";
-import { getClients } from "../../services/getCustomers";
 import buildColumns from "./agGrid/columns";
 import Buttons from "./Buttons";
+import * as useCases from "../../services/customers.useCases"
 
 function Clientes() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
@@ -25,7 +25,7 @@ function Clientes() {
   const columns = buildColumns(handleModificar)
 
   useEffect(() => {
-    getClients().then((response) => {
+    useCases.getAll().then((response) => {
       setClients(response.data)
     })
   }, [])
@@ -39,7 +39,6 @@ function Clientes() {
         alignItems: "center",
       }}
     >
-      <input type="button" value="test" onClick={() => console.log(rowsSelected)} />
       <Typography variant='h3' component='h1'>
         Registro de Clientes
       </Typography>
