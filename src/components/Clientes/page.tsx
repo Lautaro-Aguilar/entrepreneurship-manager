@@ -13,6 +13,7 @@ function Clientes() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
+  const [rowsSelected, setRowsSelected] = useState<CUSTOMER[]>([])
   const [profileToModify, setProfileToModify] = useState<CUSTOMER>()
   const [clients, setClients] = useState<CUSTOMER[]>([])
 
@@ -38,6 +39,7 @@ function Clientes() {
         alignItems: "center",
       }}
     >
+      <input type="button" value="test" onClick={() => console.log(rowsSelected)} />
       <Typography variant='h3' component='h1'>
         Registro de Clientes
       </Typography>
@@ -47,13 +49,13 @@ function Clientes() {
           className='ag-theme-alpine-dark'
           style={{ height: 400, width: "100%" }}
         >
-          <AgGridReact rowData={clients} columnDefs={columns}></AgGridReact>
+          <AgGridReact rowData={clients} columnDefs={columns} rowSelection="multiple" onRowSelected={(e) => setRowsSelected(e.api.getSelectedRows())} />
         </Box>
         <Buttons setOpenModalAgregar={setOpenModalAgregar} setOpenModalEliminar={setOpenModalEliminar} />
       </Box>
       <ModalAgregar open={openModalAgregar} setOpen={setOpenModalAgregar} />
-      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} />
-      <ModalModificar open={openModalModificar} setOpen={setOpenModalModificar} perfilToModify={profileToModify} />
+      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} rowsSelected={rowsSelected} />
+      <ModalModificar open={openModalModificar} setOpen={setOpenModalModificar} profileToModify={profileToModify} />
     </Container>
   );
 }

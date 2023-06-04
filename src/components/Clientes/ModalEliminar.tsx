@@ -1,17 +1,15 @@
 import React from 'react'
-import { Box, Typography, Modal, Button, TextField, InputAdornment, List, ListItem, ListItemText } from '@mui/material'
+import { Box, Typography, Modal, Button, List, ListItem, ListItemText } from '@mui/material'
 import styleModal from './styleModal';
 import { useTheme } from '@emotion/react';
-import PersonIcon from '@mui/icons-material/Person';
-import MapIcon from '@mui/icons-material/Map';
-import PhoneIcon from '@mui/icons-material/Phone';
-
+import CUSTOMER from '../../types/CUSTOMER';
 type ModalEliminarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  rowsSelected: CUSTOMER[]
 };
 
-function ModalEliminar({ open, setOpen }: ModalEliminarProps) {
+function ModalEliminar({ open, setOpen, rowsSelected }: ModalEliminarProps) {
   const handleClose = () => setOpen(false);
   const theme = useTheme()
   return (
@@ -19,8 +17,6 @@ function ModalEliminar({ open, setOpen }: ModalEliminarProps) {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
       >
         <Box sx={styleModal}>
           <Box className="headerModal" px={2} py={1} borderRadius={"10px 10px 0px 0px"} bgcolor={theme.palette.error.dark} color="theme.palette.success.contrastText">
@@ -29,14 +25,15 @@ function ModalEliminar({ open, setOpen }: ModalEliminarProps) {
             </Typography>
           </Box>
           <Box className="bodyModal" px={2} py={2} sx={{ display: 'flex', flexDirection: 'column' }} borderRadius={"0px 0px 10px 10px"}>
-            <Typography variant="h6" textAlign="start" component="h3">Vas a eliminar el siguiente usuario: </Typography>
+            <Typography variant="h6" textAlign="start" component="h3">{rowsSelected.length > 1 ? "Vas a los siguientes usuarios: " : "Vas a eliminar el siguiente usuario:"}</Typography>
             <List>
-              <ListItem>
-                <ListItemText primary="Lautaro Aguilar " />
-              </ListItem>
-              <ListItem>
-                <ListItemText primary="Agustin Galante " />
-              </ListItem>
+              {rowsSelected?.map(({ nombre, apellido }, index) => (
+                <ListItem key={index}>
+                  <ListItemText>
+                    {nombre} {apellido}
+                  </ListItemText>
+                </ListItem>
+              ))}
             </List>
             <Box sx={{ display: 'flex', gap: 5, justifyContent: 'flex-end' }}>
               <Button variant="contained" color="error" onClick={handleClose}>

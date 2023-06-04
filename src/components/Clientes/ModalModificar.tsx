@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Typography, Modal, Button, TextField, InputAdornment } from '@mui/material'
 import styleModal from './styleModal';
 import { useTheme } from '@emotion/react';
@@ -10,19 +10,36 @@ import CUSTOMER from '../../types/CUSTOMER';
 type ModalModificarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  perfilToModify: CUSTOMER | undefined
+  profileToModify: CUSTOMER | undefined
 };
 
 
-function ModalModificar({ open, setOpen, perfilToModify }: ModalModificarProps) {
-  const [formData, setFormData] = useState({
-    nombre: perfilToModify?.nombre,
-    apellido: perfilToModify?.apellido,
-    direccion: perfilToModify?.direccion,
-    telefono: perfilToModify?.telefono,
+function ModalModificar({ open, setOpen, profileToModify }: ModalModificarProps) {
+  const [formData, setFormData] = useState<CUSTOMER>({
+    nombre: '',
+    apellido: '',
+    direccion: '',
+    telefono: ''
   })
   const handleClose = () => setOpen(false);
   const theme = useTheme()
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  }
+
+  useEffect(() => {
+    if (profileToModify) {
+      setFormData({
+        nombre: profileToModify?.nombre,
+        apellido: profileToModify?.apellido,
+        direccion: profileToModify?.direccion,
+        telefono: profileToModify?.telefono,
+      })
+    }
+  }, [open])
+
   return (
     <div>
       <Modal
@@ -32,7 +49,6 @@ function ModalModificar({ open, setOpen, perfilToModify }: ModalModificarProps) 
         aria-describedby="modal-modal-description"
       >
         <Box sx={styleModal}>
-          <input type="button" value="test" onClick={() => console.log(formData)} />
           <Box className="headerModal" px={2} py={1} borderRadius={"10px 10px 0px 0px"} bgcolor={theme.palette.primary.main} color="theme.palette.success.contrastText">
             <Typography id="modal-modal-title" variant="h6" fontWeight={600} component="h2">
               Modificar cliente
@@ -43,8 +59,10 @@ function ModalModificar({ open, setOpen, perfilToModify }: ModalModificarProps) 
               <TextField
                 required
                 variant='standard'
+                name="nombre"
                 label="Nombre"
                 value={formData.nombre}
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -56,8 +74,10 @@ function ModalModificar({ open, setOpen, perfilToModify }: ModalModificarProps) 
               <TextField
                 required
                 variant='standard'
+                name="apellido"
                 label="Apellido"
                 value={formData.apellido}
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -69,8 +89,10 @@ function ModalModificar({ open, setOpen, perfilToModify }: ModalModificarProps) 
             </Box>
             <TextField
               variant='standard'
+              name="direccion"
               label="Direccion"
               value={formData.direccion}
+              onChange={handleChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -81,8 +103,10 @@ function ModalModificar({ open, setOpen, perfilToModify }: ModalModificarProps) 
             />
             <TextField
               variant='standard'
+              name="telefono"
               label="Telefono"
               value={formData.telefono}
+              onChange={handleChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
