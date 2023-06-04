@@ -5,7 +5,7 @@ import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
 import ModalEliminar from "./ModalEliminar";
 import PRODUCT from "../../types/PRODUCT";
-import { getProducts } from "../../services/getProducts";
+import { getProducts, getProduct } from "../../services/products.service";
 
 function useProducts() {
   const [products, setProducts] = useState<PRODUCT[]>([]);
@@ -14,6 +14,7 @@ function useProducts() {
     getProducts().then((response) => {
       setProducts(response.data);
     });
+    getProduct(2).then((response) => console.log("PRODUCTO", response));
   }, []);
 
   return { products };
