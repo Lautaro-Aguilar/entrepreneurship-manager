@@ -5,35 +5,66 @@ import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
 import ModalEliminar from "./ModalEliminar";
 import PRODUCT from "../../types/PRODUCT";
-import { getProducts, getProduct } from "../../services/products.service";
+import * as useCases from "../../services/products.useCases";
+import buildColumns from "./grid/columns";
 
 function useProducts() {
   const [products, setProducts] = useState<PRODUCT[]>([]);
+  const [openModalModificar, setOpenModalModificar] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<PRODUCT>({
+    nombre: "",
+    costo: 0,
+    precio: 0,
+  });
+
+  const openModal = () => setOpenModalModificar(true);
+  const closeModal = () => setOpenModalModificar(false);
+
+  const handleUpdateProduct = (product: PRODUCT) => {
+    setSelectedProduct(product);
+    console.log(product);
+    openModal();
+  };
+
+  const handleSubmitUpdate = (product: PRODUCT) => {
+    useCases
+      .update(product, product.id)
+      .then((response) => console.log("producto actualizado", response));
+  };
 
   useEffect(() => {
-    getProducts().then((response) => {
+    useCases.getAll().then((response) => {
       setProducts(response.data);
     });
-    getProduct(2).then((response) => console.log("PRODUCTO", response));
   }, []);
 
-  return { products };
+  return {
+    products,
+    openModalModificar,
+    openModal,
+    closeModal,
+    selectedProduct,
+    handleUpdateProduct,
+    handleSubmitUpdate,
+  };
 }
 
 function Productos() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
-  const [openModalModificar, setOpenModalModificar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
 
-  const { products } = useProducts();
+  const {
+    products,
+    openModal,
+    closeModal,
+    openModalModificar,
+    selectedProduct,
+    handleUpdateProduct,
+    handleSubmitUpdate,
+  } = useProducts();
 
-  const columnDefs = [
-    { field: "id" },
-    { field: "nombre" },
-    { field: "precio" },
-    { field: "costo" },
-    { field: "inserted_at" },
-  ];
+  const columns = buildColumns(handleUpdateProduct);
+
   return (
     <Container
       sx={{
@@ -52,7 +83,7 @@ function Productos() {
           className='ag-theme-alpine-dark'
           style={{ height: 400, width: "100%" }}
         >
-          <AgGridReact rowData={products} columnDefs={columnDefs} />
+          <AgGridReact rowData={products} columnDefs={columns} />
         </Box>
 
         <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
@@ -68,7 +99,7 @@ function Productos() {
             variant='contained'
             color='secondary'
             size='large'
-            onClick={() => setOpenModalModificar(true)}
+            onClick={openModal}
           >
             Modificar
           </Button>
@@ -84,8 +115,10 @@ function Productos() {
       </Box>
       <ModalAgregar open={openModalAgregar} setOpen={setOpenModalAgregar} />
       <ModalModificar
-        open={openModalModificar}
-        setOpen={setOpenModalModificar}
+        isOpen={openModalModificar}
+        closeModal={closeModal}
+        productToModify={selectedProduct}
+        handleSubmitUpdate={handleSubmitUpdate}
       />
       <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} />
     </Container>

@@ -71,7 +71,7 @@ export async function createProduct(data: PRODUCT): Promise<RESPONSE> {
 
 export async function updateProduct(
   data: PRODUCT,
-  id: number
+  id?: number
 ): Promise<RESPONSE> {
   const { data: supabaseResponse, error } = await supabase
     .from("productos")
