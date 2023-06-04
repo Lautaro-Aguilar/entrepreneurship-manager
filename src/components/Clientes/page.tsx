@@ -17,6 +17,7 @@ function Clientes() {
   const [profileToModify, setProfileToModify] = useState<CUSTOMER>()
   const [clients, setClients] = useState<CUSTOMER[]>([])
   const [refreshGrid, setRefreshGrid] = useState(false);
+  const [isLoading, setIsLoading] = useState(true)
 
   const handleModificar = (profile: CUSTOMER) => {
     setProfileToModify(profile)
