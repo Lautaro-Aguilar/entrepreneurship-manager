@@ -53,6 +53,12 @@ function ModalAgregar({ open, setOpen, setRefreshGrid }: ModalAgregarProps) {
     }
     useCases.create(formData).then((response) => {
       setRefreshGrid(true)
+      setFormData({
+        nombre: "",
+        apellido: "",
+        direccion: "",
+        telefono: ""
+      })
     })
     setAlert(true)
     handleClose()
