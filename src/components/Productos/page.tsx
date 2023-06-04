@@ -41,8 +41,7 @@ function useProducts() {
   const handleSubmitUpdate = (product: PRODUCT) => {
     useCases.update(product, product.id).then(() => {
       openSnackBar();
-      const productsAux = products;
-      const newProducts = productsAux.map((p) => {
+      const newProducts = products.map((p) => {
         if (p.id === product.id) {
           return product;
         }
