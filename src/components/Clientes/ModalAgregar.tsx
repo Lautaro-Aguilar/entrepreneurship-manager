@@ -20,18 +20,25 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 type ModalAgregarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setRefreshGrid: React.Dispatch<React.SetStateAction<boolean>>
 };
 
-function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
+function ModalAgregar({ open, setOpen, setRefreshGrid }: ModalAgregarProps) {
   const theme = useTheme();
   const [alert, setAlert] = useState(false)
-  const handleClose = () => setOpen(false);
+  const [formError, setFormError] = useState(false)
   const [formData, setFormData] = useState<CUSTOMER>({
     nombre: "",
     apellido: "",
     direccion: "",
     telefono: ""
   })
+
+  const handleClose = () => {
+    setFormError(false)
+    setOpen(false)
+  };
+
   const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
     ref,
@@ -40,7 +47,13 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
   });
 
   const handleSubmit = async (formData: CUSTOMER) => {
-    useCases.create(formData).then((response) => console.log(response))
+    if (formData.nombre === "" || formData.apellido === "") {
+      setFormError(true)
+      return;
+    }
+    useCases.create(formData).then((response) => {
+      setRefreshGrid(true)
+    })
     setAlert(true)
     handleClose()
   }
@@ -48,6 +61,7 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
+    setFormError(false)
     console.log(formData)
   }
 
@@ -93,6 +107,9 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             borderRadius={"0px 0px 10px 10px"}
           >
+            {formError && (
+              <Alert severity="error" sx={{ alignItems: 'center' }}>Los campos Nombre y Apellido son obligatorios.</Alert>
+            )}
             <Box sx={{ display: "flex", gap: 3 }}>
               <TextField
                 required

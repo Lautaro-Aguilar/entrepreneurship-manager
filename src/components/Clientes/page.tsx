@@ -16,6 +16,8 @@ function Clientes() {
   const [rowsSelected, setRowsSelected] = useState<CUSTOMER[]>([])
   const [profileToModify, setProfileToModify] = useState<CUSTOMER>()
   const [clients, setClients] = useState<CUSTOMER[]>([])
+  const [refreshGrid, setRefreshGrid] = useState(false);
+  const [isLoading, setIsLoading] = useState(true)
 
   const handleModificar = (profile: CUSTOMER) => {
     setProfileToModify(profile)
@@ -27,8 +29,9 @@ function Clientes() {
   useEffect(() => {
     useCases.getAll().then((response) => {
       setClients(response.data)
+      setRefreshGrid(false);
     })
-  }, [])
+  }, [refreshGrid])
 
   return (
     <Container
@@ -48,12 +51,12 @@ function Clientes() {
           className='ag-theme-alpine-dark'
           style={{ height: 400, width: "100%" }}
         >
-          <AgGridReact rowData={clients} columnDefs={columns} rowSelection="multiple" onRowSelected={(e) => setRowsSelected(e.api.getSelectedRows())} />
+          <AgGridReact key={refreshGrid} rowData={clients} columnDefs={columns} rowSelection="multiple" onRowSelected={(e) => setRowsSelected(e.api.getSelectedRows())} />
         </Box>
         <Buttons setOpenModalAgregar={setOpenModalAgregar} setOpenModalEliminar={setOpenModalEliminar} />
       </Box>
-      <ModalAgregar open={openModalAgregar} setOpen={setOpenModalAgregar} />
-      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} rowsSelected={rowsSelected} />
+      <ModalAgregar open={openModalAgregar} setOpen={setOpenModalAgregar} setRefreshGrid={setRefreshGrid} />
+      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} rowsSelected={rowsSelected} setRefreshGrid={setRefreshGrid} />
       <ModalModificar open={openModalModificar} setOpen={setOpenModalModificar} profileToModify={profileToModify} />
     </Container>
   );

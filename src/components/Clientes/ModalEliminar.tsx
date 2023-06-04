@@ -8,10 +8,11 @@ import * as useCases from '../../services/customers.useCases'
 type ModalEliminarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  rowsSelected: CUSTOMER[]
+  rowsSelected: CUSTOMER[];
+  setRefreshGrid: React.Dispatch<React.SetStateAction<boolean>>
 };
 
-function ModalEliminar({ open, setOpen, rowsSelected }: ModalEliminarProps) {
+function ModalEliminar({ open, setOpen, rowsSelected, setRefreshGrid }: ModalEliminarProps) {
   const theme = useTheme()
   const handleClose = () => setOpen(false);
   const [alert, setAlert] = useState(false)
@@ -35,6 +36,7 @@ function ModalEliminar({ open, setOpen, rowsSelected }: ModalEliminarProps) {
     for (const row of rowsSelected) {
       await useCases.destroy(row.id)
     }
+    setRefreshGrid(true)
     setAlert(true)
     handleClose()
   }
