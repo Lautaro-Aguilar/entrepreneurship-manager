@@ -6,6 +6,7 @@ import {
   Button,
   TextField,
   InputAdornment,
+  Snackbar
 } from "@mui/material";
 import styleModal from "./styleModal";
 import { useTheme } from "@emotion/react";
@@ -13,6 +14,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import MapIcon from "@mui/icons-material/Map";
 import PhoneIcon from "@mui/icons-material/Phone";
 import CUSTOMER from "../../types/CUSTOMER";
+import * as useCases from "../../services/customers.useCases"
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 type ModalAgregarProps = {
   open: boolean;
@@ -21,6 +24,7 @@ type ModalAgregarProps = {
 
 function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
   const theme = useTheme();
+  const [alert, setAlert] = useState(false)
   const handleClose = () => setOpen(false);
   const [formData, setFormData] = useState<CUSTOMER>({
     nombre: "",
@@ -28,15 +32,34 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
     direccion: "",
     telefono: ""
   })
+  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+    props,
+    ref,
+  ) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
 
-  /* const handleSubmit = async (formData: CUSTOMER) => {
-  } */
+  const handleSubmit = async (formData: CUSTOMER) => {
+    useCases.create(formData).then((response) => console.log(response))
+    setAlert(true)
+    handleClose()
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
     console.log(formData)
   }
+
+
+  const handleAlertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setAlert(false);
+  };
+
   return (
     <div>
       <Modal
@@ -130,13 +153,18 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               <Button variant='contained' color='error' onClick={handleClose}>
                 Cancelar
               </Button>
-              <Button variant='contained' color='success'>
+              <Button variant='contained' color='success' onClick={() => { handleSubmit(formData) }}>
                 <Typography variant='button'>Aceptar</Typography>
               </Button>
             </Box>
           </Box>
         </Box>
       </Modal>
+      <Snackbar open={alert} autoHideDuration={6000} onClose={handleAlertClose}>
+        <Alert onClose={handleAlertClose} severity="success" sx={{ width: '100%' }}>
+          Cliente agregado correctamente!
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
