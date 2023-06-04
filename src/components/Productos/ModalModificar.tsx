@@ -10,6 +10,7 @@ import {
 import styleModal from "./styleModal";
 import PRODUCT from "../../types/PRODUCT";
 import { useEffect, useState } from "react";
+import { AttachMoney, BakeryDining, Paid } from "@mui/icons-material";
 
 type ModalModificarProps = {
   isOpen: boolean;
@@ -82,7 +83,9 @@ function ModalModificar({
               label='Nombre'
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position='start'></InputAdornment>
+                  <InputAdornment position='start'>
+                    <BakeryDining />
+                  </InputAdornment>
                 ),
               }}
             />
@@ -96,7 +99,10 @@ function ModalModificar({
               type='number'
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position='start'></InputAdornment>
+                  <InputAdornment position='start'>
+                    {" "}
+                    <AttachMoney />
+                  </InputAdornment>
                 ),
               }}
             />
@@ -109,7 +115,9 @@ function ModalModificar({
               onChange={handleChange}
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position='start'></InputAdornment>
+                  <InputAdornment position='start'>
+                    <Paid />
+                  </InputAdornment>
                 ),
               }}
             />

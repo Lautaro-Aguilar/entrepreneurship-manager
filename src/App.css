@@ -25,7 +25,8 @@
 
 .pruebaImagen::before {
   content: "";
-  position: absolute; /* Establece posición absoluta */
+  position: absolute;
+  /* Establece posición absoluta */
   top: 0;
   left: 0;
   width: 100%;
@@ -41,4 +42,8 @@ a {
   text-decoration: none;
   color: inherit;
   outline: none;
+}
+
+.header-text-center .ag-header-cell-label {
+  justify-content: center;
 }

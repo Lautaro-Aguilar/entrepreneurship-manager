@@ -14,6 +14,7 @@ import ModalEliminar from "./ModalEliminar";
 import PRODUCT from "../../types/PRODUCT";
 import * as useCases from "../../services/products.useCases";
 import buildColumns from "./grid/columns";
+import options from "./grid/options";
 
 function useProducts() {
   const [products, setProducts] = useState<PRODUCT[]>([]);
@@ -40,10 +41,18 @@ function useProducts() {
   const handleSubmitUpdate = (product: PRODUCT) => {
     useCases.update(product, product.id).then(() => {
       openSnackBar();
-      useCases
+      const productsAux = products;
+      const newProducts = productsAux.map((p) => {
+        if (p.id === product.id) {
+          return product;
+        }
+        return p;
+      });
+      setProducts(newProducts);
+      /* useCases
         .getAll()
         .then((response) => setProducts(response.data))
-        .then(() => closeModal());
+        .then(() => closeModal()); */
     });
   };
 
@@ -115,7 +124,11 @@ function Productos() {
           className='ag-theme-alpine-dark'
           style={{ height: 400, width: "100%" }}
         >
-          <AgGridReact rowData={products} columnDefs={columns} />
+          <AgGridReact
+            rowData={products}
+            columnDefs={columns}
+            gridOptions={options}
+          />
         </Box>
 
         <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
