@@ -1,25 +1,34 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
-import ModalModificar from "./ModalModificar";
 import ModalEliminar from "./ModalEliminar";
-import columnDefs from "./agGrid/columns";
+import ModalModificar from "./ModalModificar";
 import CUSTOMER from "../../types/CUSTOMER";
 import { getClients } from "../../services/getCustomers";
+import buildColumns from "./agGrid/columns";
+import Buttons from "./Buttons";
 
 function Clientes() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
-  const [openModalModificar, setOpenModalModificar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
+  const [openModalModificar, setOpenModalModificar] = useState(false);
+  const [profileToModify, setProfileToModify] = useState<CUSTOMER>()
   const [clients, setClients] = useState<CUSTOMER[]>([])
-  const columns = columnDefs
+
+  const handleModificar = (profile: CUSTOMER) => {
+    setProfileToModify(profile)
+    setOpenModalModificar(true)
+  }
+
+  const columns = buildColumns(handleModificar)
 
   useEffect(() => {
     getClients().then((response) => {
       setClients(response.data)
     })
   }, [])
+
   return (
     <Container
       sx={{
@@ -40,40 +49,11 @@ function Clientes() {
         >
           <AgGridReact rowData={clients} columnDefs={columns}></AgGridReact>
         </Box>
-
-        <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
-          <Button
-            variant='contained'
-            color='info'
-            size='large'
-            onClick={() => setOpenModalAgregar(true)}
-          >
-            Agregar
-          </Button>
-          <Button
-            variant='contained'
-            color='secondary'
-            size='large'
-            onClick={() => setOpenModalModificar(true)}
-          >
-            Modificar
-          </Button>
-          <Button
-            variant='contained'
-            color='error'
-            size='large'
-            onClick={() => setOpenModalEliminar(true)}
-          >
-            Eliminar
-          </Button>
-        </Box>
+        <Buttons setOpenModalAgregar={setOpenModalAgregar} setOpenModalEliminar={setOpenModalEliminar} />
       </Box>
       <ModalAgregar open={openModalAgregar} setOpen={setOpenModalAgregar} />
-      <ModalModificar
-        open={openModalModificar}
-        setOpen={setOpenModalModificar}
-      />
       <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} />
+      <ModalModificar open={openModalModificar} setOpen={setOpenModalModificar} perfilToModify={profileToModify} />
     </Container>
   );
 }
