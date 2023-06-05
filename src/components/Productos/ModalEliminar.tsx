@@ -1,34 +1,36 @@
-import React from 'react'
-import { Box,Typography, Modal } from '@mui/material'
-import styleModal from './styleModal';
+import { Box, Typography, Modal, ListItem, List } from "@mui/material";
+import styleModal from "./styleModal";
+import PRODUCT from "../../types/PRODUCT";
 
 type ModalEliminarProps = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  products: PRODUCT[];
+  closeModal: () => void;
+  isOpen: boolean;
+  handleRemoveSubmit: (product: PRODUCT[]) => void;
 };
 
-function ModalEliminar({open, setOpen}: ModalEliminarProps) {
-  const handleClose = () => setOpen(false);
-
+function ModalEliminar({ isOpen, products, closeModal }: ModalEliminarProps) {
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={styleModal}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Modal Eliminar
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
-        </Box>
-      </Modal>
-    </div>
-  )
+    <Modal
+      open={isOpen}
+      onClose={closeModal}
+      aria-labelledby='modal-modal-title'
+      aria-describedby='modal-modal-description'
+    >
+      <Box sx={styleModal}>
+        <Typography id='modal-modal-title' variant='h6' component='h2'>
+          Modal Eliminar
+        </Typography>
+        <Typography id='modal-modal-description' sx={{ mt: 2 }}>
+          <List>
+            {products.map((product) => (
+              <ListItem>{product.nombre}</ListItem>
+            ))}
+          </List>
+        </Typography>
+      </Box>
+    </Modal>
+  );
 }
 
-export default ModalEliminar
+export default ModalEliminar;
