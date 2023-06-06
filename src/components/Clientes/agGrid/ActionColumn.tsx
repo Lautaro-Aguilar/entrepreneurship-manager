@@ -6,11 +6,11 @@ interface ActionColumnParams {
   node: {
     data: CUSTOMER
   };
-  handleModificar: (profile: CUSTOMER) => void;
+  handleUpdate: (profile: CUSTOMER) => void;
 }
 
 function ActionColumn(params: ActionColumnParams) {
-  const { node, handleModificar } = params;
+  const { node, handleUpdate } = params;
   return (
     <Box
       sx={{
@@ -23,7 +23,7 @@ function ActionColumn(params: ActionColumnParams) {
       }}
     >
       <IconButton
-        onClick={() => handleModificar(node.data)}
+        onClick={() => handleUpdate(node.data)}
         color='primary'
         title='Editar'
         style={{ padding: 0 }}

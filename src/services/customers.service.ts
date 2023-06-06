@@ -72,7 +72,7 @@ export async function createCustomer(data: CUSTOMER): Promise<RESPONSE> {
 
 export async function updateCustomer(
   data: CUSTOMER,
-  id: number
+  id?: number
 ): Promise<RESPONSE> {
   const { data: supabaseResponse, error } = await supabase
     .from("clientes")

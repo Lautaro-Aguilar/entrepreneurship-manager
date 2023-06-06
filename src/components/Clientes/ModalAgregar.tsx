@@ -5,8 +5,7 @@ import {
   Modal,
   Button,
   TextField,
-  InputAdornment,
-  Snackbar
+  InputAdornment
 } from "@mui/material";
 import styleModal from "./styleModal";
 import { useTheme } from "@emotion/react";
@@ -14,79 +13,32 @@ import PersonIcon from "@mui/icons-material/Person";
 import MapIcon from "@mui/icons-material/Map";
 import PhoneIcon from "@mui/icons-material/Phone";
 import CUSTOMER from "../../types/CUSTOMER";
-import * as useCases from "../../services/customers.useCases"
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 type ModalAgregarProps = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setRefreshGrid: React.Dispatch<React.SetStateAction<boolean>>
+  isOpen: boolean;
+  closeModal: () => void;
+  handleSubmitAdd: (client: CUSTOMER) => void;
 };
 
-function ModalAgregar({ open, setOpen, setRefreshGrid }: ModalAgregarProps) {
+function ModalAgregar({ isOpen, closeModal, handleSubmitAdd }: ModalAgregarProps) {
   const theme = useTheme();
-  const [alert, setAlert] = useState(false)
-  const [formError, setFormError] = useState(false)
-  const [formData, setFormData] = useState<CUSTOMER>({
+  const [client, setClient] = useState<CUSTOMER>({
     nombre: "",
     apellido: "",
     direccion: "",
     telefono: ""
   })
 
-  const handleClose = () => {
-    setFormError(false)
-    setOpen(false)
-  };
-
-  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-    props,
-    ref,
-  ) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  });
-
-  const handleSubmit = async (formData: CUSTOMER) => {
-    if (formData.nombre === "" || formData.apellido === "") {
-      setFormError(true)
-      return;
-    }
-    useCases.create(formData).then((response) => {
-      setRefreshGrid(true)
-      setFormData({
-        nombre: "",
-        apellido: "",
-        direccion: "",
-        telefono: ""
-      })
-    })
-    setAlert(true)
-    handleClose()
-  }
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-    setFormError(false)
-    console.log(formData)
+    setClient({ ...client, [name]: value })
   }
-
-
-  const handleAlertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setAlert(false);
-  };
 
   return (
     <div>
       <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby='modal-modal-title'
-        aria-describedby='modal-modal-description'
+        open={isOpen}
+        onClose={closeModal}
       >
         <Box sx={styleModal}>
           <Box
@@ -113,9 +65,6 @@ function ModalAgregar({ open, setOpen, setRefreshGrid }: ModalAgregarProps) {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             borderRadius={"0px 0px 10px 10px"}
           >
-            {formError && (
-              <Alert severity="error" sx={{ alignItems: 'center' }}>Los campos Nombre y Apellido son obligatorios.</Alert>
-            )}
             <Box sx={{ display: "flex", gap: 3 }}>
               <TextField
                 required
@@ -173,21 +122,16 @@ function ModalAgregar({ open, setOpen, setRefreshGrid }: ModalAgregarProps) {
               }}
             />
             <Box sx={{ display: "flex", gap: 5, justifyContent: "flex-end" }}>
-              <Button variant='contained' color='error' onClick={handleClose}>
+              <Button variant='contained' color='error' onClick={closeModal}>
                 Cancelar
               </Button>
-              <Button variant='contained' color='success' onClick={() => { handleSubmit(formData) }}>
+              <Button variant='contained' color='success' onClick={() => { handleSubmitAdd(client) }}>
                 <Typography variant='button'>Aceptar</Typography>
               </Button>
             </Box>
           </Box>
         </Box>
       </Modal>
-      <Snackbar open={alert} autoHideDuration={6000} onClose={handleAlertClose}>
-        <Alert onClose={handleAlertClose} severity="success" sx={{ width: '100%' }}>
-          Cliente agregado correctamente!
-        </Alert>
-      </Snackbar>
     </div>
   );
 }
