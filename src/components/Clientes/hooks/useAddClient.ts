@@ -15,6 +15,7 @@ export default function useAddClient({ clients, updateClients }: Params) {
     direccion: "",
     telefono: "",
   })
+  const [formErrorAdd, setFormErrorAdd] = useState(false)
 
   const [isSnackBarOpenAdd, setIsSnackBarOpenAdd] = useState(false)
 
@@ -22,22 +23,26 @@ export default function useAddClient({ clients, updateClients }: Params) {
   const closeSnackBarAdd = () => setIsSnackBarOpenAdd(false)
 
   const openModalAgregar = () => setIsOpenModalAgregar(true);
-  const closeModalAgregar = () => setIsOpenModalAgregar(false);
+  const closeModalAgregar = () => { setIsOpenModalAgregar(false); setFormErrorAdd(false) };
 
   const handleSubmitAdd = (client: CUSTOMER) => {
-    console.log(client)
-    useCases.create(client).then((response) => {
-      console.log(response)
-      openSnackBarAdd();
-      setClient({
-        nombre: "",
-        apellido: "",
-        direccion: "",
-        telefono: "",
+
+    if (client.nombre !== "" || client.apellido !== "") {
+      useCases.create(client).then((response) => {
+        console.log(response)
+        openSnackBarAdd();
+        setClient({
+          nombre: "",
+          apellido: "",
+          direccion: "",
+          telefono: "",
+        })
+        updateClients([...clients, client])
+        closeModalAgregar()
       })
-      updateClients([...clients, client])
-      closeModalAgregar()
-    })
+    } else {
+      setFormErrorAdd(true)
+    }
   }
 
   useEffect(() => {
@@ -52,6 +57,8 @@ export default function useAddClient({ clients, updateClients }: Params) {
     closeModalAgregar,
     handleSubmitAdd,
     isSnackBarOpenAdd,
-    closeSnackBarAdd
+    closeSnackBarAdd,
+    formErrorAdd,
+    setFormErrorAdd
   };
 }

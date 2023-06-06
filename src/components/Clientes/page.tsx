@@ -21,7 +21,9 @@ function Clientes() {
     closeModalAgregar,
     handleSubmitAdd,
     isSnackBarOpenAdd,
-    closeSnackBarAdd
+    closeSnackBarAdd,
+    formErrorAdd,
+    setFormErrorAdd
   } = useAddClient({ clients, updateClients })
 
 
@@ -84,7 +86,7 @@ function Clientes() {
         </Box>
         <Buttons setOpenModalAgregar={openModalAgregar} setOpenModalEliminar={openRemoveModal} />
       </Box>
-      <ModalAgregar isOpen={isOpenModalAgregar} closeModal={closeModalAgregar} handleSubmitAdd={handleSubmitAdd} />
+      <ModalAgregar isOpen={isOpenModalAgregar} closeModal={closeModalAgregar} handleSubmitAdd={handleSubmitAdd} formError={formErrorAdd} setFormError={setFormErrorAdd} />
       <ModalEliminar isOpen={isRemoveModalOpen} closeModal={closeRemoveModal} clients={rowsSelected} handleRemoveSubmit={handleDeleteRows} />
       <ModalModificar isOpen={openModalModificar} closeModal={closeModal} profileToModify={selectedClient} handleSubmitUpdate={handleSubmitUpdate} />
     </Container>

@@ -5,7 +5,8 @@ import {
   Modal,
   Button,
   TextField,
-  InputAdornment
+  InputAdornment,
+  Alert
 } from "@mui/material";
 import styleModal from "./styleModal";
 import { useTheme } from "@emotion/react";
@@ -18,9 +19,11 @@ type ModalAgregarProps = {
   isOpen: boolean;
   closeModal: () => void;
   handleSubmitAdd: (client: CUSTOMER) => void;
+  formError: boolean
+  setFormError: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function ModalAgregar({ isOpen, closeModal, handleSubmitAdd }: ModalAgregarProps) {
+function ModalAgregar({ isOpen, closeModal, handleSubmitAdd, formError, setFormError }: ModalAgregarProps) {
   const theme = useTheme();
   const [client, setClient] = useState<CUSTOMER>({
     nombre: "",
@@ -32,6 +35,7 @@ function ModalAgregar({ isOpen, closeModal, handleSubmitAdd }: ModalAgregarProps
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setClient({ ...client, [name]: value })
+    setFormError(false)
   }
 
   return (
@@ -65,6 +69,9 @@ function ModalAgregar({ isOpen, closeModal, handleSubmitAdd }: ModalAgregarProps
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             borderRadius={"0px 0px 10px 10px"}
           >
+            {formError && (
+              <Alert severity="error">Los campos Nombre y Apellido son obligatorios.</Alert>
+            )}
             <Box sx={{ display: "flex", gap: 3 }}>
               <TextField
                 required
