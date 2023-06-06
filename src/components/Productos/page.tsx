@@ -15,6 +15,7 @@ import buildColumns from "./grid/columns";
 import options from "./grid/options";
 import useModifyProducts from "./hooks/useModifyProduct";
 import useRemoveProducts from "./hooks/useRemoveProducts";
+import useAddProduct from "./hooks/useAddProduct";
 
 function Productos() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
@@ -40,11 +41,16 @@ function Productos() {
     openRemoveModal,
   } = useRemoveProducts({ updateProducts });
 
-  const columns = buildColumns(handleUpdateProduct);
+  const {
+    closeAddModal,
+    handleChange,
+    isAddModalOpen,
+    openAddModal,
+    product,
+    handleSubmit,
+  } = useAddProduct({ products, updateProducts });
 
-  const renderizarAlerta = (mensaje: string) => {
-    return <div>{mensaje}</div>;
-  };
+  const columns = buildColumns(handleUpdateProduct);
 
   return (
     <Container
@@ -55,11 +61,6 @@ function Productos() {
         alignItems: "center",
       }}
     >
-      <input
-        type='button'
-        value='test'
-        onClick={() => console.log(rowsSelected)}
-      />
       <Snackbar
         open={isSnackBarOpen}
         autoHideDuration={6000}
@@ -102,22 +103,27 @@ function Productos() {
             variant='contained'
             color='info'
             size='large'
-            onClick={() => setOpenModalAgregar(true)}
+            onClick={openAddModal}
           >
             Agregar
           </Button>
-          {renderizarAlerta("HOLAAAAAA")}
           <Button
             variant='contained'
             color='error'
             size='large'
-            onClick={() => openRemoveModal()}
+            onClick={openRemoveModal}
           >
             Eliminar
           </Button>
         </Box>
       </Box>
-      <ModalAgregar open={openModalAgregar} setOpen={setOpenModalAgregar} />
+      <ModalAgregar
+        isOpen={isAddModalOpen}
+        closeModal={closeAddModal}
+        handleSubmit={handleSubmit}
+        handleChange={handleChange}
+        product={product}
+      />
       <ModalModificar
         isOpen={openModalModificar}
         closeModal={closeModal}
