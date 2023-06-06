@@ -18,7 +18,6 @@ import useRemoveProducts from "./hooks/useRemoveProducts";
 
 function Productos() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
-  const [openModalEliminar, setOpenModalEliminar] = useState(false);
 
   const {
     products,
@@ -29,6 +28,7 @@ function Productos() {
     handleSubmitUpdate,
     closeSnackBar,
     isSnackBarOpen,
+    updateProducts,
   } = useModifyProducts();
 
   const {
@@ -38,9 +38,13 @@ function Productos() {
     closeRemoveModal,
     isRemoveModalOpen,
     openRemoveModal,
-  } = useRemoveProducts();
+  } = useRemoveProducts({ updateProducts });
 
   const columns = buildColumns(handleUpdateProduct);
+
+  const renderizarAlerta = (mensaje: string) => {
+    return <div>{mensaje}</div>;
+  };
 
   return (
     <Container
@@ -102,11 +106,12 @@ function Productos() {
           >
             Agregar
           </Button>
+          {renderizarAlerta("HOLAAAAAA")}
           <Button
             variant='contained'
             color='error'
             size='large'
-            onClick={() => setOpenModalEliminar(true)}
+            onClick={() => openRemoveModal()}
           >
             Eliminar
           </Button>
@@ -120,7 +125,7 @@ function Productos() {
         handleSubmitUpdate={handleSubmitUpdate}
       />
       <ModalEliminar
-        isOpen={openModalEliminar}
+        isOpen={isRemoveModalOpen}
         closeModal={closeRemoveModal}
         products={rowsSelected}
         handleRemoveSubmit={handleDeleteRows}

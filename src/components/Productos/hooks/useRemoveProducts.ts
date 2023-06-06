@@ -2,7 +2,11 @@ import { useState } from "react";
 import PRODUCT from "../../../types/PRODUCT";
 import * as useCases from "../../../services/products.service";
 
-export default function useRemoveProducts() {
+interface Parameters {
+  updateProducts: (products: PRODUCT[]) => void;
+}
+
+export default function useRemoveProducts({ updateProducts }: Parameters) {
   const [rowsSelected, setRowsSelected] = useState<PRODUCT[]>([]);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
@@ -11,8 +15,19 @@ export default function useRemoveProducts() {
   };
 
   const handleDeleteRows = (products: PRODUCT[]) => {
-    products.forEach((product: PRODUCT) => {
-      useCases.deleteProduct(product.id);
+    const promises = products.map((product) => {
+      return new Promise((resolve, reject) => {
+        useCases.deleteProduct(product.id).then((response) => {
+          resolve(response);
+        });
+      });
+    });
+
+    Promise.all(promises).then((resultados) => {
+      /* useCases.getProducts().then(({ data }) => {
+        updateProducts(data);
+        closeRemoveModal();
+      }); */
     });
   };
 
@@ -28,12 +43,3 @@ export default function useRemoveProducts() {
     isRemoveModalOpen,
   };
 }
-
-/* 
-
-SupAnonymo — hoy a las 18:56
-<AgGridReact key={refreshGrid} rowData={clients} columnDefs={columns} rowSelection="multiple" onRowSelected={(e) => setRowsSelected(e.api.getSelectedRows())} />
-
-    { headerName: "Nombre", field: "nombre", checkboxSelection: true, headerCheckboxSelection: true },
-
-*/
