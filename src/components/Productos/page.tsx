@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  Alert,
-  Box,
-  Button,
-  Container,
-  Snackbar,
-  Typography,
-} from "@mui/material";
+import { AlertColor, Box, Button, Container, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
@@ -16,9 +9,35 @@ import options from "./grid/options";
 import useModifyProducts from "./hooks/useModifyProduct";
 import useRemoveProducts from "./hooks/useRemoveProducts";
 import useAddProduct from "./hooks/useAddProduct";
+import SnackbarCustom from "../shared/SnackbarCustom";
+
+interface SNACKOPTIONS {
+  message: string;
+  variant: AlertColor;
+}
+
+function useSnackBar() {
+  const [isSnackBarOpen, setIsSnackBarOpen] = useState(false);
+  const [snackOptions, setSnackOptions] = useState<SNACKOPTIONS>({
+    message: "",
+    variant: "info",
+  });
+  const openSnackBar = (alertVariant: AlertColor, alertMessage: string) => {
+    setIsSnackBarOpen(true);
+    setSnackOptions({ message: alertMessage, variant: alertVariant });
+    setTimeout(() => {
+      setIsSnackBarOpen(false);
+    }, 5000);
+  };
+
+  const closeSnackBar = () => setIsSnackBarOpen(false);
+
+  return { openSnackBar, isSnackBarOpen, snackOptions, closeSnackBar };
+}
 
 function Productos() {
-  const [openModalAgregar, setOpenModalAgregar] = useState(false);
+  const { isSnackBarOpen, snackOptions, openSnackBar, closeSnackBar } =
+    useSnackBar();
 
   const {
     products,
@@ -27,10 +46,8 @@ function Productos() {
     selectedProduct,
     handleUpdateProduct,
     handleSubmitUpdate,
-    closeSnackBar,
-    isSnackBarOpen,
     updateProducts,
-  } = useModifyProducts();
+  } = useModifyProducts({ openSnackBar });
 
   const {
     handleRowsSelected,
@@ -39,7 +56,7 @@ function Productos() {
     closeRemoveModal,
     isRemoveModalOpen,
     openRemoveModal,
-  } = useRemoveProducts({ updateProducts });
+  } = useRemoveProducts({ updateProducts, openSnackBar });
 
   const {
     closeAddModal,
@@ -48,7 +65,7 @@ function Productos() {
     openAddModal,
     product,
     handleSubmit,
-  } = useAddProduct({ products, updateProducts });
+  } = useAddProduct({ products, updateProducts, openSnackBar });
 
   const columns = buildColumns(handleUpdateProduct);
 
@@ -61,19 +78,12 @@ function Productos() {
         alignItems: "center",
       }}
     >
-      <Snackbar
-        open={isSnackBarOpen}
-        autoHideDuration={6000}
-        onClose={closeSnackBar}
-      >
-        <Alert
-          onClose={closeSnackBar}
-          severity='success'
-          sx={{ width: "100%" }}
-        >
-          Producto actualizado correctamente 👍
-        </Alert>
-      </Snackbar>
+      <SnackbarCustom
+        isSnackBarOpen={isSnackBarOpen}
+        closeSnackBar={closeSnackBar}
+        message={snackOptions.message}
+        variant={snackOptions.variant}
+      />
       <Typography variant='h3' component='h1'>
         Registro de Productos
       </Typography>

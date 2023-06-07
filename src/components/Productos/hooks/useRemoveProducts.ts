@@ -1,12 +1,17 @@
 import { useState } from "react";
 import PRODUCT from "../../../types/PRODUCT";
 import * as useCases from "../../../services/products.service";
+import { AlertColor } from "@mui/material";
 
 interface Parameters {
   updateProducts: (products: PRODUCT[]) => void;
+  openSnackBar: (alertVariant: AlertColor, alertMessage: string) => void;
 }
 
-export default function useRemoveProducts({ updateProducts }: Parameters) {
+export default function useRemoveProducts({
+  updateProducts,
+  openSnackBar,
+}: Parameters) {
   const [rowsSelected, setRowsSelected] = useState<PRODUCT[]>([]);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
@@ -24,10 +29,11 @@ export default function useRemoveProducts({ updateProducts }: Parameters) {
     });
 
     Promise.all(promises).then((resultados) => {
-      /* useCases.getProducts().then(({ data }) => {
+      useCases.getProducts().then(({ data }) => {
         updateProducts(data);
         closeRemoveModal();
-      }); */
+        openSnackBar("success", "Producto eliminado correctamente 👍");
+      });
     });
   };
 

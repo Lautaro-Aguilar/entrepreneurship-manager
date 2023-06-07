@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import PRODUCT from "../../../types/PRODUCT";
 import * as useCases from "../../../services/products.service";
+import { AlertColor } from "@mui/material";
 
 interface Parameters {
   products: PRODUCT[];
   updateProducts: (products: PRODUCT[]) => void;
+  openSnackBar: (alertVariant: AlertColor, alertMessage: string) => void;
 }
 
 export default function useAddProduct({
   products,
   updateProducts,
+  openSnackBar,
 }: Parameters) {
   const [product, setProduct] = useState<PRODUCT>({
     costo: 0,
@@ -34,6 +37,7 @@ export default function useAddProduct({
       const newProducts = [...products, product];
       updateProducts(newProducts);
       closeAddModal();
+      openSnackBar("success", "Producto agregado correctamente 👍");
     });
   };
 

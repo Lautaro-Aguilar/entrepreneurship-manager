@@ -37,11 +37,6 @@ function ModalEliminar({
           bgcolor={theme.palette.error.dark}
           color='theme.palette.success.contrastText'
         >
-          <input
-            type='button'
-            value='test'
-            onClick={() => console.log(products)}
-          />
           <Typography
             id='modal-modal-title'
             variant='h6'

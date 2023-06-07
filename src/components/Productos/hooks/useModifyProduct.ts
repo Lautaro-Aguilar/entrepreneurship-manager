@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import PRODUCT from "../../../types/PRODUCT";
 import * as useCases from "../../../services/products.useCases";
+import { AlertColor } from "@mui/material";
 
-export default function useProducts() {
+export default function useProducts({
+  openSnackBar,
+}: {
+  openSnackBar: (alertVariant: AlertColor, alertMessage: string) => void;
+}) {
   const [products, setProducts] = useState<PRODUCT[]>([]);
   const [openModalModificar, setOpenModalModificar] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<PRODUCT>({
@@ -10,11 +15,6 @@ export default function useProducts() {
     costo: 0,
     precio: 0,
   });
-
-  const [isSnackBarOpen, setIsSnackBarOpen] = useState(false);
-
-  const openSnackBar = () => setIsSnackBarOpen(true);
-  const closeSnackBar = () => setIsSnackBarOpen(false);
 
   const openModal = () => setOpenModalModificar(true);
   const closeModal = () => setOpenModalModificar(false);
@@ -26,7 +26,6 @@ export default function useProducts() {
 
   const handleSubmitUpdate = (product: PRODUCT) => {
     useCases.update(product, product.id).then(() => {
-      openSnackBar();
       const newProducts = products.map((p) => {
         if (p.id === product.id) {
           return product;
@@ -34,6 +33,7 @@ export default function useProducts() {
         return p;
       });
       setProducts(newProducts);
+      openSnackBar("success", "Producto modificado correctamente 👍");
       closeModal();
     });
   };
@@ -56,8 +56,6 @@ export default function useProducts() {
     selectedProduct,
     handleUpdateProduct,
     handleSubmitUpdate,
-    isSnackBarOpen,
-    closeSnackBar,
     updateProducts,
   };
 }
