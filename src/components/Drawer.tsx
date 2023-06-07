@@ -57,10 +57,8 @@ function DrawerResponsive() {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const drawerWidth = 240;
-  console.log(theme.palette.primary);
 
   const handleDrawerToggle = () => {
-    console.log("toggle", !mobileOpen);
     setMobileOpen(!mobileOpen);
   };
 

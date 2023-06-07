@@ -12,7 +12,7 @@ export const getOne = (id: number) => getProduct(id);
 
 export const create = (data: PRODUCT) => createProduct(data);
 
-export const update = (data: PRODUCT, id: number) => updateProduct(data, id);
+export const update = (data: PRODUCT, id?: number) => updateProduct(data, id);
 /* 
 
 export const destroy = (id) => deleteClient(id);

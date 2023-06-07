@@ -1,39 +1,74 @@
-import { useEffect, useState } from "react";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { useState } from "react";
+import { AlertColor, Box, Button, Container, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
 import ModalEliminar from "./ModalEliminar";
-import PRODUCT from "../../types/PRODUCT";
-import { getProducts, getProduct } from "../../services/products.service";
+import buildColumns from "./grid/columns";
+import options from "./grid/options";
+import useModifyProducts from "./hooks/useModifyProduct";
+import useRemoveProducts from "./hooks/useRemoveProducts";
+import useAddProduct from "./hooks/useAddProduct";
+import SnackbarCustom from "../shared/SnackbarCustom";
 
-function useProducts() {
-  const [products, setProducts] = useState<PRODUCT[]>([]);
+interface SNACKOPTIONS {
+  message: string;
+  variant: AlertColor;
+}
 
-  useEffect(() => {
-    getProducts().then((response) => {
-      setProducts(response.data);
-    });
-    getProduct(2).then((response) => console.log("PRODUCTO", response));
-  }, []);
+function useSnackBar() {
+  const [isSnackBarOpen, setIsSnackBarOpen] = useState(false);
+  const [snackOptions, setSnackOptions] = useState<SNACKOPTIONS>({
+    message: "",
+    variant: "info",
+  });
+  const openSnackBar = (alertVariant: AlertColor, alertMessage: string) => {
+    setIsSnackBarOpen(true);
+    setSnackOptions({ message: alertMessage, variant: alertVariant });
+    setTimeout(() => {
+      setIsSnackBarOpen(false);
+    }, 5000);
+  };
 
-  return { products };
+  const closeSnackBar = () => setIsSnackBarOpen(false);
+
+  return { openSnackBar, isSnackBarOpen, snackOptions, closeSnackBar };
 }
 
 function Productos() {
-  const [openModalAgregar, setOpenModalAgregar] = useState(false);
-  const [openModalModificar, setOpenModalModificar] = useState(false);
-  const [openModalEliminar, setOpenModalEliminar] = useState(false);
+  const { isSnackBarOpen, snackOptions, openSnackBar, closeSnackBar } =
+    useSnackBar();
 
-  const { products } = useProducts();
+  const {
+    products,
+    closeModal,
+    openModalModificar,
+    selectedProduct,
+    handleUpdateProduct,
+    handleSubmitUpdate,
+    updateProducts,
+  } = useModifyProducts({ openSnackBar });
 
-  const columnDefs = [
-    { field: "id" },
-    { field: "nombre" },
-    { field: "precio" },
-    { field: "costo" },
-    { field: "inserted_at" },
-  ];
+  const {
+    handleRowsSelected,
+    rowsSelected,
+    handleDeleteRows,
+    closeRemoveModal,
+    isRemoveModalOpen,
+    openRemoveModal,
+  } = useRemoveProducts({ updateProducts, openSnackBar });
+
+  const {
+    closeAddModal,
+    handleChange,
+    isAddModalOpen,
+    openAddModal,
+    product,
+    handleSubmit,
+  } = useAddProduct({ products, updateProducts, openSnackBar });
+
+  const columns = buildColumns(handleUpdateProduct);
+
   return (
     <Container
       sx={{
@@ -43,6 +78,12 @@ function Productos() {
         alignItems: "center",
       }}
     >
+      <SnackbarCustom
+        isSnackBarOpen={isSnackBarOpen}
+        closeSnackBar={closeSnackBar}
+        message={snackOptions.message}
+        variant={snackOptions.variant}
+      />
       <Typography variant='h3' component='h1'>
         Registro de Productos
       </Typography>
@@ -52,42 +93,59 @@ function Productos() {
           className='ag-theme-alpine-dark'
           style={{ height: 400, width: "100%" }}
         >
-          <AgGridReact rowData={products} columnDefs={columnDefs} />
+          <AgGridReact
+            rowData={products}
+            columnDefs={columns}
+            gridOptions={options}
+            rowSelection='multiple'
+            onRowSelected={(e) => handleRowsSelected(e)}
+          />
         </Box>
 
-        <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
+        <Box
+          sx={{
+            display: "flex",
+            my: 2,
+            justifyContent: "space-around",
+          }}
+        >
           <Button
             variant='contained'
             color='info'
             size='large'
-            onClick={() => setOpenModalAgregar(true)}
+            onClick={openAddModal}
           >
             Agregar
           </Button>
           <Button
             variant='contained'
-            color='secondary'
-            size='large'
-            onClick={() => setOpenModalModificar(true)}
-          >
-            Modificar
-          </Button>
-          <Button
-            variant='contained'
             color='error'
             size='large'
-            onClick={() => setOpenModalEliminar(true)}
+            onClick={openRemoveModal}
           >
             Eliminar
           </Button>
         </Box>
       </Box>
-      <ModalAgregar open={openModalAgregar} setOpen={setOpenModalAgregar} />
-      <ModalModificar
-        open={openModalModificar}
-        setOpen={setOpenModalModificar}
+      <ModalAgregar
+        isOpen={isAddModalOpen}
+        closeModal={closeAddModal}
+        handleSubmit={handleSubmit}
+        handleChange={handleChange}
+        product={product}
       />
-      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} />
+      <ModalModificar
+        isOpen={openModalModificar}
+        closeModal={closeModal}
+        productToModify={selectedProduct}
+        handleSubmitUpdate={handleSubmitUpdate}
+      />
+      <ModalEliminar
+        isOpen={isRemoveModalOpen}
+        closeModal={closeRemoveModal}
+        products={rowsSelected}
+        handleRemoveSubmit={handleDeleteRows}
+      />
     </Container>
   );
 }
