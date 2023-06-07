@@ -1,45 +1,43 @@
-import { useState, useEffect } from 'react'
-import CUSTOMER from '../../../types/CUSTOMER'
-import * as useCases from "../../../services/customers.useCases"
+import { useState, useEffect } from "react";
+import CUSTOMER from "../../../types/CUSTOMER";
+import * as useCases from "../../../services/customers.useCases";
+import { AlertColor } from "@mui/material";
 
-export default function useModifyClients() {
-  const [clients, setClients] = useState<CUSTOMER[]>([])
-  const [openModalModificar, setOpenModalModificar] = useState(false)
+interface Params {
+  openSnackBar: (alertVariant: AlertColor, alertMessage: string) => void;
+}
+
+export default function useModifyClients({ openSnackBar }: Params) {
+  const [clients, setClients] = useState<CUSTOMER[]>([]);
+  const [openModalModificar, setOpenModalModificar] = useState(false);
   const [selectedClient, setSelectedClient] = useState<CUSTOMER>({
     nombre: "",
     apellido: "",
     direccion: "",
     telefono: "",
-  })
-
-  const [isSnackBarOpen, setIsSnackBarOpen] = useState(false)
-
-  const openSnackBar = () => setIsSnackBarOpen(true)
-  const closeSnackBar = () => setIsSnackBarOpen(false)
+  });
 
   const openModal = () => setOpenModalModificar(true);
   const closeModal = () => setOpenModalModificar(false);
 
   const handleUpdateClient = (client: CUSTOMER) => {
     setSelectedClient(client);
-    openModal()
-  }
+    openModal();
+  };
 
   const handleSubmitUpdate = (client: CUSTOMER) => {
-    console.log(client)
     useCases.update(client, client.id).then(() => {
-      openSnackBar();
       const newClients = clients.map((c) => {
         if (c.id === client.id) {
-          return client
+          return client;
         }
-        return c
-      })
-      setClients(newClients)
-      closeModal()
-    })
-
-  }
+        return c;
+      });
+      setClients(newClients);
+      openSnackBar("success", "Cliente modificado correctamente 👍");
+      closeModal();
+    });
+  };
 
   const updateClients = (clients: CUSTOMER[]) => {
     setClients(clients);
@@ -47,9 +45,9 @@ export default function useModifyClients() {
 
   useEffect(() => {
     useCases.getAll().then((response) => {
-      setClients(response.data)
-    })
-  }, [])
+      setClients(response.data);
+    });
+  }, []);
 
   return {
     clients,
@@ -59,8 +57,6 @@ export default function useModifyClients() {
     selectedClient,
     handleUpdateClient,
     handleSubmitUpdate,
-    isSnackBarOpen,
-    closeSnackBar,
-    updateClients
+    updateClients,
   };
 }

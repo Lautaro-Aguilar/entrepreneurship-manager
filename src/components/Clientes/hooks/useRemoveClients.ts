@@ -1,18 +1,19 @@
-import { useState, useEffect } from 'react'
-import CUSTOMER from '../../../types/CUSTOMER'
-import * as useCases from "../../../services/customers.useCases"
+import { useState } from "react";
+import CUSTOMER from "../../../types/CUSTOMER";
+import * as useCases from "../../../services/customers.useCases";
+import { AlertColor } from "@mui/material";
 
 interface Params {
-  updateClients: (client: CUSTOMER[]) => void
+  updateClients: (client: CUSTOMER[]) => void;
+  openSnackBar: (alertVariant: AlertColor, alertMessage: string) => void;
 }
 
-export default function useRemoveClients({ updateClients }: Params) {
+export default function useRemoveClients({
+  updateClients,
+  openSnackBar,
+}: Params) {
   const [rowsSelected, setRowsSelected] = useState<CUSTOMER[]>([]);
-  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
-  const [isRemoveSnackBarOpen, setIsRemoveSnackBarOpen] = useState(false)
-
-  const openRemoveSnackBar = () => setIsRemoveSnackBarOpen(true)
-  const closeRemoveSnackBar = () => setIsRemoveSnackBarOpen(false)
+  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
   const openRemoveModal = () => setIsRemoveModalOpen(true);
   const closeRemoveModal = () => setIsRemoveModalOpen(false);
@@ -22,7 +23,6 @@ export default function useRemoveClients({ updateClients }: Params) {
   };
 
   const handleDeleteRows = (clients: CUSTOMER[]) => {
-    console.log(clients)
     const promises = clients.map((client) => {
       return new Promise((resolve, reject) => {
         useCases.destroy(client.id).then((response) => {
@@ -34,8 +34,8 @@ export default function useRemoveClients({ updateClients }: Params) {
     Promise.all(promises).then((resultados) => {
       useCases.getAll().then(({ data }) => {
         updateClients(data);
-        openRemoveSnackBar()
         closeRemoveModal();
+        openSnackBar("success", "Cliente removido correctamente 👍");
       });
     });
   };
@@ -47,7 +47,5 @@ export default function useRemoveClients({ updateClients }: Params) {
     openRemoveModal,
     closeRemoveModal,
     isRemoveModalOpen,
-    isRemoveSnackBarOpen,
-    closeRemoveSnackBar
-  }
+  };
 }

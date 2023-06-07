@@ -1,4 +1,4 @@
-import { Alert, Box, Container, Snackbar, Typography } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalEliminar from "./ModalEliminar";
@@ -8,24 +8,30 @@ import Buttons from "./Buttons";
 import useModifyClients from "./hooks/useModifyClients";
 import useRemoveClients from "./hooks/useRemoveClients";
 import useAddClient from "./hooks/useAddClient";
-import SnackbarAlert from "./utils/Snackbar";
+import useSnackBar from "../shared/hooks/useSnackBar";
+import SnackbarCustom from "../shared/SnackbarCustom";
 
 function Clientes() {
+  const { closeSnackBar, isSnackBarOpen, openSnackBar, snackOptions } =
+    useSnackBar();
   const {
-    clients, closeModal, openModalModificar, selectedClient, handleUpdateClient, handleSubmitUpdate, closeSnackBar, isSnackBarOpen, updateClients
-  } = useModifyClients()
+    clients,
+    closeModal,
+    openModalModificar,
+    selectedClient,
+    handleUpdateClient,
+    handleSubmitUpdate,
+    updateClients,
+  } = useModifyClients({ openSnackBar });
 
   const {
     isOpenModalAgregar,
     openModalAgregar,
     closeModalAgregar,
     handleSubmitAdd,
-    isSnackBarOpenAdd,
-    closeSnackBarAdd,
     formErrorAdd,
-    setFormErrorAdd
-  } = useAddClient({ clients, updateClients })
-
+    setFormErrorAdd,
+  } = useAddClient({ clients, updateClients, openSnackBar });
 
   const {
     handleRowsSelected,
@@ -34,11 +40,9 @@ function Clientes() {
     closeRemoveModal,
     isRemoveModalOpen,
     openRemoveModal,
-    isRemoveSnackBarOpen,
-    closeRemoveSnackBar
-  } = useRemoveClients({ updateClients })
+  } = useRemoveClients({ updateClients, openSnackBar });
 
-  const columns = buildColumns(handleUpdateClient)
+  const columns = buildColumns(handleUpdateClient);
 
   return (
     <Container
@@ -49,29 +53,12 @@ function Clientes() {
         alignItems: "center",
       }}
     >
-      <Snackbar open={isSnackBarOpenAdd} autoHideDuration={6000} onClose={closeSnackBarAdd}>
-        <Alert onClose={closeSnackBarAdd} severity="success" sx={{ width: "100%" }}>
-          Producto añadido correctamente 👍
-        </Alert>
-      </Snackbar>
-
-      <Snackbar open={isSnackBarOpen} autoHideDuration={6000} onClose={closeSnackBar}>
-        <Alert onClose={closeSnackBar} severity="success" sx={{ width: "100%" }}>
-          Producto modificado correctamente 👍
-        </Alert>
-      </Snackbar>
-
-      {/*  <Snackbar open={isRemoveModalOpen} autoHideDuration={6000} onClose={closeRemoveSnackBar}>
-        <Alert onClose={closeRemoveSnackBar} severity="success" sx={{ width: "100%" }}>
-          Producto Eliminado correctamente 👍
-        </Alert>
-      </Snackbar> */}
-
-      <SnackbarAlert mensaje="Producto Eliminado Correctamente 👍" isRemoveSnackBarOpen={isRemoveSnackBarOpen} closeRemoveSnackBar={closeRemoveSnackBar} />
-      <Typography variant='h3' component='h1'>
-        Registro de Clientes
-      </Typography>
-
+      <SnackbarCustom
+        closeSnackBar={closeSnackBar}
+        isSnackBarOpen={isSnackBarOpen}
+        message={snackOptions.message}
+        variant={snackOptions.variant}
+      />
       <Box sx={{ width: "100%", my: 2 }}>
         <Box
           className='ag-theme-alpine-dark'
@@ -80,15 +67,34 @@ function Clientes() {
           <AgGridReact
             rowData={clients}
             columnDefs={columns}
-            rowSelection="multiple"
+            rowSelection='multiple'
             onRowSelected={(e) => handleRowsSelected(e)}
           />
         </Box>
-        <Buttons setOpenModalAgregar={openModalAgregar} setOpenModalEliminar={openRemoveModal} />
+        <Buttons
+          setOpenModalAgregar={openModalAgregar}
+          setOpenModalEliminar={openRemoveModal}
+        />
       </Box>
-      <ModalAgregar isOpen={isOpenModalAgregar} closeModal={closeModalAgregar} handleSubmitAdd={handleSubmitAdd} formError={formErrorAdd} setFormError={setFormErrorAdd} />
-      <ModalEliminar isOpen={isRemoveModalOpen} closeModal={closeRemoveModal} clients={rowsSelected} handleRemoveSubmit={handleDeleteRows} />
-      <ModalModificar isOpen={openModalModificar} closeModal={closeModal} profileToModify={selectedClient} handleSubmitUpdate={handleSubmitUpdate} />
+      <ModalAgregar
+        isOpen={isOpenModalAgregar}
+        closeModal={closeModalAgregar}
+        handleSubmitAdd={handleSubmitAdd}
+        formError={formErrorAdd}
+        setFormError={setFormErrorAdd}
+      />
+      <ModalEliminar
+        isOpen={isRemoveModalOpen}
+        closeModal={closeRemoveModal}
+        clients={rowsSelected}
+        handleRemoveSubmit={handleDeleteRows}
+      />
+      <ModalModificar
+        isOpen={openModalModificar}
+        closeModal={closeModal}
+        profileToModify={selectedClient}
+        handleSubmitUpdate={handleSubmitUpdate}
+      />
     </Container>
   );
 }

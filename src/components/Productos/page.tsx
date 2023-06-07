@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { AlertColor, Box, Button, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
@@ -10,30 +9,7 @@ import useModifyProducts from "./hooks/useModifyProduct";
 import useRemoveProducts from "./hooks/useRemoveProducts";
 import useAddProduct from "./hooks/useAddProduct";
 import SnackbarCustom from "../shared/SnackbarCustom";
-
-interface SNACKOPTIONS {
-  message: string;
-  variant: AlertColor;
-}
-
-function useSnackBar() {
-  const [isSnackBarOpen, setIsSnackBarOpen] = useState(false);
-  const [snackOptions, setSnackOptions] = useState<SNACKOPTIONS>({
-    message: "",
-    variant: "info",
-  });
-  const openSnackBar = (alertVariant: AlertColor, alertMessage: string) => {
-    setIsSnackBarOpen(true);
-    setSnackOptions({ message: alertMessage, variant: alertVariant });
-    setTimeout(() => {
-      setIsSnackBarOpen(false);
-    }, 5000);
-  };
-
-  const closeSnackBar = () => setIsSnackBarOpen(false);
-
-  return { openSnackBar, isSnackBarOpen, snackOptions, closeSnackBar };
-}
+import useSnackBar from "../shared/hooks/useSnackBar";
 
 function Productos() {
   const { isSnackBarOpen, snackOptions, openSnackBar, closeSnackBar } =
