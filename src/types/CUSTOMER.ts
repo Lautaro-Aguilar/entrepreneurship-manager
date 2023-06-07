@@ -4,5 +4,5 @@ export default interface CUSTOMER {
   apellido: string;
   direccion: string;
   telefono: string;
-  inserted_at?: Date;
+  inserted_at?: string;
 }

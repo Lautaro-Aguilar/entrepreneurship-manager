@@ -1,6 +1,7 @@
 import CUSTOMER from "../types/CUSTOMER";
 import supabase from "../supabase/supabase";
 import RESPONSE from "../types/RESPONSE";
+import formatDate from "../utils/formatDate";
 
 export async function getCustomers(): Promise<RESPONSE> {
   const { data: customers, error } = await supabase
@@ -16,7 +17,7 @@ export async function getCustomers(): Promise<RESPONSE> {
         apellido: customer.apellido,
         direccion: customer.direccion,
         telefono: customer.telefono,
-        inserted_at: customer.inserted_at,
+        inserted_at: formatDate(new Date(customer.inserted_at)),
       };
       return newCustomer;
     });
@@ -71,7 +72,7 @@ export async function createCustomer(data: CUSTOMER): Promise<RESPONSE> {
 
 export async function updateCustomer(
   data: CUSTOMER,
-  id: number
+  id?: number
 ): Promise<RESPONSE> {
   const { data: supabaseResponse, error } = await supabase
     .from("clientes")
@@ -86,7 +87,7 @@ export async function updateCustomer(
   return response;
 }
 
-export async function deleteCustomer(id: number): Promise<RESPONSE> {
+export async function deleteCustomer(id?: number): Promise<RESPONSE> {
   const { data, error } = await supabase.from("clientes").delete().eq("id", id);
 
   const response = {

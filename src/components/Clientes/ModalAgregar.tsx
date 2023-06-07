@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -6,28 +6,43 @@ import {
   Button,
   TextField,
   InputAdornment,
+  Alert
 } from "@mui/material";
 import styleModal from "./styleModal";
 import { useTheme } from "@emotion/react";
 import PersonIcon from "@mui/icons-material/Person";
 import MapIcon from "@mui/icons-material/Map";
 import PhoneIcon from "@mui/icons-material/Phone";
+import CUSTOMER from "../../types/CUSTOMER";
 
 type ModalAgregarProps = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpen: boolean;
+  closeModal: () => void;
+  handleSubmitAdd: (client: CUSTOMER) => void;
+  formError: boolean
+  setFormError: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
-  const handleClose = () => setOpen(false);
+function ModalAgregar({ isOpen, closeModal, handleSubmitAdd, formError, setFormError }: ModalAgregarProps) {
   const theme = useTheme();
+  const [client, setClient] = useState<CUSTOMER>({
+    nombre: "",
+    apellido: "",
+    direccion: "",
+    telefono: ""
+  })
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setClient({ ...client, [name]: value })
+    setFormError(false)
+  }
+
   return (
     <div>
       <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby='modal-modal-title'
-        aria-describedby='modal-modal-description'
+        open={isOpen}
+        onClose={closeModal}
       >
         <Box sx={styleModal}>
           <Box
@@ -54,11 +69,16 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             borderRadius={"0px 0px 10px 10px"}
           >
+            {formError && (
+              <Alert severity="error">Los campos Nombre y Apellido son obligatorios.</Alert>
+            )}
             <Box sx={{ display: "flex", gap: 3 }}>
               <TextField
                 required
-                variant='standard'
+                name="nombre"
                 label='Nombre'
+                variant='standard'
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -69,8 +89,10 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               />
               <TextField
                 required
-                variant='standard'
+                name="apellido"
                 label='Apellido'
+                variant='standard'
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -81,8 +103,10 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               />
             </Box>
             <TextField
-              variant='standard'
+              name="direccion"
               label='Direccion'
+              variant='standard'
+              onChange={handleChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position='start'>
@@ -92,8 +116,10 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               }}
             />
             <TextField
-              variant='standard'
+              name='telefono'
               label='Telefono'
+              variant='standard'
+              onChange={handleChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position='start'>
@@ -103,10 +129,10 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               }}
             />
             <Box sx={{ display: "flex", gap: 5, justifyContent: "flex-end" }}>
-              <Button variant='contained' color='error' onClick={handleClose}>
+              <Button variant='contained' color='error' onClick={closeModal}>
                 Cancelar
               </Button>
-              <Button variant='contained' color='success'>
+              <Button variant='contained' color='success' onClick={() => { handleSubmitAdd(client) }}>
                 <Typography variant='button'>Aceptar</Typography>
               </Button>
             </Box>

@@ -1,26 +1,43 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Typography, Modal, Button, TextField, InputAdornment } from '@mui/material'
 import styleModal from './styleModal';
 import { useTheme } from '@emotion/react';
 import PersonIcon from '@mui/icons-material/Person';
 import MapIcon from '@mui/icons-material/Map';
 import PhoneIcon from '@mui/icons-material/Phone';
+import CUSTOMER from '../../types/CUSTOMER';
 
 type ModalModificarProps = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpen: boolean;
+  closeModal: () => void;
+  profileToModify: CUSTOMER;
+  handleSubmitUpdate: (client: CUSTOMER) => void;
 };
 
-function ModalModificar({ open, setOpen }: ModalModificarProps) {
-  const handleClose = () => setOpen(false);
+
+function ModalModificar({ isOpen, closeModal, profileToModify, handleSubmitUpdate }: ModalModificarProps) {
+  const [client, setClient] = useState<CUSTOMER>({
+    nombre: '',
+    apellido: '',
+    direccion: '',
+    telefono: ''
+  })
+
+  useEffect(() => { setClient(profileToModify) }, [profileToModify])
+
+
   const theme = useTheme()
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setClient({ ...client, [name]: value })
+  }
+
   return (
     <div>
       <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        open={isOpen}
+        onClose={closeModal}
       >
         <Box sx={styleModal}>
           <Box className="headerModal" px={2} py={1} borderRadius={"10px 10px 0px 0px"} bgcolor={theme.palette.primary.main} color="theme.palette.success.contrastText">
@@ -33,7 +50,10 @@ function ModalModificar({ open, setOpen }: ModalModificarProps) {
               <TextField
                 required
                 variant='standard'
+                name="nombre"
                 label="Nombre"
+                value={client.nombre}
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -45,7 +65,10 @@ function ModalModificar({ open, setOpen }: ModalModificarProps) {
               <TextField
                 required
                 variant='standard'
+                name="apellido"
                 label="Apellido"
+                value={client.apellido}
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -57,7 +80,10 @@ function ModalModificar({ open, setOpen }: ModalModificarProps) {
             </Box>
             <TextField
               variant='standard'
+              name="direccion"
               label="Direccion"
+              value={client.direccion}
+              onChange={handleChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -68,7 +94,10 @@ function ModalModificar({ open, setOpen }: ModalModificarProps) {
             />
             <TextField
               variant='standard'
+              name="telefono"
               label="Telefono"
+              value={client.telefono}
+              onChange={handleChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -78,10 +107,10 @@ function ModalModificar({ open, setOpen }: ModalModificarProps) {
               }}
             />
             <Box sx={{ display: 'flex', gap: 5, justifyContent: 'flex-end' }}>
-              <Button variant="contained" color="error" onClick={handleClose}>
+              <Button variant="contained" color="error" onClick={closeModal}>
                 Cancelar
               </Button>
-              <Button variant="contained" color="success">
+              <Button variant="contained" color="success" onClick={() => handleSubmitUpdate(client)}>
                 Aceptar
               </Button>
             </Box>
