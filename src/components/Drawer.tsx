@@ -78,8 +78,8 @@ function DrawerResponsive() {
       <Divider /> */}
       <List>
         {links.map(({ icono, href, title }, index) => (
-          <Link to={href}>
-            <ListItem key={index} disablePadding sx={{ py: 1, px: 2 }}>
+          <ListItem key={index} disablePadding sx={{ py: 1, px: 2 }}>
+            <Link to={href}>
               <ListItemButton>
                 <ListItemIcon sx={{ color: theme.palette.primary.main }}>
                   {icono}
@@ -95,8 +95,8 @@ function DrawerResponsive() {
                   </Typography>
                 </ListItemText>
               </ListItemButton>
-            </ListItem>
-          </Link>
+            </Link>
+          </ListItem>
         ))}
       </List>
     </div>
