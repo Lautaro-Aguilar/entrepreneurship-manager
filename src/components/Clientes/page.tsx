@@ -1,25 +1,49 @@
-import { useState } from "react";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
-import ModalModificar from "./ModalModificar";
 import ModalEliminar from "./ModalEliminar";
+import ModalModificar from "./ModalModificar";
+import buildColumns from "./agGrid/columns";
+import Buttons from "./Buttons";
+import useModifyClients from "./hooks/useModifyClients";
+import useRemoveClients from "./hooks/useRemoveClients";
+import useAddClient from "./hooks/useAddClient";
+import useSnackBar from "../shared/hooks/useSnackBar";
+import SnackbarCustom from "../shared/SnackbarCustom";
 
 function Clientes() {
-  const [openModalAgregar, setOpenModalAgregar] = useState(false);
-  const [openModalModificar, setOpenModalModificar] = useState(false);
-  const [openModalEliminar, setOpenModalEliminar] = useState(false);
-  const [rowData] = useState([
-    { make: "Toyota", model: "Celica", price: 35000 },
-    { make: "Ford", model: "Mondeo", price: 32000 },
-    { make: "Porsche", model: "Boxster", price: 72000 },
-  ]);
+  const { closeSnackBar, isSnackBarOpen, openSnackBar, snackOptions } =
+    useSnackBar();
+  const {
+    clients,
+    closeModal,
+    openModalModificar,
+    selectedClient,
+    handleUpdateClient,
+    handleSubmitUpdate,
+    updateClients,
+  } = useModifyClients({ openSnackBar });
 
-  const [columnDefs] = useState([
-    { field: "make" },
-    { field: "model" },
-    { field: "price" },
-  ]);
+  const {
+    isOpenModalAgregar,
+    openModalAgregar,
+    closeModalAgregar,
+    handleSubmitAdd,
+    formErrorAdd,
+    setFormErrorAdd,
+  } = useAddClient({ clients, updateClients, openSnackBar });
+
+  const {
+    handleRowsSelected,
+    rowsSelected,
+    handleDeleteRows,
+    closeRemoveModal,
+    isRemoveModalOpen,
+    openRemoveModal,
+  } = useRemoveClients({ updateClients, openSnackBar });
+
+  const columns = buildColumns(handleUpdateClient);
+
   return (
     <Container
       sx={{
@@ -29,51 +53,48 @@ function Clientes() {
         alignItems: "center",
       }}
     >
-      <Typography variant='h3' component='h1'>
-        Registro de Clientes
-      </Typography>
-
+      <SnackbarCustom
+        closeSnackBar={closeSnackBar}
+        isSnackBarOpen={isSnackBarOpen}
+        message={snackOptions.message}
+        variant={snackOptions.variant}
+      />
       <Box sx={{ width: "100%", my: 2 }}>
         <Box
           className='ag-theme-alpine-dark'
           style={{ height: 400, width: "100%" }}
         >
-          <AgGridReact rowData={rowData} columnDefs={columnDefs}></AgGridReact>
+          <AgGridReact
+            rowData={clients}
+            columnDefs={columns}
+            rowSelection='multiple'
+            onRowSelected={(e) => handleRowsSelected(e)}
+          />
         </Box>
-
-        <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
-          <Button
-            variant='contained'
-            color='info'
-            size='large'
-            onClick={() => setOpenModalAgregar(true)}
-          >
-            Agregar
-          </Button>
-          <Button
-            variant='contained'
-            color='secondary'
-            size='large'
-            onClick={() => setOpenModalModificar(true)}
-          >
-            Modificar
-          </Button>
-          <Button
-            variant='contained'
-            color='error'
-            size='large'
-            onClick={() => setOpenModalEliminar(true)}
-          >
-            Eliminar
-          </Button>
-        </Box>
+        <Buttons
+          setOpenModalAgregar={openModalAgregar}
+          setOpenModalEliminar={openRemoveModal}
+        />
       </Box>
-      <ModalAgregar open={openModalAgregar} setOpen={setOpenModalAgregar} />
-      <ModalModificar
-        open={openModalModificar}
-        setOpen={setOpenModalModificar}
+      <ModalAgregar
+        isOpen={isOpenModalAgregar}
+        closeModal={closeModalAgregar}
+        handleSubmitAdd={handleSubmitAdd}
+        formError={formErrorAdd}
+        setFormError={setFormErrorAdd}
       />
-      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} />
+      <ModalEliminar
+        isOpen={isRemoveModalOpen}
+        closeModal={closeRemoveModal}
+        clients={rowsSelected}
+        handleRemoveSubmit={handleDeleteRows}
+      />
+      <ModalModificar
+        isOpen={openModalModificar}
+        closeModal={closeModal}
+        profileToModify={selectedClient}
+        handleSubmitUpdate={handleSubmitUpdate}
+      />
     </Container>
   );
 }

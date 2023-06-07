@@ -65,21 +65,10 @@ function DrawerResponsive() {
   const drawer = (
     <div>
       <Toolbar />
-      {/*     <Box sx={{ display: 'flex', flexDirection: "column", justifyContent: "center", textAlign: 'center', alignItems: 'center', pb: 2.5 }}>
-        <Typography variant="h6" fontWeight="bold" color="primary" component="h2" py={1} px={2}>
-          Entrepreneurship Manager
-        </Typography>
-        <Box sx={{ backgroundColor: theme.palette.primary.dark, px: 2.5, py: .5, borderRadius: 5 }}>
-          <Typography variant="body2" fontWeight="bold" color="white">
-            v0.0.1
-          </Typography>
-        </Box>
-      </Box>
-      <Divider /> */}
       <List>
         {links.map(({ icono, href, title }, index) => (
-          <Link to={href}>
-            <ListItem key={index} disablePadding sx={{ py: 1, px: 2 }}>
+          <Link to={href} key={index}>
+            <ListItem disablePadding sx={{ py: 1, px: 2 }}>
               <ListItemButton>
                 <ListItemIcon sx={{ color: theme.palette.primary.main }}>
                   {icono}
