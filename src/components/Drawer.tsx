@@ -32,11 +32,6 @@ const links = [
     title: "Clientes",
   },
   {
-    icono: <PointOfSaleIcon />,
-    href: "/Ventas",
-    title: "Ventas",
-  },
-  {
     icono: <LibraryBooksIcon />,
     href: "/Productos",
     title: "Productos",

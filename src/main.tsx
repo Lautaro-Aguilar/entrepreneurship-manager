@@ -6,7 +6,6 @@ import "./app.css";
 import Clientes from "./components/Clientes/page";
 import Pedidos from "./components/Pedidos/page";
 import Productos from "./components/Productos/page";
-import Ventas from "./components/Ventas/page";
 import Inicio from "./components/Inicio/page";
 import { createTheme, ThemeProvider } from "@mui/material";
 import Components from "./components/Components";
@@ -31,10 +30,6 @@ const router = createBrowserRouter([
       {
         path: "/Productos",
         element: <Productos />,
-      },
-      {
-        path: "/Ventas",
-        element: <Ventas />,
       },
       {
         path: "/Components",
@@ -83,7 +78,7 @@ const theme = createTheme({
     },
     button: {
       textTransform: "none",
-      color: 'white'
+      color: "white",
     },
   },
   components: {
