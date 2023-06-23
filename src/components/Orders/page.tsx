@@ -4,22 +4,18 @@ import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
 import ModalEliminar from "./ModalEliminar";
+import buildColumns from "./agGrid/columns";
 
-function Pedidos() {
+
+function useAddOrder() {
+
+}
+
+function Orders() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
-  const [rowData] = useState([
-    { make: "Toyota", model: "Celica", price: 35000 },
-    { make: "Ford", model: "Mondeo", price: 32000 },
-    { make: "Porsche", model: "Boxster", price: 72000 },
-  ]);
-
-  const [columnDefs] = useState([
-    { field: "make" },
-    { field: "model" },
-    { field: "price" },
-  ]);
+  const columns = buildColumns()
   return (
     <Container
       sx={{
@@ -38,7 +34,7 @@ function Pedidos() {
           className='ag-theme-alpine-dark'
           style={{ height: 400, width: "100%" }}
         >
-          <AgGridReact rowData={rowData} columnDefs={columnDefs}></AgGridReact>
+          <AgGridReact columnDefs={columns}></AgGridReact>
         </Box>
 
         <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
@@ -78,4 +74,4 @@ function Pedidos() {
   );
 }
 
-export default Pedidos;
+export default Orders;

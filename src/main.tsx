@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/Root";
 import "./app.css";
 import Clientes from "./components/Clientes/page";
-import Pedidos from "./components/Pedidos/page";
+import Orders from "./components/Orders/page";
 import Productos from "./components/Productos/page";
 import Inicio from "./components/Inicio/page";
 import { createTheme, ThemeProvider } from "@mui/material";
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/Pedidos",
-        element: <Pedidos />,
+        element: <Orders />,
       },
       {
         path: "/Productos",
@@ -78,7 +78,7 @@ const theme = createTheme({
     },
     button: {
       textTransform: "none",
-      color: "white",
+      color: 'white'
     },
   },
   components: {
