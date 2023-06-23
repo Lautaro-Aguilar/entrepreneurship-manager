@@ -73,3 +73,7 @@ a {
   --ag-input-disabled-border-color: rgba(186, 191, 199, 0.3) !important;
   --ag-input-disabled-background-color: rgba(186, 191, 199, 0.15) !important;
 }
+
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
