@@ -1,21 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
 import ModalEliminar from "./ModalEliminar";
 import buildColumns from "./agGrid/columns";
+import ORDER from "../../types/ORDER";
+import * as useCases from "../../services/orders.usecases";
+import { SelectionChangedEvent } from "ag-grid-community";
 
+function useOrders() {
+  const [orders, setOrders] = useState<ORDER[]>([]);
+  const [selectedOrders, setSelectedOrders] = useState<ORDER[]>([]);
 
-function useAddOrder() {
+  useEffect(() => {
+    useCases.getAll().then((res) => {
+      setOrders(res.data);
+    });
+  }, []);
 
+  const handleChangeSelection = (e: SelectionChangedEvent<ORDER>) => {
+    setSelectedOrders(e.api.getSelectedRows());
+  };
+
+  return { orders, selectedOrders, handleChangeSelection };
 }
 
 function Orders() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
-  const columns = buildColumns()
+  const columns = buildColumns();
+
+  const { orders, handleChangeSelection } = useOrders();
+
   return (
     <Container
       sx={{
@@ -34,7 +52,13 @@ function Orders() {
           className='ag-theme-alpine-dark'
           style={{ height: 400, width: "100%" }}
         >
-          <AgGridReact columnDefs={columns}></AgGridReact>
+          <AgGridReact
+            columnDefs={columns}
+            rowData={orders}
+            gridOptions={{ defaultColDef: { resizable: true, filter: true } }}
+            onSelectionChanged={handleChangeSelection}
+            rowSelection='multiple'
+          />
         </Box>
 
         <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
