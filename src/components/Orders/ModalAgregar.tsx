@@ -22,23 +22,22 @@ type ModalAgregarProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-type Product = {
-  name: string
-  quantity: number
-}
-
-interface ProductList {
-  name: string
-  quantity: number
+interface ProductList extends PRODUCT {
+  quantity?: number
 }
 
 function useOrders() {
-  const [products, setProducts] = useState<ProductList[]>([
-    { name: "", quantity: 0 },
-  ])
+  const [products, setProducts] = useState<ProductList[]>([])
 
-  const [productList, setProductList] = useState<PRODUCT[]>([])
+  const [productList, setProductList] = useState<ProductList[]>([])
   const [customers, setCustomers] = useState<CUSTOMER[]>([])
+
+  const [total, setTotal] = useState(0)
+
+  const resolveTotal = (value: number) => {
+    console.log(total + value)
+    setTotal(total + value)
+  }
 
   useEffect(() => {
     productsUseCases.getAll().then(({ data }: { data: PRODUCT[] }) => {
@@ -54,6 +53,8 @@ function useOrders() {
     setProducts,
     productList,
     customers,
+    resolveTotal,
+    total,
   }
 }
 
@@ -61,10 +62,12 @@ const renderAdditionalInputs = ({
   products,
   setProducts,
   productList,
+  resolveTotal,
 }: {
   products: ProductList[]
   setProducts: any
-  productList: PRODUCT[]
+  productList: ProductList[]
+  resolveTotal: (value: number) => void
 }) => {
   const handleEliminarInput = (index: number) => {
     const updatedProducts = [...products]
@@ -72,24 +75,20 @@ const renderAdditionalInputs = ({
     setProducts(updatedProducts)
   }
 
-  return products.slice(1).map((product: Product, index: number) => (
+  return products.map((product: ProductList, index: number) => (
     <Box key={index} sx={{ display: "flex", gap: 3 }}>
       <Autocomplete
         disablePortal
         style={{ width: "70%" }}
         options={productList}
-        /* value={() => {
-          const selectedProduct = productList.find(
-            (e) => e.nombre === product.name
-          );
-          if (selectedProduct) return selectedProduct;
-          return productList[0];
-        }} */
+        value={product}
         getOptionLabel={(option) => option.nombre}
         onChange={(event, newValue) => {
           if (newValue) {
+            console.log(newValue)
             const updatedProducts = [...products]
-            updatedProducts[index + 1].name = newValue.nombre
+            updatedProducts[index].nombre = newValue.nombre
+            updatedProducts[index].precio = newValue.precio
             setProducts(updatedProducts)
           }
         }}
@@ -102,8 +101,10 @@ const renderAdditionalInputs = ({
         value={product.quantity}
         onChange={(event) => {
           const updatedProducts = [...products]
-          updatedProducts[index + 1].quantity =
-            parseInt(event.target.value) || 0
+          const pr = updatedProducts[index]
+          pr.quantity = parseInt(event.target.value) || 0
+          const total = pr.precio * pr.quantity
+          resolveTotal(total)
           setProducts(updatedProducts)
         }}
       />
@@ -113,7 +114,7 @@ const renderAdditionalInputs = ({
         color='error'
         size='small'
         sx={{ marginLeft: "auto", borderRadius: 0 }}
-        onClick={() => handleEliminarInput(index + 1)}
+        onClick={() => handleEliminarInput(index)}
       >
         <Delete fontSize='small' />
       </Button>
@@ -121,13 +122,19 @@ const renderAdditionalInputs = ({
   ))
 }
 function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
-  const { products, setProducts, productList, customers } = useOrders()
+  const { products, setProducts, productList, customers, total, resolveTotal } =
+    useOrders()
   const handleClose = () => setOpen(false)
   const theme: any = useTheme()
 
   const handleAgregarInput = (index: number) => {
     const updatedProducts = [...products]
-    updatedProducts.splice(index + 1, 0, { name: "", quantity: 0 })
+    updatedProducts.splice(index + 1, 0, {
+      nombre: "",
+      quantity: 0,
+      costo: 0,
+      precio: 0,
+    })
     setProducts(updatedProducts)
   }
 
@@ -165,37 +172,18 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             borderRadius={"0px 0px 10px 10px"}
           >
-            <Box sx={{ display: "flex", gap: 3 }}>
-              <Autocomplete
-                disablePortal
-                style={{ width: "40%" }}
-                options={productList}
-                getOptionLabel={(option) => option.nombre}
-                /* value={products[0].name} */
-                /* onChange={(event, newValue) => {
-                  const updatedProducts = [...products];
-                  updatedProducts[0].name = newValue || "";
-                  setProducts(updatedProducts);
-                }} */
-                renderInput={(params) => (
-                  <TextField {...params} label='Producto' />
-                )}
-              />
+            <input
+              type='button'
+              value='test'
+              onClick={() => console.log(products)}
+            />
 
-              <TextField
-                label='Cantidad'
-                type='number'
-                value={products[0].quantity}
-                onChange={(event) => {
-                  const updatedProducts = [...products]
-                  updatedProducts[0].quantity =
-                    parseInt(event.target.value) || 0
-                  setProducts(updatedProducts)
-                }}
-              />
-            </Box>
-
-            {renderAdditionalInputs({ products, setProducts, productList })}
+            {renderAdditionalInputs({
+              products,
+              setProducts,
+              productList,
+              resolveTotal,
+            })}
 
             <Autocomplete
               disablePortal
@@ -220,6 +208,11 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
                 startAdornment: (
                   <InputAdornment position='start'>$</InputAdornment>
                 ),
+              }}
+              onChange={(e) => {
+                const value = Number(e.target.value) * -1
+                console.log(value)
+                resolveTotal(value)
               }}
               InputLabelProps={{ shrink: true }}
             />
@@ -246,7 +239,7 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
                 fontWeight='bold'
                 display='inline-block'
               >
-                $1.500
+                ${total}
               </Typography>
             </Box>
             <Button
@@ -258,7 +251,7 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               startIcon={<Add />}
               onClick={() => handleAgregarInput(products.length - 1)}
             >
-              Agregar otro producto
+              Agregar producto
             </Button>
           </Box>
           <Box display='flex' justifyContent='flex-end' gap={2} mr={2} mb={2}>
