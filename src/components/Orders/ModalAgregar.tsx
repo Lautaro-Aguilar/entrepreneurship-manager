@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -7,46 +7,50 @@ import {
   TextField,
   Button,
   InputAdornment,
-} from "@mui/material"
-import styleModal from "./styleModal"
-import { useTheme } from "@emotion/react"
-import { Add, Delete } from "@mui/icons-material"
+} from "@mui/material";
+import styleModal from "./styleModal";
+import { useTheme } from "@emotion/react";
+import { Add, Delete } from "@mui/icons-material";
 /* import orderUseCases from "../../services/orders.usecases" */
-import * as customersUseCases from "../../services/customers.useCases"
-import * as productsUseCases from "../../services/products.useCases"
-import PRODUCT from "../../types/PRODUCT"
-import CUSTOMER from "../../types/CUSTOMER"
+import * as customersUseCases from "../../services/customers.useCases";
+import * as productsUseCases from "../../services/products.useCases";
+import PRODUCT from "../../types/PRODUCT";
+import CUSTOMER from "../../types/CUSTOMER";
 
 type ModalAgregarProps = {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 interface ProductList extends PRODUCT {
-  quantity?: number
+  quantity?: number;
 }
 
 function useOrders() {
-  const [products, setProducts] = useState<ProductList[]>([])
+  const [products, setProducts] = useState<ProductList[]>([]);
 
-  const [productList, setProductList] = useState<ProductList[]>([])
-  const [customers, setCustomers] = useState<CUSTOMER[]>([])
+  const [productList, setProductList] = useState<ProductList[]>([]);
+  const [customers, setCustomers] = useState<CUSTOMER[]>([]);
 
-  const [total, setTotal] = useState(0)
+  const [total, setTotal] = useState(0);
+  const [subTotal, setSubtotal] = useState(0);
 
   const resolveTotal = (value: number) => {
-    console.log(total + value)
-    setTotal(total + value)
-  }
+    setTotal(total + value);
+  };
+
+  const calcSubTotal = (newValue: number) => {
+    setSubtotal(total - newValue);
+  };
 
   useEffect(() => {
     productsUseCases.getAll().then(({ data }: { data: PRODUCT[] }) => {
-      setProductList(data)
-    })
+      setProductList(data);
+    });
     customersUseCases.getAll().then(({ data }: { data: CUSTOMER[] }) => {
-      setCustomers(data)
-    })
-  }, [])
+      setCustomers(data);
+    });
+  }, []);
 
   return {
     products,
@@ -55,7 +59,16 @@ function useOrders() {
     customers,
     resolveTotal,
     total,
-  }
+    subTotal,
+    calcSubTotal,
+  };
+}
+
+interface AdditionInputPropTypes {
+  products: ProductList[];
+  setProducts: any;
+  productList: ProductList[];
+  resolveTotal: (value: number) => void;
 }
 
 const renderAdditionalInputs = ({
@@ -63,17 +76,12 @@ const renderAdditionalInputs = ({
   setProducts,
   productList,
   resolveTotal,
-}: {
-  products: ProductList[]
-  setProducts: any
-  productList: ProductList[]
-  resolveTotal: (value: number) => void
-}) => {
+}: AdditionInputPropTypes) => {
   const handleEliminarInput = (index: number) => {
-    const updatedProducts = [...products]
-    updatedProducts.splice(index, 1)
-    setProducts(updatedProducts)
-  }
+    const updatedProducts = [...products];
+    updatedProducts.splice(index, 1);
+    setProducts(updatedProducts);
+  };
 
   return products.map((product: ProductList, index: number) => (
     <Box key={index} sx={{ display: "flex", gap: 3 }}>
@@ -85,11 +93,11 @@ const renderAdditionalInputs = ({
         getOptionLabel={(option) => option.nombre}
         onChange={(event, newValue) => {
           if (newValue) {
-            console.log(newValue)
-            const updatedProducts = [...products]
-            updatedProducts[index].nombre = newValue.nombre
-            updatedProducts[index].precio = newValue.precio
-            setProducts(updatedProducts)
+            console.log(newValue);
+            const updatedProducts = [...products];
+            updatedProducts[index].nombre = newValue.nombre;
+            updatedProducts[index].precio = newValue.precio;
+            setProducts(updatedProducts);
           }
         }}
         renderInput={(params) => <TextField {...params} label='Producto' />}
@@ -100,12 +108,12 @@ const renderAdditionalInputs = ({
         type='number'
         value={product.quantity}
         onChange={(event) => {
-          const updatedProducts = [...products]
-          const pr = updatedProducts[index]
-          pr.quantity = parseInt(event.target.value) || 0
-          const total = pr.precio * pr.quantity
-          resolveTotal(total)
-          setProducts(updatedProducts)
+          const updatedProducts = [...products];
+          const pr = updatedProducts[index];
+          pr.quantity = parseInt(event.target.value) || 0;
+          const total = pr.precio * pr.quantity;
+          resolveTotal(total);
+          setProducts(updatedProducts);
         }}
       />
 
@@ -119,24 +127,33 @@ const renderAdditionalInputs = ({
         <Delete fontSize='small' />
       </Button>
     </Box>
-  ))
-}
+  ));
+};
+
 function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
-  const { products, setProducts, productList, customers, total, resolveTotal } =
-    useOrders()
-  const handleClose = () => setOpen(false)
-  const theme: any = useTheme()
+  const {
+    products,
+    setProducts,
+    productList,
+    customers,
+    total,
+    resolveTotal,
+    subTotal,
+    calcSubTotal,
+  } = useOrders();
+  const handleClose = () => setOpen(false);
+  const theme: any = useTheme();
 
   const handleAgregarInput = (index: number) => {
-    const updatedProducts = [...products]
+    const updatedProducts = [...products];
     updatedProducts.splice(index + 1, 0, {
       nombre: "",
       quantity: 0,
       costo: 0,
       precio: 0,
-    })
-    setProducts(updatedProducts)
-  }
+    });
+    setProducts(updatedProducts);
+  };
 
   return (
     <div>
@@ -146,7 +163,17 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
         aria-labelledby='modal-modal-title'
         aria-describedby='modal-modal-description'
       >
-        <Box sx={styleModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            borderRadius: 5,
+          }}
+        >
           <Box
             className='headerModal'
             px={2}
@@ -172,12 +199,6 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             borderRadius={"0px 0px 10px 10px"}
           >
-            <input
-              type='button'
-              value='test'
-              onClick={() => console.log(products)}
-            />
-
             {renderAdditionalInputs({
               products,
               setProducts,
@@ -210,9 +231,8 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
                 ),
               }}
               onChange={(e) => {
-                const value = Number(e.target.value) * -1
-                console.log(value)
-                resolveTotal(value)
+                const value = Number(e.target.value);
+                calcSubTotal(value);
               }}
               InputLabelProps={{ shrink: true }}
             />
@@ -222,25 +242,56 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               display='flex'
               py={1}
               px={1}
+              flexDirection='column'
               justifyContent='space-between'
             >
-              <Typography
-                variant='h5'
-                component='h5'
-                textTransform='uppercase'
-                fontWeight='bold'
-                display='inline-block'
-              >
-                Total
-              </Typography>
-              <Typography
-                variant='h5'
-                component='h5'
-                fontWeight='bold'
-                display='inline-block'
-              >
-                ${total}
-              </Typography>
+              <Box display='flex' justifyContent='space-between'>
+                <Typography
+                  variant='h6'
+                  component='h6'
+                  textTransform='uppercase'
+                  fontWeight='bold'
+                  display='inline-block'
+                >
+                  Total
+                </Typography>
+                <Typography
+                  variant='h6'
+                  component='h6'
+                  fontWeight='bold'
+                  display='inline-block'
+                >
+                  ${total}
+                </Typography>
+              </Box>
+            </Box>
+            <Box
+              bgcolor={theme.palette.success.dark}
+              display='flex'
+              py={1}
+              px={1}
+              flexDirection='column'
+              justifyContent='space-between'
+            >
+              <Box display='flex' justifyContent='space-between'>
+                <Typography
+                  variant='h6'
+                  component='h6'
+                  textTransform='uppercase'
+                  fontWeight='bold'
+                  display='inline-block'
+                >
+                  SubTotal
+                </Typography>
+                <Typography
+                  variant='h6'
+                  component='h6'
+                  fontWeight='bold'
+                  display='inline-block'
+                >
+                  ${subTotal}
+                </Typography>
+              </Box>
             </Box>
             <Button
               variant='contained'
@@ -265,7 +316,7 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
         </Box>
       </Modal>
     </div>
-  )
+  );
 }
 
-export default ModalAgregar
+export default ModalAgregar;

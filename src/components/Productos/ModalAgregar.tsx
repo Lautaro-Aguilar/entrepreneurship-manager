@@ -27,7 +27,7 @@ function ModalAgregar({
   handleSubmit,
   handleChange,
 }: ModalAgregarProps) {
-  const theme = useTheme();
+  const theme: any = useTheme();
   return (
     <Modal
       open={isOpen}
@@ -50,7 +50,7 @@ function ModalAgregar({
             fontWeight={600}
             component='h2'
           >
-            Modificar Producto
+            Agregar Producto
           </Typography>
         </Box>
         <Box
