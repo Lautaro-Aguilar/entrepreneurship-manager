@@ -14,6 +14,7 @@ import { Add, Delete } from "@mui/icons-material";
 /* import orderUseCases from "../../services/orders.usecases" */
 import * as customersUseCases from "../../services/customers.useCases";
 import * as productsUseCases from "../../services/products.useCases";
+import * as orderUseCases from "../../services/orders.usecases"
 import PRODUCT from "../../types/PRODUCT";
 import CUSTOMER from "../../types/CUSTOMER";
 
@@ -26,22 +27,55 @@ interface ProductList extends PRODUCT {
   quantity?: number;
 }
 
+interface RequestOrder {
+  idcliente: number | undefined
+  arrayidsproductos: (number | undefined)[]
+  arraydecantidad: (number | undefined)[]
+  fechaentrega: string
+  sena: number
+  total: number
+}
+
 function useOrders() {
   const [products, setProducts] = useState<ProductList[]>([]);
 
+  const currentDate = new Date().toISOString().slice(0, 16);
+  const [formDataOrder, setFormDataOrder] = useState<RequestOrder>({
+    idcliente: 0,
+    arraydecantidad: [],
+    arrayidsproductos: [],
+    fechaentrega: currentDate,
+    sena: 0,
+    total: 0
+  })
   const [productList, setProductList] = useState<ProductList[]>([]);
   const [customers, setCustomers] = useState<CUSTOMER[]>([]);
 
   const [total, setTotal] = useState(0);
-  const [subTotal, setSubtotal] = useState(0);
 
   const resolveTotal = (value: number) => {
     setTotal(total + value);
   };
 
-  const calcSubTotal = (newValue: number) => {
-    setSubtotal(total - newValue);
-  };
+  const handleSubmit = () => {
+    /* setFormDataOrder({ ...formDataOrder, ...products }) */
+    console.log(formDataOrder)
+
+    const arrayidsproductos = products.map((prod) => prod.id)
+    const arraydecantidad = products.map((prod) => prod.quantity)
+    const request: RequestOrder = {
+      idcliente: formDataOrder.idcliente,
+      arrayidsproductos,
+      arraydecantidad,
+      fechaentrega: formDataOrder.fechaentrega,
+      sena: formDataOrder.sena,
+      total: 0
+    }
+    orderUseCases.create(request).then((response) => {
+      alert('salio bien')
+      console.log
+    })
+  }
 
   useEffect(() => {
     productsUseCases.getAll().then(({ data }: { data: PRODUCT[] }) => {
@@ -59,8 +93,9 @@ function useOrders() {
     customers,
     resolveTotal,
     total,
-    subTotal,
-    calcSubTotal,
+    formDataOrder,
+    setFormDataOrder,
+    handleSubmit
   };
 }
 
@@ -77,10 +112,15 @@ const renderAdditionalInputs = ({
   productList,
   resolveTotal,
 }: AdditionInputPropTypes) => {
-  const handleEliminarInput = (index: number) => {
+  const handleEliminarInput = (index: number, precio: number, cantidad: number | undefined) => {
     const updatedProducts = [...products];
     updatedProducts.splice(index, 1);
     setProducts(updatedProducts);
+
+    if (cantidad) {
+      const totalRestar = precio * cantidad;
+      resolveTotal(-totalRestar);
+    }
   };
 
   return products.map((product: ProductList, index: number) => (
@@ -97,6 +137,7 @@ const renderAdditionalInputs = ({
             const updatedProducts = [...products];
             updatedProducts[index].nombre = newValue.nombre;
             updatedProducts[index].precio = newValue.precio;
+            updatedProducts[index].id = newValue.id;
             setProducts(updatedProducts);
           }
         }}
@@ -110,10 +151,14 @@ const renderAdditionalInputs = ({
         onChange={(event) => {
           const updatedProducts = [...products];
           const pr = updatedProducts[index];
-          pr.quantity = parseInt(event.target.value) || 0;
-          const total = pr.precio * pr.quantity;
-          resolveTotal(total);
-          setProducts(updatedProducts);
+          if (pr.quantity !== undefined) {
+            const previousTotal = pr.precio * pr.quantity;
+            pr.quantity = parseInt(event.target.value) || 0;
+            const newTotal = pr.precio * pr.quantity;
+            resolveTotal(newTotal - previousTotal);
+            setProducts(updatedProducts);
+          }
+          // setFormDataOrder({...formDataOrder, updatedProducts})
         }}
       />
 
@@ -122,7 +167,7 @@ const renderAdditionalInputs = ({
         color='error'
         size='small'
         sx={{ marginLeft: "auto", borderRadius: 0 }}
-        onClick={() => handleEliminarInput(index)}
+        onClick={() => handleEliminarInput(index, product.precio, product.quantity)}
       >
         <Delete fontSize='small' />
       </Button>
@@ -138,8 +183,9 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
     customers,
     total,
     resolveTotal,
-    subTotal,
-    calcSubTotal,
+    formDataOrder,
+    setFormDataOrder,
+    handleSubmit
   } = useOrders();
   const handleClose = () => setOpen(false);
   const theme: any = useTheme();
@@ -154,6 +200,9 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
     });
     setProducts(updatedProducts);
   };
+
+  const currentDate = new Date().toISOString().slice(0, 16);
+  const [fechaEntregaDefault, setFechaEntregaDefault] = useState(currentDate);
 
   return (
     <div>
@@ -209,8 +258,18 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
             <Autocomplete
               disablePortal
               options={customers}
+              renderOption={(props, option) => {
+                return (
+                  <li {...props} key={option.id}>
+                    {option.nombre}
+                  </li>
+                )
+              }}
               getOptionLabel={(option) => option.nombre}
               fullWidth
+              onChange={(event, value) => {
+                setFormDataOrder({ ...formDataOrder, idcliente: value?.id })
+              }}
               renderInput={(params) => (
                 <TextField {...params} label='Cliente' />
               )}
@@ -220,6 +279,8 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               label='Fecha de Entrega'
               type='datetime-local'
               InputLabelProps={{ shrink: true }}
+              value={fechaEntregaDefault}
+              onChange={(e) => { setFechaEntregaDefault(e.target.value); setFormDataOrder({ ...formDataOrder, fechaentrega: e.target.value }) }}
             />
 
             <TextField
@@ -232,7 +293,7 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               }}
               onChange={(e) => {
                 const value = Number(e.target.value);
-                calcSubTotal(value);
+                setFormDataOrder({ ...formDataOrder, sena: value })
               }}
               InputLabelProps={{ shrink: true }}
             />
@@ -265,34 +326,6 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
                 </Typography>
               </Box>
             </Box>
-            <Box
-              bgcolor={theme.palette.success.dark}
-              display='flex'
-              py={1}
-              px={1}
-              flexDirection='column'
-              justifyContent='space-between'
-            >
-              <Box display='flex' justifyContent='space-between'>
-                <Typography
-                  variant='h6'
-                  component='h6'
-                  textTransform='uppercase'
-                  fontWeight='bold'
-                  display='inline-block'
-                >
-                  SubTotal
-                </Typography>
-                <Typography
-                  variant='h6'
-                  component='h6'
-                  fontWeight='bold'
-                  display='inline-block'
-                >
-                  ${subTotal}
-                </Typography>
-              </Box>
-            </Box>
             <Button
               variant='contained'
               color='success'
@@ -309,7 +342,7 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
             <Button variant='contained' color='error'>
               Cancelar
             </Button>
-            <Button variant='contained' color='success'>
+            <Button variant='contained' color='success' onClick={handleSubmit}>
               Aceptar
             </Button>
           </Box>

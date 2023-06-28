@@ -1,8 +1,8 @@
 export default interface ORDER {
   idpedido?: number;
   idcliente?: number;
-  arrayidsproductos?: number[];
-  arraydecantidad?: number[];
+  arrayidsproductos?: (number | undefined)[];
+  arraydecantidad?: (number | undefined)[];
   fechaentrega?: Date;
   sena?: number;
   total?: number;
