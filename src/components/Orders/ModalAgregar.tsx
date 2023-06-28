@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -8,101 +8,21 @@ import {
   Button,
   InputAdornment,
 } from "@mui/material";
-import styleModal from "./styleModal";
 import { useTheme } from "@emotion/react";
 import { Add, Delete } from "@mui/icons-material";
-/* import orderUseCases from "../../services/orders.usecases" */
-import * as customersUseCases from "../../services/customers.useCases";
-import * as productsUseCases from "../../services/products.useCases";
-import * as orderUseCases from "../../services/orders.usecases"
-import PRODUCT from "../../types/PRODUCT";
-import CUSTOMER from "../../types/CUSTOMER";
+import PRODUCTLIST from "../../types/PRODUCTLIST";
+import useOrders from "./useOrders";
 
 type ModalAgregarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-interface ProductList extends PRODUCT {
-  quantity?: number;
-}
-
-interface RequestOrder {
-  idcliente: number | undefined
-  arrayidsproductos: (number | undefined)[]
-  arraydecantidad: (number | undefined)[]
-  fechaentrega: string
-  sena: number
-  total: number
-}
-
-function useOrders() {
-  const [products, setProducts] = useState<ProductList[]>([]);
-
-  const currentDate = new Date().toISOString().slice(0, 16);
-  const [formDataOrder, setFormDataOrder] = useState<RequestOrder>({
-    idcliente: 0,
-    arraydecantidad: [],
-    arrayidsproductos: [],
-    fechaentrega: currentDate,
-    sena: 0,
-    total: 0
-  })
-  const [productList, setProductList] = useState<ProductList[]>([]);
-  const [customers, setCustomers] = useState<CUSTOMER[]>([]);
-
-  const [total, setTotal] = useState(0);
-
-  const resolveTotal = (value: number) => {
-    setTotal(total + value);
-  };
-
-  const handleSubmit = () => {
-    /* setFormDataOrder({ ...formDataOrder, ...products }) */
-    console.log(formDataOrder)
-
-    const arrayidsproductos = products.map((prod) => prod.id)
-    const arraydecantidad = products.map((prod) => prod.quantity)
-    const request: RequestOrder = {
-      idcliente: formDataOrder.idcliente,
-      arrayidsproductos,
-      arraydecantidad,
-      fechaentrega: formDataOrder.fechaentrega,
-      sena: formDataOrder.sena,
-      total: 0
-    }
-    orderUseCases.create(request).then((response) => {
-      alert('salio bien')
-      console.log
-    })
-  }
-
-  useEffect(() => {
-    productsUseCases.getAll().then(({ data }: { data: PRODUCT[] }) => {
-      setProductList(data);
-    });
-    customersUseCases.getAll().then(({ data }: { data: CUSTOMER[] }) => {
-      setCustomers(data);
-    });
-  }, []);
-
-  return {
-    products,
-    setProducts,
-    productList,
-    customers,
-    resolveTotal,
-    total,
-    formDataOrder,
-    setFormDataOrder,
-    handleSubmit
-  };
-}
 
 interface AdditionInputPropTypes {
-  products: ProductList[];
+  products: PRODUCTLIST[];
   setProducts: any;
-  productList: ProductList[];
+  productList: PRODUCTLIST[];
   resolveTotal: (value: number) => void;
 }
 
@@ -123,7 +43,7 @@ const renderAdditionalInputs = ({
     }
   };
 
-  return products.map((product: ProductList, index: number) => (
+  return products.map((product: PRODUCTLIST, index: number) => (
     <Box key={index} sx={{ display: "flex", gap: 3 }}>
       <Autocomplete
         disablePortal

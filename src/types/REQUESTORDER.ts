@@ -1,4 +1,4 @@
-interface REQUESTORDER {
+export default interface REQUESTORDER {
   idcliente: number | undefined
   arrayidsproductos: (number | undefined)[]
   arraydecantidad: (number | undefined)[]
