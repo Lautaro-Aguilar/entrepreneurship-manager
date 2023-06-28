@@ -31,6 +31,7 @@ export async function getOrders() {
       return newOrder;
     });
   }
+
   return {
     data: customersResponse,
     errors: error,
@@ -69,10 +70,12 @@ export async function getOrder(idPedido: number) {
 }
 
 export async function createOrder(data: ORDER) {
-  const { data: newOrder, error } = await supabase.from("pedidos").insert(data);
+  const { data: resp, error } = await supabase.from("pedidos").insert(data);
+
+  const newValues = await supabase.from("vista_pedidos").select("*");
 
   const response = {
-    data: newOrder,
+    data: newValues.data,
     errors: error,
   };
 

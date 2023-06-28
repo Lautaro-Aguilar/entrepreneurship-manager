@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { AlertColor, Box, Button, Container, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
@@ -8,8 +8,16 @@ import buildColumns from "./agGrid/columns";
 import ORDER from "../../types/ORDER";
 import * as useCases from "../../services/orders.usecases";
 import { SelectionChangedEvent } from "ag-grid-community";
+import useSnackBar from "../shared/hooks/useSnackBar";
+import SnackbarCustom from "../shared/SnackbarCustom";
 
-function useOrders() {
+function useOrders({
+  openSnackBar,
+  closeModal,
+}: {
+  openSnackBar: (alertVariant: AlertColor, alertMessage: string) => void;
+  closeModal: () => void;
+}) {
   const [orders, setOrders] = useState<ORDER[]>([]);
   const [selectedOrders, setSelectedOrders] = useState<ORDER[]>([]);
 
@@ -23,7 +31,13 @@ function useOrders() {
     setSelectedOrders(e.api.getSelectedRows());
   };
 
-  return { orders, selectedOrders, handleChangeSelection };
+  const updateGrid = (values: any) => {
+    setOrders(values.data);
+    openSnackBar("success", "Pedido agregado correctamente 👍");
+    closeModal();
+  };
+
+  return { orders, selectedOrders, handleChangeSelection, updateGrid };
 }
 
 function Orders() {
@@ -32,7 +46,14 @@ function Orders() {
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
   const columns = buildColumns();
 
-  const { orders, handleChangeSelection } = useOrders();
+  const closeModalAgregar = () => setOpenModalAgregar(false);
+
+  const { openSnackBar, closeSnackBar, isSnackBarOpen, snackOptions } =
+    useSnackBar();
+  const { orders, handleChangeSelection, updateGrid } = useOrders({
+    openSnackBar,
+    closeModal: closeModalAgregar,
+  });
 
   return (
     <Container
@@ -43,6 +64,12 @@ function Orders() {
         alignItems: "center",
       }}
     >
+      <SnackbarCustom
+        isSnackBarOpen={isSnackBarOpen}
+        closeSnackBar={closeSnackBar}
+        message={snackOptions.message}
+        variant={snackOptions.variant}
+      />
       <Typography variant='h3' component='h1'>
         Registro de Pedidos
       </Typography>
@@ -88,7 +115,11 @@ function Orders() {
           </Button>
         </Box>
       </Box>
-      <ModalAgregar open={openModalAgregar} setOpen={setOpenModalAgregar} />
+      <ModalAgregar
+        open={openModalAgregar}
+        setOpen={setOpenModalAgregar}
+        updateGrid={updateGrid}
+      />
       <ModalModificar
         open={openModalModificar}
         setOpen={setOpenModalModificar}

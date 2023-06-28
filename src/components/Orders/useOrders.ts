@@ -2,23 +2,31 @@ import { useEffect, useState } from "react";
 import PRODUCTLIST from "../../types/PRODUCTLIST";
 import REQUESTORDER from "../../types/REQUESTORDER";
 import CUSTOMER from "../../types/CUSTOMER";
-import * as orderUseCases from "../../services/orders.usecases"
+import * as orderUseCases from "../../services/orders.usecases";
 import * as customersUseCases from "../../services/customers.useCases";
 import * as productsUseCases from "../../services/products.useCases";
 import PRODUCT from "../../types/PRODUCT";
 
-function useOrders() {
+const currentDate = new Date().toISOString().slice(0, 16);
+
+function useOrders({
+  open,
+  updateGrid,
+}: {
+  open: boolean;
+  updateGrid: (values: any) => void;
+}) {
   const [products, setProducts] = useState<PRODUCTLIST[]>([]);
 
-  const currentDate = new Date().toISOString().slice(0, 16);
   const [formDataOrder, setFormDataOrder] = useState<REQUESTORDER>({
     idcliente: 0,
     arraydecantidad: [],
     arrayidsproductos: [],
     fechaentrega: currentDate,
     sena: 0,
-    total: 0
-  })
+    total: 0,
+    estado: "Pendiente",
+  });
   const [productList, setProductList] = useState<PRODUCTLIST[]>([]);
   const [customers, setCustomers] = useState<CUSTOMER[]>([]);
 
@@ -29,24 +37,22 @@ function useOrders() {
   };
 
   const handleSubmit = () => {
-    /* setFormDataOrder({ ...formDataOrder, ...products }) */
-    console.log(formDataOrder)
-
-    const arrayidsproductos = products.map((prod) => prod.id)
-    const arraydecantidad = products.map((prod) => prod.quantity)
+    const arrayidsproductos = products.map((prod) => prod.id);
+    const arraydecantidad = products.map((prod) => prod.quantity);
     const request: REQUESTORDER = {
       idcliente: formDataOrder.idcliente,
       arrayidsproductos,
       arraydecantidad,
       fechaentrega: formDataOrder.fechaentrega,
       sena: formDataOrder.sena,
-      total: 0
-    }
+      total: 0,
+      estado: "Pendiente",
+    };
     orderUseCases.create(request).then((response) => {
-      alert('salio bien')
-      console.log(response)
-    })
-  }
+      const newOrders = response;
+      updateGrid(newOrders);
+    });
+  };
 
   useEffect(() => {
     productsUseCases.getAll().then(({ data }: { data: PRODUCT[] }) => {
@@ -55,7 +61,21 @@ function useOrders() {
     customersUseCases.getAll().then(({ data }: { data: CUSTOMER[] }) => {
       setCustomers(data);
     });
-  }, []);
+
+    return () => {
+      setProducts([]);
+      setProductList([]);
+      setFormDataOrder({
+        idcliente: 0,
+        arraydecantidad: [],
+        arrayidsproductos: [],
+        fechaentrega: currentDate,
+        sena: 0,
+        total: 0,
+        estado: "Pendiente",
+      });
+    };
+  }, [open]);
 
   return {
     products,
@@ -66,8 +86,8 @@ function useOrders() {
     total,
     formDataOrder,
     setFormDataOrder,
-    handleSubmit
+    handleSubmit,
   };
 }
 
-export default useOrders
+export default useOrders;
