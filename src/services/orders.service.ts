@@ -14,9 +14,9 @@ export async function getOrders() {
     .from("vista_pedidos")
     .select("*");
 
-  let customersResponse: __TORDER[] = [];
+  let orderResponse: __TORDER[] = [];
   if (orders) {
-    customersResponse = orders.map((order) => {
+    orderResponse = orders.map((order) => {
       const newOrder: __TORDER = {
         idpedido: order.idpedido,
         cliente: order.cliente,
@@ -33,7 +33,7 @@ export async function getOrders() {
   }
 
   return {
-    data: customersResponse,
+    data: orderResponse,
     errors: error,
   };
 }
@@ -70,9 +70,9 @@ export async function getOrder(idPedido: number) {
 }
 
 export async function createOrder(data: ORDER) {
-  const { data: resp, error } = await supabase.from("pedidos").insert(data);
+  const { error } = await supabase.from("pedidos").insert(data);
 
-  const newValues = await supabase.from("vista_pedidos").select("*");
+  const newValues = await getOrders();
 
   const response = {
     data: newValues.data,

@@ -32,7 +32,7 @@ function useOrders({
   };
 
   const updateGrid = (values: any) => {
-    setOrders(values.data);
+    setOrders(values);
     openSnackBar("success", "Pedido agregado correctamente 👍");
     closeModal();
   };

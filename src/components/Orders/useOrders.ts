@@ -49,7 +49,7 @@ function useOrders({
       estado: "Pendiente",
     };
     orderUseCases.create(request).then((response) => {
-      const newOrders = response;
+      const newOrders = response.data;
       updateGrid(newOrders);
     });
   };
