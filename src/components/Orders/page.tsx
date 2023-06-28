@@ -11,7 +11,7 @@ import { SelectionChangedEvent } from "ag-grid-community";
 
 function useOrders() {
   const [orders, setOrders] = useState<ORDER[]>([]);
-  const [selectedOrders, setSelectedOrders] = useState<ORDER[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<ORDER[]>([]);
 
   useEffect(() => {
     useCases.getAll().then((res) => {
@@ -20,10 +20,10 @@ function useOrders() {
   }, []);
 
   const handleChangeSelection = (e: SelectionChangedEvent<ORDER>) => {
-    setSelectedOrders(e.api.getSelectedRows());
+    setSelectedOrder(e.api.getSelectedRows());
   };
 
-  return { orders, selectedOrders, handleChangeSelection };
+  return { orders, selectedOrder, handleChangeSelection };
 }
 
 function Orders() {
@@ -32,7 +32,7 @@ function Orders() {
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
   const columns = buildColumns();
 
-  const { orders, handleChangeSelection } = useOrders();
+  const { orders, selectedOrder, handleChangeSelection } = useOrders();
 
   return (
     <Container
@@ -92,6 +92,7 @@ function Orders() {
       <ModalModificar
         open={openModalModificar}
         setOpen={setOpenModalModificar}
+        selectedOrder={selectedOrder}
       />
       <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} />
     </Container>
