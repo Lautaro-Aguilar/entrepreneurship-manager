@@ -16,8 +16,8 @@ import useOrders from "./useOrders";
 type ModalAgregarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  updateGrid: (values: any) => void;
 };
-
 
 interface AdditionInputPropTypes {
   products: PRODUCTLIST[];
@@ -32,7 +32,11 @@ const renderAdditionalInputs = ({
   productList,
   resolveTotal,
 }: AdditionInputPropTypes) => {
-  const handleEliminarInput = (index: number, precio: number, cantidad: number | undefined) => {
+  const handleEliminarInput = (
+    index: number,
+    precio: number,
+    cantidad: number | undefined
+  ) => {
     const updatedProducts = [...products];
     updatedProducts.splice(index, 1);
     setProducts(updatedProducts);
@@ -53,7 +57,6 @@ const renderAdditionalInputs = ({
         getOptionLabel={(option) => option.nombre}
         onChange={(event, newValue) => {
           if (newValue) {
-            console.log(newValue);
             const updatedProducts = [...products];
             updatedProducts[index].nombre = newValue.nombre;
             updatedProducts[index].precio = newValue.precio;
@@ -87,7 +90,9 @@ const renderAdditionalInputs = ({
         color='error'
         size='small'
         sx={{ marginLeft: "auto", borderRadius: 0 }}
-        onClick={() => handleEliminarInput(index, product.precio, product.quantity)}
+        onClick={() =>
+          handleEliminarInput(index, product.precio, product.quantity)
+        }
       >
         <Delete fontSize='small' />
       </Button>
@@ -95,7 +100,7 @@ const renderAdditionalInputs = ({
   ));
 };
 
-function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
+function ModalAgregar({ open, setOpen, updateGrid }: ModalAgregarProps) {
   const {
     products,
     setProducts,
@@ -105,8 +110,8 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
     resolveTotal,
     formDataOrder,
     setFormDataOrder,
-    handleSubmit
-  } = useOrders();
+    handleSubmit,
+  } = useOrders({ open, updateGrid });
   const handleClose = () => setOpen(false);
   const theme: any = useTheme();
 
@@ -183,12 +188,12 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
                   <li {...props} key={option.id}>
                     {option.nombre}
                   </li>
-                )
+                );
               }}
               getOptionLabel={(option) => option.nombre}
               fullWidth
               onChange={(event, value) => {
-                setFormDataOrder({ ...formDataOrder, idcliente: value?.id })
+                setFormDataOrder({ ...formDataOrder, idcliente: value?.id });
               }}
               renderInput={(params) => (
                 <TextField {...params} label='Cliente' />
@@ -200,7 +205,13 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               type='datetime-local'
               InputLabelProps={{ shrink: true }}
               value={fechaEntregaDefault}
-              onChange={(e) => { setFechaEntregaDefault(e.target.value); setFormDataOrder({ ...formDataOrder, fechaentrega: e.target.value }) }}
+              onChange={(e) => {
+                setFechaEntregaDefault(e.target.value);
+                setFormDataOrder({
+                  ...formDataOrder,
+                  fechaentrega: e.target.value,
+                });
+              }}
             />
 
             <TextField
@@ -213,7 +224,7 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
               }}
               onChange={(e) => {
                 const value = Number(e.target.value);
-                setFormDataOrder({ ...formDataOrder, sena: value })
+                setFormDataOrder({ ...formDataOrder, sena: value });
               }}
               InputLabelProps={{ shrink: true }}
             />
@@ -259,7 +270,7 @@ function ModalAgregar({ open, setOpen }: ModalAgregarProps) {
             </Button>
           </Box>
           <Box display='flex' justifyContent='flex-end' gap={2} mr={2} mb={2}>
-            <Button variant='contained' color='error'>
+            <Button variant='contained' color='error' onClick={handleClose}>
               Cancelar
             </Button>
             <Button variant='contained' color='success' onClick={handleSubmit}>
