@@ -26,6 +26,7 @@ export async function getOrders() {
         cantidades: order.arraydecantidad.join(","),
         fechaentrega: order.fechaentrega,
         fecharealizado: formatDate(new Date(order.fecharealizado)),
+        estado: order.estado,
       };
       return newOrder;
     });
@@ -51,6 +52,7 @@ export async function getOrder(idPedido: number) {
       fechaentrega: order[0].fechaentrega,
       sena: order[0].sena,
       total: order[0].total,
+      estado: order[0].estado,
     };
     const response = {
       data: orderResponse,

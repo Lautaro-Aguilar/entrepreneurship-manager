@@ -7,4 +7,5 @@ export default interface ORDER {
   sena?: number;
   total?: number;
   inserted_at?: Date;
+  estado: string;
 }

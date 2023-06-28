@@ -13,6 +13,7 @@ const buildColumns = () => {
     { headerName: "Fecha de Entrega", field: "fechaentrega" },
     { headerName: "Seña", field: "sena" },
     { headerName: "Total", field: "total" },
+    { headerName: "Estado", field: "estado" },
   ];
   return columns;
 };
