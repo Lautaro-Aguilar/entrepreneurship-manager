@@ -13,7 +13,7 @@ function useOrders({
   open,
   updateGrid,
 }: {
-  open: boolean;
+  open?: boolean;
   updateGrid: (values: any) => void;
 }) {
   const [products, setProducts] = useState<PRODUCTLIST[]>([]);
@@ -43,11 +43,12 @@ function useOrders({
       idcliente: formDataOrder.idcliente,
       arrayidsproductos,
       arraydecantidad,
-      fechaentrega: formDataOrder.fechaentrega,
+      fechaentrega: new Date(formDataOrder.fechaentrega),
       sena: formDataOrder.sena,
       total: 0,
       estado: "Pendiente",
     };
+    console.log("REQUEST", request);
     orderUseCases.create(request).then((response) => {
       const newOrders = response.data;
       updateGrid(newOrders);

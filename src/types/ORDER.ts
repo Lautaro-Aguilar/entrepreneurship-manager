@@ -3,7 +3,7 @@ export default interface ORDER {
   idcliente?: number;
   arrayidsproductos?: (number | undefined)[];
   arraydecantidad?: (number | undefined)[];
-  fechaentrega?: string;
+  fechaentrega?: string | Date;
   sena?: number;
   total?: number;
   inserted_at?: Date;

@@ -31,7 +31,6 @@ function useOrders({
     setSelectedOrder(e.api.getSelectedRows());
   };
 
-  return { orders, selectedOrder, handleChangeSelection };
   const updateGrid = (values: any) => {
     setOrders(values);
     openSnackBar("success", "Pedido agregado correctamente 👍");
@@ -51,10 +50,11 @@ function Orders() {
 
   const { openSnackBar, closeSnackBar, isSnackBarOpen, snackOptions } =
     useSnackBar();
-  const { orders, handleChangeSelection, updateGrid, selectedOrder } = useOrders({
-    openSnackBar,
-    closeModal: closeModalAgregar,
-  });
+  const { orders, handleChangeSelection, updateGrid, selectedOrder } =
+    useOrders({
+      openSnackBar,
+      closeModal: closeModalAgregar,
+    });
 
   return (
     <Container
@@ -125,6 +125,7 @@ function Orders() {
         open={openModalModificar}
         setOpen={setOpenModalModificar}
         selectedOrder={selectedOrder}
+        updateGrid={updateGrid}
       />
       <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} />
     </Container>

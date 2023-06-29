@@ -1,71 +1,93 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Typography, Modal, Autocomplete, TextField, Button, InputAdornment } from '@mui/material'
-import ORDER from '../../types/ORDER';
-import { useTheme } from '@emotion/react';
-import useOrders from './useOrders';
-import CUSTOMER from '../../types/CUSTOMER';
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  Modal,
+  Autocomplete,
+  TextField,
+  Button,
+  InputAdornment,
+} from "@mui/material";
+import ORDER from "../../types/ORDER";
+import { useTheme } from "@emotion/react";
+import useOrders from "./useOrders";
+import CUSTOMER from "../../types/CUSTOMER";
 
 interface SELECTEDORDER {
-  cliente: string,
-  cantidades: string,
-  estado: string,
-  fechaentrega: string,
-  fecharealizado: string,
-  idpedido: number,
-  productos: string,
-  sena: number,
-  total: 41
+  cliente: string;
+  cantidades: string;
+  estado: string;
+  fechaentrega: string;
+  fecharealizado: string;
+  idpedido: number;
+  productos: string;
+  sena: number;
+  total: 41;
 }
 
 type ModalModificarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedOrder: SELECTEDORDER[];
+  updateGrid: (data: any) => void;
 };
 
-function ModalModificar({ open, setOpen, selectedOrder }: ModalModificarProps) {
-  const { customers, formDataOrder, setFormDataOrder } = useOrders()
+function ModalModificar({
+  open,
+  setOpen,
+  selectedOrder,
+  updateGrid,
+}: ModalModificarProps) {
+  const { customers, formDataOrder, setFormDataOrder } = useOrders({
+    open,
+    updateGrid,
+  });
   const theme: any = useTheme();
   const handleClose = () => setOpen(false);
   const [clientToModify, setClientToModify] = useState<CUSTOMER>({
     nombre: "",
     apellido: "",
     direccion: "",
-    telefono: ""
-  })
-  const [orderToModify, setOrderToModify] = useState<SELECTEDORDER>()
+    telefono: "",
+  });
+  const [orderToModify, setOrderToModify] = useState<SELECTEDORDER>();
 
   useEffect(() => {
-    setOrderToModify(selectedOrder[0])
+    setOrderToModify(selectedOrder[0]);
     if (orderToModify) {
-      const clienteAModificar = customers.find(customer => `${customer.nombre} ${customer.apellido}` === orderToModify.cliente);
-      setClientToModify(clienteAModificar || {
-        nombre: "",
-        apellido: "",
-        direccion: "",
-        telefono: ""
-      });
+      const clienteAModificar = customers.find(
+        (customer) =>
+          `${customer.nombre} ${customer.apellido}` === orderToModify.cliente
+      );
+      setClientToModify(
+        clienteAModificar || {
+          nombre: "",
+          apellido: "",
+          direccion: "",
+          telefono: "",
+        }
+      );
     }
-    console.log(orderToModify, selectedOrder[0])
+    console.log(orderToModify, selectedOrder[0]);
   }, [open, selectedOrder]);
 
   const handleSubmit = () => {
-  }
+    console.log("hola");
+  };
   return (
     <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-      >
-        <Box sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 500,
-          bgcolor: "background.paper",
-          borderRadius: 5,
-        }}>
+      <Modal open={open} onClose={handleClose}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            borderRadius: 5,
+          }}
+        >
           <Box
             className='headerModal'
             px={2}
@@ -91,7 +113,6 @@ function ModalModificar({ open, setOpen, selectedOrder }: ModalModificarProps) {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             borderRadius={"0px 0px 10px 10px"}
           >
-
             <Autocomplete
               disablePortal
               options={customers}
@@ -101,12 +122,12 @@ function ModalModificar({ open, setOpen, selectedOrder }: ModalModificarProps) {
                   <li {...props} key={option.id}>
                     {option.nombre} {option.apellido}
                   </li>
-                )
+                );
               }}
               getOptionLabel={(option) => `${option.nombre} ${option.apellido}`}
               fullWidth
               onChange={(event, value) => {
-                setFormDataOrder({ ...formDataOrder, idcliente: value?.id })
+                setFormDataOrder({ ...formDataOrder, idcliente: value?.id });
               }}
               renderInput={(params) => (
                 <TextField {...params} label='Cliente' />
@@ -118,7 +139,12 @@ function ModalModificar({ open, setOpen, selectedOrder }: ModalModificarProps) {
               type='datetime-local'
               InputLabelProps={{ shrink: true }}
               value={orderToModify?.fechaentrega}
-              onChange={(e) => { setFormDataOrder({ ...formDataOrder, fechaentrega: e.target.value }) }}
+              onChange={(e) => {
+                setFormDataOrder({
+                  ...formDataOrder,
+                  fechaentrega: e.target.value,
+                });
+              }}
             />
 
             <TextField
@@ -132,7 +158,7 @@ function ModalModificar({ open, setOpen, selectedOrder }: ModalModificarProps) {
               }}
               onChange={(e) => {
                 const value = Number(e.target.value);
-                setFormDataOrder({ ...formDataOrder, sena: value })
+                setFormDataOrder({ ...formDataOrder, sena: value });
               }}
               InputLabelProps={{ shrink: true }}
             />
@@ -164,7 +190,6 @@ function ModalModificar({ open, setOpen, selectedOrder }: ModalModificarProps) {
                   ${orderToModify?.total}
                 </Typography>
               </Box>
-
             </Box>
           </Box>
           <Box display='flex' justifyContent='flex-end' gap={2} mr={2} mb={2}>
@@ -178,7 +203,7 @@ function ModalModificar({ open, setOpen, selectedOrder }: ModalModificarProps) {
         </Box>
       </Modal>
     </div>
-  )
+  );
 }
 
-export default ModalModificar
+export default ModalModificar;

@@ -130,156 +130,152 @@ function ModalAgregar({ open, setOpen, updateGrid }: ModalAgregarProps) {
   const [fechaEntregaDefault, setFechaEntregaDefault] = useState(currentDate);
 
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby='modal-modal-title'
-        aria-describedby='modal-modal-description'
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby='modal-modal-title'
+      aria-describedby='modal-modal-description'
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 500,
+          bgcolor: "background.paper",
+          borderRadius: 5,
+        }}
       >
         <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 500,
-            bgcolor: "background.paper",
-            borderRadius: 5,
-          }}
+          className='headerModal'
+          px={2}
+          py={1}
+          borderRadius={"10px 10px 0px 0px"}
+          bgcolor={theme.palette.success.main}
+          color='theme.palette.success.contrastText'
         >
-          <Box
-            className='headerModal'
-            px={2}
-            py={1}
-            borderRadius={"10px 10px 0px 0px"}
-            bgcolor={theme.palette.success.main}
-            color='theme.palette.success.contrastText'
+          <Typography
+            id='modal-modal-title'
+            variant='h6'
+            fontWeight={600}
+            component='h2'
           >
-            <Typography
-              id='modal-modal-title'
-              variant='h6'
-              fontWeight={600}
-              component='h2'
-            >
-              Nuevo Pedido
-            </Typography>
-          </Box>
-
-          <Box
-            className='bodyModal'
-            px={2}
-            py={2}
-            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-            borderRadius={"0px 0px 10px 10px"}
-          >
-            {renderAdditionalInputs({
-              products,
-              setProducts,
-              productList,
-              resolveTotal,
-            })}
-
-            <Autocomplete
-              disablePortal
-              options={customers}
-              renderOption={(props, option) => {
-                return (
-                  <li {...props} key={option.id}>
-                    {option.nombre}
-                  </li>
-                );
-              }}
-              getOptionLabel={(option) => option.nombre}
-              fullWidth
-              onChange={(event, value) => {
-                setFormDataOrder({ ...formDataOrder, idcliente: value?.id });
-              }}
-              renderInput={(params) => (
-                <TextField {...params} label='Cliente' />
-              )}
-            />
-
-            <TextField
-              label='Fecha de Entrega'
-              type='datetime-local'
-              InputLabelProps={{ shrink: true }}
-              value={fechaEntregaDefault}
-              onChange={(e) => {
-                setFechaEntregaDefault(e.target.value);
-                setFormDataOrder({
-                  ...formDataOrder,
-                  fechaentrega: e.target.value,
-                });
-              }}
-            />
-
-            <TextField
-              label='Seña'
-              type='number'
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>$</InputAdornment>
-                ),
-              }}
-              onChange={(e) => {
-                const value = Number(e.target.value);
-                setFormDataOrder({ ...formDataOrder, sena: value });
-              }}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <Box
-              bgcolor={theme.palette.success.dark}
-              display='flex'
-              py={1}
-              px={1}
-              flexDirection='column'
-              justifyContent='space-between'
-            >
-              <Box display='flex' justifyContent='space-between'>
-                <Typography
-                  variant='h6'
-                  component='h6'
-                  textTransform='uppercase'
-                  fontWeight='bold'
-                  display='inline-block'
-                >
-                  Total
-                </Typography>
-                <Typography
-                  variant='h6'
-                  component='h6'
-                  fontWeight='bold'
-                  display='inline-block'
-                >
-                  ${total}
-                </Typography>
-              </Box>
-            </Box>
-            <Button
-              variant='contained'
-              color='success'
-              size='large'
-              fullWidth
-              sx={{ borderRadius: 0 }}
-              startIcon={<Add />}
-              onClick={() => handleAgregarInput(products.length - 1)}
-            >
-              Agregar producto
-            </Button>
-          </Box>
-          <Box display='flex' justifyContent='flex-end' gap={2} mr={2} mb={2}>
-            <Button variant='contained' color='error' onClick={handleClose}>
-              Cancelar
-            </Button>
-            <Button variant='contained' color='success' onClick={handleSubmit}>
-              Aceptar
-            </Button>
-          </Box>
+            Nuevo Pedido
+          </Typography>
         </Box>
-      </Modal>
-    </div>
+
+        <Box
+          className='bodyModal'
+          px={2}
+          py={2}
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          borderRadius={"0px 0px 10px 10px"}
+        >
+          {renderAdditionalInputs({
+            products,
+            setProducts,
+            productList,
+            resolveTotal,
+          })}
+
+          <Autocomplete
+            disablePortal
+            options={customers}
+            renderOption={(props, option) => {
+              return (
+                <li {...props} key={option.id}>
+                  {option.nombre}
+                </li>
+              );
+            }}
+            getOptionLabel={(option) => option.nombre}
+            fullWidth
+            onChange={(event, value) => {
+              setFormDataOrder({ ...formDataOrder, idcliente: value?.id });
+            }}
+            renderInput={(params) => <TextField {...params} label='Cliente' />}
+          />
+
+          <TextField
+            label='Fecha de Entrega'
+            type='datetime-local'
+            InputLabelProps={{ shrink: true }}
+            value={fechaEntregaDefault}
+            onChange={(e) => {
+              setFechaEntregaDefault(e.target.value);
+              setFormDataOrder({
+                ...formDataOrder,
+                fechaentrega: e.target.value,
+              });
+            }}
+          />
+
+          <TextField
+            label='Seña'
+            type='number'
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>$</InputAdornment>
+              ),
+            }}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              setFormDataOrder({ ...formDataOrder, sena: value });
+            }}
+            InputLabelProps={{ shrink: true }}
+          />
+
+          <Box
+            bgcolor={theme.palette.success.dark}
+            display='flex'
+            py={1}
+            px={1}
+            flexDirection='column'
+            justifyContent='space-between'
+          >
+            <Box display='flex' justifyContent='space-between'>
+              <Typography
+                variant='h6'
+                component='h6'
+                textTransform='uppercase'
+                fontWeight='bold'
+                display='inline-block'
+              >
+                Total
+              </Typography>
+              <Typography
+                variant='h6'
+                component='h6'
+                fontWeight='bold'
+                display='inline-block'
+              >
+                ${total}
+              </Typography>
+            </Box>
+          </Box>
+          <Button
+            variant='contained'
+            color='success'
+            size='large'
+            fullWidth
+            sx={{ borderRadius: 0 }}
+            startIcon={<Add />}
+            onClick={() => handleAgregarInput(products.length - 1)}
+          >
+            Agregar producto
+          </Button>
+        </Box>
+        <Box display='flex' justifyContent='flex-end' gap={2} mr={2} mb={2}>
+          <Button variant='contained' color='error' onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button variant='contained' color='success' onClick={handleSubmit}>
+            Aceptar
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
   );
 }
 
