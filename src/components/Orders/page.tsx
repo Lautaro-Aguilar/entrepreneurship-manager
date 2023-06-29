@@ -31,7 +31,6 @@ function useOrders({
     setSelectedOrder(e.api.getSelectedRows());
   };
 
-  return { orders, selectedOrder, handleChangeSelection };
   const updateGrid = (values: any) => {
     setOrders(values);
     openSnackBar("success", "Pedido agregado correctamente 👍");
@@ -51,10 +50,11 @@ function Orders() {
 
   const { openSnackBar, closeSnackBar, isSnackBarOpen, snackOptions } =
     useSnackBar();
-  const { orders, handleChangeSelection, updateGrid, selectedOrder } = useOrders({
-    openSnackBar,
-    closeModal: closeModalAgregar,
-  });
+  const { orders, handleChangeSelection, updateGrid, selectedOrder } =
+    useOrders({
+      openSnackBar,
+      closeModal: closeModalAgregar,
+    });
 
   return (
     <Container
@@ -71,8 +71,8 @@ function Orders() {
         message={snackOptions.message}
         variant={snackOptions.variant}
       />
-      <Typography variant='h3' component='h1'>
-        Registro de Pedidos
+      <Typography variant='h2' fontWeight='700' color='primary'>
+        Pedidos
       </Typography>
 
       <Box sx={{ width: "100%", my: 2 }}>
