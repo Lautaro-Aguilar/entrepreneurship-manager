@@ -60,8 +60,8 @@ function Productos() {
         message={snackOptions.message}
         variant={snackOptions.variant}
       />
-      <Typography variant='h3' component='h1'>
-        Registro de Productos
+      <Typography variant='h2' fontWeight='700' color='primary'>
+        Productos
       </Typography>
 
       <Box sx={{ width: "100%", my: 2 }}>

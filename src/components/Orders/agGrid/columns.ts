@@ -16,6 +16,7 @@ const buildColumns = () => {
       field: "cantidades",
       headerClass: "header-text-center",
       cellStyle: { textAlign: "center" },
+      width: 150,
     },
     {
       headerName: "Fecha cargado",
@@ -34,18 +35,21 @@ const buildColumns = () => {
       field: "sena",
       headerClass: "header-text-center",
       cellStyle: { textAlign: "center" },
+      width: 100,
     },
     {
       headerName: "Total",
       field: "total",
       headerClass: "header-text-center",
       cellStyle: { textAlign: "center" },
+      width: 100,
     },
     {
       headerName: "Estado",
       field: "estado",
       headerClass: "header-text-center",
       cellStyle: { textAlign: "center" },
+      width: 150,
     },
   ];
   return columns;

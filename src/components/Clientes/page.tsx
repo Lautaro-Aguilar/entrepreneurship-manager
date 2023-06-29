@@ -1,4 +1,4 @@
-import { Box, Container } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalEliminar from "./ModalEliminar";
@@ -59,6 +59,9 @@ function Clientes() {
         message={snackOptions.message}
         variant={snackOptions.variant}
       />
+      <Typography variant='h2' fontWeight='700' color='primary'>
+        Clientes
+      </Typography>
       <Box sx={{ width: "100%", my: 2 }}>
         <Box
           className='ag-theme-alpine-dark'
