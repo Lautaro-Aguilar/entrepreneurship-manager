@@ -24,7 +24,7 @@ export async function getOrders() {
         total: order.total,
         productos: order.productos.join(","),
         cantidades: order.arraydecantidad.join(","),
-        fechaentrega: order.fechaentrega,
+        fechaentrega: formatDate(new Date(order.fechaentrega), true),
         fecharealizado: formatDate(new Date(order.fecharealizado), true),
         estado: order.estado,
       };
