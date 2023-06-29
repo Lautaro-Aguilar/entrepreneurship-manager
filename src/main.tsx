@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/Root";
-import "./app.css";
+import "./App.css";
 import Clientes from "./components/Clientes/page";
 import Orders from "./components/Orders/page";
 import Productos from "./components/Productos/page";

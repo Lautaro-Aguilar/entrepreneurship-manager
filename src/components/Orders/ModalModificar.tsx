@@ -12,18 +12,8 @@ import ORDER from "../../types/ORDER";
 import { useTheme } from "@emotion/react";
 import useOrders from "./useOrders";
 import CUSTOMER from "../../types/CUSTOMER";
-
-interface SELECTEDORDER {
-  cliente: string;
-  cantidades: string;
-  estado: string;
-  fechaentrega: string;
-  fecharealizado: string;
-  idpedido: number;
-  productos: string;
-  sena: number;
-  total: 41;
-}
+import SELECTEDORDER from "../../types/SELECTEDORDER";
+import PRODUCTLIST from "../../types/PRODUCTLIST";
 
 type ModalModificarProps = {
   open: boolean;
@@ -38,7 +28,7 @@ function ModalModificar({
   selectedOrder,
   updateGrid,
 }: ModalModificarProps) {
-  const { customers, formDataOrder, setFormDataOrder } = useOrders({
+  const { customers, formDataOrder, setFormDataOrder, productList } = useOrders({
     open,
     updateGrid,
   });
@@ -51,8 +41,11 @@ function ModalModificar({
     telefono: "",
   });
   const [orderToModify, setOrderToModify] = useState<SELECTEDORDER>();
+  const [coincidingProducts, setCoincidingProducts] = useState<PRODUCTLIST[]>([]);
+  const [cantidades, setCantidades] = useState<Number[]>([])
 
   useEffect(() => {
+    console.log(selectedOrder[0], productList)
     setOrderToModify(selectedOrder[0]);
     if (orderToModify) {
       const clienteAModificar = customers.find(
@@ -67,8 +60,15 @@ function ModalModificar({
           telefono: "",
         }
       );
+
+      const coincidingProducts = productList.filter((producto) =>
+        orderToModify.productos.includes(producto.nombre)
+      );
+      setCoincidingProducts(coincidingProducts);
+
+      const cantidadesArray = orderToModify.cantidades.split(",").map(Number);
+      setCantidades(cantidadesArray)
     }
-    console.log(orderToModify, selectedOrder[0]);
   }, [open, selectedOrder]);
 
   const handleSubmit = () => {
@@ -102,7 +102,7 @@ function ModalModificar({
               fontWeight={600}
               component='h2'
             >
-              Nuevo Pedido
+              Modificar Pedido
             </Typography>
           </Box>
 
@@ -113,6 +113,24 @@ function ModalModificar({
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             borderRadius={"0px 0px 10px 10px"}
           >
+            {coincidingProducts.map((product: PRODUCTLIST, index: number) => (
+              <Box key={index} sx={{ display: 'flex', gap: 3 }}>
+                <Autocomplete
+                  disablePortal
+                  style={{ width: "70%" }}
+                  options={productList}
+                  value={product}
+                  getOptionLabel={(option) => option.nombre}
+                  renderInput={(params) => <TextField {...params} label='Producto' />}
+                />
+
+                <TextField
+                  label="Cantidad"
+                  type="number"
+                  value={cantidades[index]}
+                  InputLabelProps={{ shrink: true }} />
+              </Box>
+            ))}
             <Autocomplete
               disablePortal
               options={customers}
