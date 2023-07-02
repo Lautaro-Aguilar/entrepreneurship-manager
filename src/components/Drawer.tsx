@@ -12,12 +12,11 @@ import {
   ListItemIcon,
   ListItemButton,
 } from "@mui/material";
-import { BookmarkAdded, Menu, Science } from "@mui/icons-material";
+import { AttachMoney, BookmarkAdded, Menu, Science } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import { useTheme } from "@emotion/react";
 
 const links = [
@@ -46,10 +45,15 @@ const links = [
     href: "/Components",
     title: "Theme",
   },
+  {
+    icono: <AttachMoney />,
+    href: "/Dashboard",
+    title: "Panel",
+  },
 ];
 
 function DrawerResponsive() {
-  const theme = useTheme();
+  const theme: any = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const drawerWidth = 240;
 

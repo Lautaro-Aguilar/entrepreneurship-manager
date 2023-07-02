@@ -7,8 +7,9 @@ import Clientes from "./components/Clientes/page";
 import Orders from "./components/Orders/page";
 import Productos from "./components/Productos/page";
 import Inicio from "./components/Inicio/page";
-import { createTheme, ThemeProvider } from "@mui/material";
 import Components from "./components/Components";
+import Dashboard from "./components/Panel/page";
+import { createTheme, ThemeProvider } from "@mui/material";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/Components",
         element: <Components />,
+      },
+      {
+        path: "/Dashboard",
+        element: <Dashboard />,
       },
     ],
   },
