@@ -1,35 +1,17 @@
 import { AttachMoney } from "@mui/icons-material";
 import { Box, Container, TextField, Typography } from "@mui/material";
-import React from "react";
-
-interface CardProps {
-  title: string;
-  footer: string;
-  text: string;
-  icon: React.JSX.Element;
-}
-
-const Card = ({ title, text, footer, icon }: CardProps) => {
-  return (
-    <Box
-      width={300}
-      sx={{ border: "2px solid #e85d04", borderRadius: 1, padding: 2 }}
-    >
-      <Box display='flex' justifyContent='space-between'>
-        <Typography variant='subtitle1'>{title}</Typography>
-        {icon}
-      </Box>
-      <Box>
-        <Typography>{text}</Typography>
-      </Box>
-    </Box>
-  );
-};
+import Card from "./Card";
+import ChartBar from "./ChartBar";
 
 const page = () => {
   return (
     <Container
-      sx={{ padding: "20px 0px", border: "2px solid #e85d04", borderRadius: 1 }}
+      sx={{
+        margin: "20px auto",
+        padding: "20px 0px",
+        border: "2px solid #e85d04",
+        borderRadius: 4,
+      }}
     >
       <Box display='flex' justifyContent='space-between'>
         <Typography
@@ -55,13 +37,28 @@ const page = () => {
           />
         </Box>
       </Box>
-      <Box>
+      <Box display='flex' gap={3} justifyContent='space-between' py={2} my={3}>
         <Card
           title='Ganacia'
-          footer='10% more than last mont'
+          footer='10% more than last month'
           icon={<AttachMoney />}
           text='$140.200'
         />
+        <Card
+          title='Total Ventas'
+          footer='40% more than last month'
+          icon={<AttachMoney />}
+          text='$140.200'
+        />
+        <Card
+          title='Ganacia'
+          footer='10% less than last month'
+          icon={<AttachMoney />}
+          text='$140.200'
+        />
+      </Box>
+      <Box>
+        <ChartBar />
       </Box>
     </Container>
   );
