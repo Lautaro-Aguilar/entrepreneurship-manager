@@ -40,7 +40,7 @@ export const data = {
     {
       label: "Dataset 1",
       data: [40, 50, 60],
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
+      backgroundColor: "#b28205",
     },
   ],
 };
@@ -50,13 +50,3 @@ const ChartBar = () => {
 };
 
 export default ChartBar;
-
-/* 
-
-import React from 'react';
-
-export function App() {
-  return <Bar options={options} data={data} />;
-}
-
-*/
