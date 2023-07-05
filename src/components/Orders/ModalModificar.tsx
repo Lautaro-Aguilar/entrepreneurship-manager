@@ -16,12 +16,12 @@ import { Add, Delete } from "@mui/icons-material";
 import REQUESTORDER from "../../types/REQUESTORDER";
 import * as orderUseCases from "../../services/orders.usecases";
 import transformDate from "./utils/transformDate";
-
+import ORDER from "../../types/ORDER";
 
 type ModalModificarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedOrder: SELECTEDORDER[];
+  selectedOrder: SELECTEDORDER[] | ORDER[];
   updateGrid: (data: any) => void;
 };
 
@@ -43,7 +43,7 @@ function ModalModificar({
     direccion: "",
     telefono: "",
   });
-  const [orderToModify, setOrderToModify] = useState<SELECTEDORDER>({
+  const [orderToModify, setOrderToModify] = useState<any>({
     cliente: "",
     cantidades: "",
     estado: "",
@@ -54,14 +54,14 @@ function ModalModificar({
     total: 0,
   });
   const [products, setProducts] = useState<PRODUCTLIST[]>([]);
-  const [cantidades, setCantidades] = useState<(number | undefined)[]>([])
+  const [cantidades, setCantidades] = useState<(number | undefined)[]>([]);
   const [total, setTotal] = useState(0);
 
   const handleAgregarInput = (index: number) => {
     const updatedProducts = [...products];
-    const updatedQuantities = [...cantidades]
-    updatedQuantities.splice(index + 1, 0, 0)
-    setCantidades(updatedQuantities)
+    const updatedQuantities = [...cantidades];
+    updatedQuantities.splice(index + 1, 0, 0);
+    setCantidades(updatedQuantities);
     updatedProducts.splice(index + 1, 0, {
       nombre: "",
       quantity: 0,
@@ -73,13 +73,15 @@ function ModalModificar({
 
   const resolveTotal = (value: number) => {
     setTotal(total + value);
-    setOrderToModify({ ...orderToModify, total: total })
+    setOrderToModify({ ...orderToModify, total: total });
   };
 
   useEffect(() => {
     if (selectedOrder[0]) {
-      const defaultDate = transformDate(selectedOrder[0].fechaentrega)
-      const order = { ...selectedOrder[0], fechaentrega: defaultDate }
+      const defaultDate = transformDate(
+        selectedOrder[0].fechaentrega || new Date()
+      );
+      const order = { ...selectedOrder[0], fechaentrega: defaultDate };
       setOrderToModify(order);
 
       if (orderToModify) {
@@ -99,12 +101,12 @@ function ModalModificar({
         const coincidingProducts = productList.filter((producto) =>
           orderToModify.productos.includes(producto.nombre)
         );
-        setProducts(coincidingProducts)
+        setProducts(coincidingProducts);
 
         const cantidadesArray = orderToModify.cantidades.split(",").map(Number);
-        setCantidades(cantidadesArray)
+        setCantidades(cantidadesArray);
 
-        setTotal(orderToModify.total)
+        setTotal(orderToModify.total);
       }
     }
   }, [open, selectedOrder]);
@@ -117,31 +119,31 @@ function ModalModificar({
     const updatedProducts = [...products];
     updatedProducts.splice(index, 1);
     setProducts(updatedProducts);
-    const updateQuantities = [...cantidades]
-    updateQuantities.splice(index, 1)
-    setCantidades(updateQuantities)
+    const updateQuantities = [...cantidades];
+    updateQuantities.splice(index, 1);
+    setCantidades(updateQuantities);
 
     if (cantidad) {
-      console.log('CANTIDAD:', cantidad)
+      console.log("CANTIDAD:", cantidad);
       const totalRestar = precio * cantidad;
-      console.log(totalRestar)
+      console.log(totalRestar);
       resolveTotal(-totalRestar);
     }
   };
 
   const handleSubmit = () => {
-    const arrayidsproductos = products.map((prod) => prod.id)
+    const arrayidsproductos = products.map((prod) => prod.id);
     const request: REQUESTORDER = {
       idcliente: clientToModify.id,
       arrayidsproductos,
       arraydecantidad: cantidades,
       fechaentrega: orderToModify.fechaentrega,
       total,
-      estado: "Pendiente"
-    }
+      estado: "Pendiente",
+    };
     orderUseCases.update(request, orderToModify.idpedido).then((response) => {
-      updateGrid(response)
-    })
+      updateGrid(response);
+    });
   };
 
   return (
@@ -184,7 +186,7 @@ function ModalModificar({
             borderRadius={"0px 0px 10px 10px"}
           >
             {products.map((product: PRODUCTLIST, index: number) => (
-              <Box key={index} sx={{ display: 'flex', gap: 3 }}>
+              <Box key={index} sx={{ display: "flex", gap: 3 }}>
                 <Autocomplete
                   disablePortal
                   style={{ width: "70%" }}
@@ -192,41 +194,44 @@ function ModalModificar({
                   value={product}
                   onChange={(event, newValue) => {
                     if (newValue) {
-                      const updateProducts = [...products]
-                      updateProducts[index].nombre = newValue.nombre
-                      updateProducts[index].precio = newValue.precio
-                      updateProducts[index].id = newValue.id
-                      setProducts(updateProducts)
+                      const updateProducts = [...products];
+                      updateProducts[index].nombre = newValue.nombre;
+                      updateProducts[index].precio = newValue.precio;
+                      updateProducts[index].id = newValue.id;
+                      setProducts(updateProducts);
                     }
                   }}
                   getOptionLabel={(option) => option.nombre}
-                  renderInput={(params) => <TextField {...params} label='Producto' />}
+                  renderInput={(params) => (
+                    <TextField {...params} label='Producto' />
+                  )}
                 />
 
                 <TextField
-                  label="Cantidad"
-                  type="number"
+                  label='Cantidad'
+                  type='number'
                   value={cantidades[index]}
                   InputProps={{ inputProps: { min: -1, max: 10 } }}
                   onChange={(event) => {
-                    const { value } = event.target
+                    const { value } = event.target;
                     const enteredValue = Number(value);
-                    const updatedQuantities = [...cantidades]
+                    const updatedQuantities = [...cantidades];
                     if (enteredValue <= -1) {
-                      updatedQuantities[index] = 0
-                      setCantidades(updatedQuantities)
+                      updatedQuantities[index] = 0;
+                      setCantidades(updatedQuantities);
                     } else {
-                      const product = products[index]
-                      const previousTotal = product.precio * updatedQuantities[index]
-                      const newQuantity = parseInt(value) || 0
-                      const newTotal = product.precio * newQuantity
-                      resolveTotal(newTotal - previousTotal)
-                      updatedQuantities[index] = newQuantity
-                      setCantidades(updatedQuantities)
+                      const product = products[index];
+                      const previousTotal =
+                        product.precio * updatedQuantities[index];
+                      const newQuantity = parseInt(value) || 0;
+                      const newTotal = product.precio * newQuantity;
+                      resolveTotal(newTotal - previousTotal);
+                      updatedQuantities[index] = newQuantity;
+                      setCantidades(updatedQuantities);
                     }
-
                   }}
-                  InputLabelProps={{ shrink: true }} />
+                  InputLabelProps={{ shrink: true }}
+                />
 
                 <Button
                   variant='outlined'
@@ -234,7 +239,11 @@ function ModalModificar({
                   size='small'
                   sx={{ marginLeft: "auto", borderRadius: 0 }}
                   onClick={() =>
-                    handleEliminarInput(index, product.precio, cantidades[index])
+                    handleEliminarInput(
+                      index,
+                      product.precio,
+                      cantidades[index]
+                    )
                   }
                 >
                   <Delete fontSize='small' />
@@ -256,7 +265,7 @@ function ModalModificar({
               fullWidth
               onChange={(event, value) => {
                 if (value) {
-                  setClientToModify(value)
+                  setClientToModify(value);
                 }
               }}
               renderInput={(params) => (
