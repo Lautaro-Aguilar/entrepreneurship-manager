@@ -2,7 +2,7 @@ export default interface SELECTEDORDER {
   cliente: string;
   cantidades: string;
   estado: string;
-  fechaentrega: string | Date;
+  fechaentrega?: string | Date;
   fecharealizado: string;
   idpedido: number;
   productos: string;

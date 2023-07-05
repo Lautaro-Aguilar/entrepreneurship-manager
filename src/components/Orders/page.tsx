@@ -33,7 +33,7 @@ function useOrders({
 
   const updateGrid = (response: any) => {
     if (response.errors !== null) {
-      openSnackBar("error", "Hubo un error al agregar el pedido 😞")
+      openSnackBar("error", "Hubo un error al agregar el pedido 😞");
       closeModal();
     } else {
       setOrders(response.data);
@@ -46,16 +46,22 @@ function useOrders({
     setOrders(data);
     openSnackBar("success", "Pedido agregado correctamente 👍");
     closeModal();
-  }
+  };
 
-  return { orders, selectedOrder, handleChangeSelection, updateGrid, updateDeleteGrid };
+  return {
+    orders,
+    selectedOrder,
+    handleChangeSelection,
+    updateGrid,
+    updateDeleteGrid,
+  };
 }
 
 function Orders() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
-  const [rowsSelected, setRowsSelected] = useState<SELECTEDORDER[]>([])
+  const [rowsSelected, setRowsSelected] = useState<SELECTEDORDER[]>([]);
   const columns = buildColumns();
 
   const handleRowsSelected = (e: any) => {
@@ -66,29 +72,34 @@ function Orders() {
     const promises = orders.map((order) => {
       return new Promise((resolve, reject) => {
         useCases.destroy(order.idpedido).then((response) => {
-          resolve(response)
-        })
-      })
-    })
+          resolve(response);
+        });
+      });
+    });
 
     Promise.all(promises).then((resultados) => {
       useCases.getAll().then(({ data }) => {
-        updateDeleteGrid(data)
-        setOpenModalEliminar(false)
-        openSnackBar("success", "Pedido removido correctamente 👍")
-      })
-    })
-  }
+        updateDeleteGrid(data);
+        setOpenModalEliminar(false);
+        openSnackBar("success", "Pedido removido correctamente 👍");
+      });
+    });
+  };
 
   const closeModalAgregar = () => setOpenModalAgregar(false);
 
   const { openSnackBar, closeSnackBar, isSnackBarOpen, snackOptions } =
     useSnackBar();
-  const { orders, handleChangeSelection, updateGrid, selectedOrder, updateDeleteGrid } =
-    useOrders({
-      openSnackBar,
-      closeModal: closeModalAgregar,
-    });
+  const {
+    orders,
+    handleChangeSelection,
+    updateGrid,
+    selectedOrder,
+    updateDeleteGrid,
+  } = useOrders({
+    openSnackBar,
+    closeModal: closeModalAgregar,
+  });
 
   return (
     <Container
@@ -139,7 +150,9 @@ function Orders() {
             color='secondary'
             disabled={selectedOrder.length > 0 && rowsSelected.length < 2 ? false : true}
             size='large'
-            onClick={() => { setOpenModalModificar(true) }}
+            onClick={() => {
+              setOpenModalModificar(true);
+            }}
           >
             Modificar
           </Button>
@@ -165,7 +178,12 @@ function Orders() {
         selectedOrder={selectedOrder}
         updateGrid={updateGrid}
       />
-      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} orders={rowsSelected} handleRemoveSubmit={handleDeleteOrders} />
+      <ModalEliminar
+        open={openModalEliminar}
+        setOpen={setOpenModalEliminar}
+        orders={rowsSelected}
+        handleRemoveSubmit={handleDeleteOrders}
+      />
     </Container>
   );
 }
