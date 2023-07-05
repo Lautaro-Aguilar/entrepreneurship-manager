@@ -16,7 +16,7 @@ function Orders() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
-  const [openModalEstado, setOpenModalEstado] = useState(true);
+  const [openModalEstado, setOpenModalEstado] = useState(false);
   const [rowsSelected, setRowsSelected] = useState<SELECTEDORDER[]>([]);
   const columns = buildColumns();
 
@@ -122,7 +122,7 @@ function Orders() {
             color='info'
             disabled={rowsSelected.length < 1}
             size='large'
-            onClick={() => setOpenModalEliminar(true)}
+            onClick={() => setOpenModalEstado(true)}
           >
             Cambiar Estado
           </Button>

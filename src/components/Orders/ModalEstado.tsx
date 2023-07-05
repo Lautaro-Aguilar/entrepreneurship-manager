@@ -19,6 +19,13 @@ interface ModalEstadoProps {
   handleSubmit: () => void;
 }
 
+interface PedidoItemProps {
+  id: number;
+  estado: string;
+  fechaentrega: string | Date | undefined;
+}
+
+
 function ModalEstado({
   open,
   handleClose,
@@ -26,6 +33,42 @@ function ModalEstado({
   handleSubmit,
 }: ModalEstadoProps) {
   const theme: any = useTheme();
+
+  const PedidoItem = ({ id, estado, fechaentrega }: PedidoItemProps) => {
+    const colorEstado = estado === "Pendiente" ? "red" : "green";
+    const textoEstado = estado === "Pendiente" ? "Finalizado" : "Pendiente";
+
+    return (
+      <ListItem>
+        <ListItemText>
+          <Box sx={{ display: "flex", justifyContent: "center", flexDirection: 'column' }}>
+            <span>ID Pedido: {id}</span>
+            <span>Fecha entrega: {fechaentrega?.toLocaleString()}</span>
+            <span>Estado actual: <span
+              style={{
+                marginLeft: 5,
+                color: colorEstado,
+                fontWeight: "600",
+              }}
+            >
+              {estado}
+            </span></span>
+            <span>Nuevo estado: <span
+              style={{
+                marginLeft: 5,
+                color: colorEstado === "red" ? "green" : "red",
+                fontWeight: "600",
+              }}
+            >
+              {textoEstado}
+            </span></span>
+
+          </Box>
+        </ListItemText>
+      </ListItem>
+    );
+  };
+
 
   return (
     <div>
@@ -60,37 +103,8 @@ function ModalEstado({
               Vas a cambiar los estados de los siguientes pedidos:
             </Typography>
             <List>
-              {pedidos.map((element, index) => (
-                <ListItem key={index}>
-                  <ListItemText>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      ID: {element.idpedido}, Estado:
-                      <span
-                        style={{
-                          marginLeft: 5,
-                          color:
-                            element.estado === "Pendiente" ? "red" : "green",
-                          fontWeight: "600",
-                        }}
-                      >
-                        {element.estado}
-                      </span>
-                      <ArrowRightAltIcon />
-                      <span
-                        style={{
-                          marginLeft: 5,
-                          color:
-                            element.estado === "Pendiente" ? "green" : "red",
-                          fontWeight: "600",
-                        }}
-                      >
-                        {element.estado === "Pendiente"
-                          ? "Finalizado"
-                          : "Pendiente"}
-                      </span>
-                    </Box>
-                  </ListItemText>
-                </ListItem>
+              {pedidos.map((pedido) => (
+                <PedidoItem key={pedido.idpedido} id={pedido.idpedido} estado={pedido.estado} fechaentrega={pedido.fechaentrega} />
               ))}
             </List>
             <Box sx={{ display: "flex", gap: 5, justifyContent: "flex-end" }}>
