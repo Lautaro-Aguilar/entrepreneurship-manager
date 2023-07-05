@@ -3,6 +3,7 @@ import ORDER from "../../types/ORDER";
 import { useEffect, useState } from "react";
 import { AlertColor } from "@mui/material";
 import * as useCases from "../../services/orders.usecases";
+import SELECTEDORDER from "../../types/SELECTEDORDER";
 
 export default function useOrders({
   openSnackBar,
@@ -40,11 +41,18 @@ export default function useOrders({
     closeModal();
   };
 
+  const handleUpdateStateOrder = (orders: SELECTEDORDER[]) => {
+    useCases.updateState(orders).then((response) => {
+      console.log(response);
+    });
+  };
+
   return {
     orders,
     selectedOrder,
     handleChangeSelection,
     updateGrid,
     updateDeleteGrid,
+    handleUpdateStateOrder,
   };
 }

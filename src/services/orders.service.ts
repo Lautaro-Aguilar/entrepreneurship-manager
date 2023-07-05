@@ -111,9 +111,12 @@ export async function deleteOrder(id: number) {
   return response;
 }
 
-export async function updateStateOrder(ids: number[]) {
+export async function updateStateOrder(orders: SELECTEDORDER[]) {
   const { data: pedidosDB } = await supabase.from("pedidos").select("*");
 
+  const arrayIDs = orders.map((order) => order.idpedido);
+
+  console.log("array de ids: ", arrayIDs);
   let updatedOrders: ORDER[] = [];
   if (pedidosDB) {
     updatedOrders = pedidosDB.map((order) => {
@@ -123,12 +126,13 @@ export async function updateStateOrder(ids: number[]) {
       };
       return updatedElement;
     });
+    console.log("pedidos db: ", pedidosDB);
+    console.log("updatedOrders: ", updatedOrders);
   }
-
   const { data, error } = await supabase
     .from("pedidos")
     .update(updatedOrders)
-    .in("idpedido", ids)
+    .in("idpedido", arrayIDs)
     .select("*");
 
   const response = {

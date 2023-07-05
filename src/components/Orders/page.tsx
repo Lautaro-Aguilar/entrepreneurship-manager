@@ -55,6 +55,7 @@ function Orders() {
     updateGrid,
     selectedOrder,
     updateDeleteGrid,
+    handleUpdateStateOrder,
   } = useOrders({
     openSnackBar,
     closeModal: closeModalAgregar,
@@ -158,7 +159,7 @@ function Orders() {
         open={openModalEstado}
         pedidos={rowsSelected}
         handleClose={handleCloseModalEstado}
-        handleSubmit={() => console.log("submit")}
+        handleSubmit={() => handleUpdateStateOrder(rowsSelected)}
       />
     </Container>
   );
