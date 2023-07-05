@@ -11,7 +11,7 @@ const SellsCard = ({ customerName, date, total }: SellsCard) => {
   return (
     <Box
       sx={{
-        border: "3px solid #388e3c",
+        border: "3px solid #E68F00",
         padding: 1,
         borderRadius: 3,
         display: "flex ",

@@ -40,7 +40,7 @@ export const data = {
     {
       label: "Dataset 1",
       data: [40, 50, 60],
-      backgroundColor: "#b28205",
+      backgroundColor: "#E68F00",
     },
   ],
 };
