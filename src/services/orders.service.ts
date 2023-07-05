@@ -1,5 +1,6 @@
 import supabase from "../supabase/supabase";
 import ORDER from "../types/ORDER";
+import SELECTEDORDER from "../types/SELECTEDORDER";
 import formatDate from "../utils/formatDate";
 
 interface __TORDER extends ORDER {
@@ -104,6 +105,34 @@ export async function deleteOrder(id: number) {
 
   const response = {
     data: supabaseResponse,
+    errors: error,
+  };
+
+  return response;
+}
+
+export async function updateStateOrder(ids: number[]) {
+  const { data: pedidosDB } = await supabase.from("pedidos").select("*");
+
+  let updatedOrders: ORDER[] = [];
+  if (pedidosDB) {
+    updatedOrders = pedidosDB.map((order) => {
+      const updatedElement: ORDER = {
+        ...order,
+        estado: order.estado === "Finalizado" ? "Pendiente" : "Finalizado",
+      };
+      return updatedElement;
+    });
+  }
+
+  const { data, error } = await supabase
+    .from("pedidos")
+    .update(updatedOrders)
+    .in("idpedido", ids)
+    .select("*");
+
+  const response = {
+    data,
     errors: error,
   };
 
