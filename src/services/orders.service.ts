@@ -112,28 +112,19 @@ export async function deleteOrder(id: number) {
 }
 
 export async function updateStateOrder(orders: SELECTEDORDER[]) {
-  const { data: pedidosDB } = await supabase.from("pedidos").select("*");
-
   const arrayIDs = orders.map((order) => order.idpedido);
 
-  console.log("array de ids: ", arrayIDs);
-  let updatedOrders: ORDER[] = [];
-  if (pedidosDB) {
-    updatedOrders = pedidosDB.map((order) => {
-      const updatedElement: ORDER = {
-        ...order,
-        estado: order.estado === "Finalizado" ? "Pendiente" : "Finalizado",
-      };
-      return updatedElement;
-    });
-    console.log("pedidos db: ", pedidosDB);
-    console.log("updatedOrders: ", updatedOrders);
-  }
+  const updatedOrders = orders.map((order) => {
+    return {
+      idpedido: order.idpedido,
+      estado: order.estado === "Finalizado" ? "Pendiente" : "Finalizado",
+    };
+  });
+
   const { data, error } = await supabase
     .from("pedidos")
-    .update(updatedOrders)
-    .in("idpedido", arrayIDs)
-    .select("*");
+    .upsert(updatedOrders)
+    .select("*")
 
   const response = {
     data,
