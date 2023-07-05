@@ -137,7 +137,7 @@ function Orders() {
           <Button
             variant='contained'
             color='secondary'
-            disabled={selectedOrder.length > 0 ? false : true}
+            disabled={selectedOrder.length > 0 && rowsSelected.length < 2 ? false : true}
             size='large'
             onClick={() => { setOpenModalModificar(true) }}
           >
@@ -146,6 +146,7 @@ function Orders() {
           <Button
             variant='contained'
             color='error'
+            disabled={rowsSelected.length < 1}
             size='large'
             onClick={() => setOpenModalEliminar(true)}
           >

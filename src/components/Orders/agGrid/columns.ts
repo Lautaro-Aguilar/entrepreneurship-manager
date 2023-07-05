@@ -1,3 +1,5 @@
+import RagRenderer from "./RagRender";
+
 const buildColumns = () => {
   const columns = [
     {
@@ -42,7 +44,12 @@ const buildColumns = () => {
       field: "estado",
       headerClass: "header-text-center",
       cellStyle: { textAlign: "center" },
+      cellRenderer: RagRenderer,
       width: 150,
+      cellClassRules: {
+        'cell-green': (params: any) => params.value === "Finalizado",
+        'cell-red': (params: any) => params.value === "Pendiente",
+      },
     },
   ];
   return columns;

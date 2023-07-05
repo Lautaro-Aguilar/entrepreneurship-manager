@@ -58,6 +58,9 @@ function useOrders({
       total: 0,
       estado: "Pendiente",
     })
+    setTimeout(() => {
+      setTotal(0)
+    }, 500)
   };
 
   useEffect(() => {
