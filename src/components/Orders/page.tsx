@@ -11,6 +11,7 @@ import { SelectionChangedEvent } from "ag-grid-community";
 import useSnackBar from "../shared/hooks/useSnackBar";
 import SnackbarCustom from "../shared/SnackbarCustom";
 import SELECTEDORDER from "../../types/SELECTEDORDER";
+import ModalEstado from "./ModalEstado";
 
 function useOrders({
   openSnackBar,
@@ -61,6 +62,7 @@ function Orders() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
+  const [openModalPrueba, setOpenModalPrueba] = useState(true);
   const [rowsSelected, setRowsSelected] = useState<SELECTEDORDER[]>([]);
   const columns = buildColumns();
 
@@ -184,6 +186,7 @@ function Orders() {
         orders={rowsSelected}
         handleRemoveSubmit={handleDeleteOrders}
       />
+      <ModalEstado open={openModalPrueba} />
     </Container>
   );
 }
