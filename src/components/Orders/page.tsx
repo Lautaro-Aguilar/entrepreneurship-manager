@@ -132,14 +132,14 @@ function Orders() {
             gridOptions={{ defaultColDef: { resizable: true, filter: true } }}
             onSelectionChanged={handleChangeSelection}
             rowSelection='multiple'
-            onRowSelected={(e) => handleRowsSelected(e)}
+            onRowSelected={handleRowsSelected}
           />
         </Box>
 
         <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
           <Button
             variant='contained'
-            color='info'
+            color='success'
             size='large'
             onClick={() => setOpenModalAgregar(true)}
           >
@@ -148,13 +148,24 @@ function Orders() {
           <Button
             variant='contained'
             color='secondary'
-            disabled={selectedOrder.length > 0 && rowsSelected.length < 2 ? false : true}
+            disabled={
+              selectedOrder.length > 0 && rowsSelected.length < 2 ? false : true
+            }
             size='large'
             onClick={() => {
               setOpenModalModificar(true);
             }}
           >
             Modificar
+          </Button>
+          <Button
+            variant='contained'
+            color='info'
+            disabled={rowsSelected.length < 1}
+            size='large'
+            onClick={() => setOpenModalEliminar(true)}
+          >
+            Cambiar Estado
           </Button>
           <Button
             variant='contained'
