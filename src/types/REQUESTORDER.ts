@@ -3,7 +3,6 @@ export default interface REQUESTORDER {
   arrayidsproductos: (number | undefined)[];
   arraydecantidad: (number | undefined)[];
   fechaentrega: string | Date;
-  sena: number;
   total: number;
   estado: "Pendiente" | "Finalizado";
 }

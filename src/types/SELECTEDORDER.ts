@@ -6,6 +6,5 @@ export default interface SELECTEDORDER {
   fecharealizado: string;
   idpedido: number;
   productos: string;
-  sena: number;
-  total: 41;
+  total: number;
 }

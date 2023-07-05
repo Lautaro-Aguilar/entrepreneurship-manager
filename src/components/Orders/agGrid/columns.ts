@@ -31,13 +31,6 @@ const buildColumns = () => {
       cellStyle: { textAlign: "center" },
     },
     {
-      headerName: "Seña",
-      field: "sena",
-      headerClass: "header-text-center",
-      cellStyle: { textAlign: "center" },
-      width: 100,
-    },
-    {
       headerName: "Total",
       field: "total",
       headerClass: "header-text-center",

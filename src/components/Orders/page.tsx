@@ -10,6 +10,7 @@ import * as useCases from "../../services/orders.usecases";
 import { SelectionChangedEvent } from "ag-grid-community";
 import useSnackBar from "../shared/hooks/useSnackBar";
 import SnackbarCustom from "../shared/SnackbarCustom";
+import SELECTEDORDER from "../../types/SELECTEDORDER";
 
 function useOrders({
   openSnackBar,
@@ -20,7 +21,6 @@ function useOrders({
 }) {
   const [orders, setOrders] = useState<ORDER[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<ORDER[]>([]);
-
   useEffect(() => {
     useCases.getAll().then((res) => {
       setOrders(res.data);
@@ -31,26 +31,60 @@ function useOrders({
     setSelectedOrder(e.api.getSelectedRows());
   };
 
-  const updateGrid = (values: any) => {
-    setOrders(values);
-    openSnackBar("success", "Pedido agregado correctamente 👍");
-    closeModal();
+  const updateGrid = (response: any) => {
+    if (response.errors !== null) {
+      openSnackBar("error", "Hubo un error al agregar el pedido 😞")
+      closeModal();
+    } else {
+      setOrders(response.data);
+      openSnackBar("success", "Pedido agregado correctamente 👍");
+      closeModal();
+    }
   };
 
-  return { orders, selectedOrder, handleChangeSelection, updateGrid };
+  const updateDeleteGrid = (data: any) => {
+    setOrders(data);
+    openSnackBar("success", "Pedido agregado correctamente 👍");
+    closeModal();
+  }
+
+  return { orders, selectedOrder, handleChangeSelection, updateGrid, updateDeleteGrid };
 }
 
 function Orders() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
+  const [rowsSelected, setRowsSelected] = useState<SELECTEDORDER[]>([])
   const columns = buildColumns();
+
+  const handleRowsSelected = (e: any) => {
+    setRowsSelected(e.api.getSelectedRows());
+  };
+
+  const handleDeleteOrders = (orders: SELECTEDORDER[]) => {
+    const promises = orders.map((order) => {
+      return new Promise((resolve, reject) => {
+        useCases.destroy(order.idpedido).then((response) => {
+          resolve(response)
+        })
+      })
+    })
+
+    Promise.all(promises).then((resultados) => {
+      useCases.getAll().then(({ data }) => {
+        updateDeleteGrid(data)
+        setOpenModalEliminar(false)
+        openSnackBar("success", "Pedido removido correctamente 👍")
+      })
+    })
+  }
 
   const closeModalAgregar = () => setOpenModalAgregar(false);
 
   const { openSnackBar, closeSnackBar, isSnackBarOpen, snackOptions } =
     useSnackBar();
-  const { orders, handleChangeSelection, updateGrid, selectedOrder } =
+  const { orders, handleChangeSelection, updateGrid, selectedOrder, updateDeleteGrid } =
     useOrders({
       openSnackBar,
       closeModal: closeModalAgregar,
@@ -81,11 +115,13 @@ function Orders() {
           style={{ height: 400, width: "100%" }}
         >
           <AgGridReact
+            rowMultiSelectWithClick
             columnDefs={columns}
             rowData={orders}
             gridOptions={{ defaultColDef: { resizable: true, filter: true } }}
             onSelectionChanged={handleChangeSelection}
             rowSelection='multiple'
+            onRowSelected={(e) => handleRowsSelected(e)}
           />
         </Box>
 
@@ -101,8 +137,9 @@ function Orders() {
           <Button
             variant='contained'
             color='secondary'
+            disabled={selectedOrder.length > 0 ? false : true}
             size='large'
-            onClick={() => setOpenModalModificar(true)}
+            onClick={() => { setOpenModalModificar(true) }}
           >
             Modificar
           </Button>
@@ -125,8 +162,9 @@ function Orders() {
         open={openModalModificar}
         setOpen={setOpenModalModificar}
         selectedOrder={selectedOrder}
+        updateGrid={updateGrid}
       />
-      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} />
+      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} orders={rowsSelected} handleRemoveSubmit={handleDeleteOrders} />
     </Container>
   );
 }

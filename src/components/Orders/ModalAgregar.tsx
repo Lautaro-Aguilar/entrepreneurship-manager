@@ -71,17 +71,24 @@ const renderAdditionalInputs = ({
         label='Cantidad'
         type='number'
         value={product.quantity}
+        InputProps={{ inputProps: { min: -1, max: 10 } }}
         onChange={(event) => {
           const updatedProducts = [...products];
           const pr = updatedProducts[index];
-          if (pr.quantity !== undefined) {
-            const previousTotal = pr.precio * pr.quantity;
-            pr.quantity = parseInt(event.target.value) || 0;
-            const newTotal = pr.precio * pr.quantity;
-            resolveTotal(newTotal - previousTotal);
-            setProducts(updatedProducts);
+          const enteredValue = Number(event.target.value);
+
+          if (enteredValue <= -1) {
+            pr.quantity = 0; // Establecer el valor como 0 si es igual o menor a -1
+          } else {
+            if (pr.quantity !== undefined) {
+              const previousTotal = pr.precio * pr.quantity;
+              pr.quantity = parseInt(event.target.value) || 0;
+              const newTotal = pr.precio * pr.quantity;
+              resolveTotal(newTotal - previousTotal);
+            }
           }
-          // setFormDataOrder({...formDataOrder, updatedProducts})
+
+          setProducts(updatedProducts);
         }}
       />
 
@@ -107,12 +114,16 @@ function ModalAgregar({ open, setOpen, updateGrid }: ModalAgregarProps) {
     productList,
     customers,
     total,
+    setTotal,
     resolveTotal,
     formDataOrder,
     setFormDataOrder,
     handleSubmit,
   } = useOrders({ open, updateGrid });
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false)
+    setTotal(0)
+  };
   const theme: any = useTheme();
 
   const handleAgregarInput = (index: number) => {
@@ -209,21 +220,6 @@ function ModalAgregar({ open, setOpen, updateGrid }: ModalAgregarProps) {
                 fechaentrega: e.target.value,
               });
             }}
-          />
-
-          <TextField
-            label='Seña'
-            type='number'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>$</InputAdornment>
-              ),
-            }}
-            onChange={(e) => {
-              const value = Number(e.target.value);
-              setFormDataOrder({ ...formDataOrder, sena: value });
-            }}
-            InputLabelProps={{ shrink: true }}
           />
 
           <Box

@@ -6,6 +6,7 @@ import * as orderUseCases from "../../services/orders.usecases";
 import * as customersUseCases from "../../services/customers.useCases";
 import * as productsUseCases from "../../services/products.useCases";
 import PRODUCT from "../../types/PRODUCT";
+import SELECTEDORDER from "../../types/SELECTEDORDER";
 
 const currentDate = new Date().toISOString().slice(0, 16);
 
@@ -23,7 +24,6 @@ function useOrders({
     arraydecantidad: [],
     arrayidsproductos: [],
     fechaentrega: currentDate,
-    sena: 0,
     total: 0,
     estado: "Pendiente",
   });
@@ -44,15 +44,20 @@ function useOrders({
       arrayidsproductos,
       arraydecantidad,
       fechaentrega: new Date(formDataOrder.fechaentrega),
-      sena: formDataOrder.sena,
       total: 0,
       estado: "Pendiente",
     };
-    console.log("REQUEST", request);
     orderUseCases.create(request).then((response) => {
-      const newOrders = response.data;
-      updateGrid(newOrders);
+      updateGrid(response);
     });
+    setFormDataOrder({
+      idcliente: 0,
+      arraydecantidad: [],
+      arrayidsproductos: [],
+      fechaentrega: currentDate,
+      total: 0,
+      estado: "Pendiente",
+    })
   };
 
   useEffect(() => {
@@ -71,7 +76,6 @@ function useOrders({
         arraydecantidad: [],
         arrayidsproductos: [],
         fechaentrega: currentDate,
-        sena: 0,
         total: 0,
         estado: "Pendiente",
       });
@@ -84,6 +88,7 @@ function useOrders({
     productList,
     customers,
     resolveTotal,
+    setTotal,
     total,
     formDataOrder,
     setFormDataOrder,
