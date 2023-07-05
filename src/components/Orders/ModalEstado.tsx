@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   List,
   ListItem,
   ListItemText,
@@ -23,6 +24,7 @@ interface PedidoItemProps {
   id: number;
   estado: string;
   fechaentrega: string | Date | undefined;
+  index: number;
 }
 
 
@@ -34,7 +36,7 @@ function ModalEstado({
 }: ModalEstadoProps) {
   const theme: any = useTheme();
 
-  const PedidoItem = ({ id, estado, fechaentrega }: PedidoItemProps) => {
+  const PedidoItem = ({ id, estado, fechaentrega, index }: PedidoItemProps) => {
     const colorEstado = estado === "Pendiente" ? "red" : "green";
     const textoEstado = estado === "Pendiente" ? "Finalizado" : "Pendiente";
 
@@ -46,7 +48,7 @@ function ModalEstado({
             <span>Fecha entrega: {fechaentrega?.toLocaleString()}</span>
             <span>Estado actual: <span
               style={{
-                marginLeft: 5,
+                marginLeft: 2.5,
                 color: colorEstado,
                 fontWeight: "600",
               }}
@@ -55,15 +57,15 @@ function ModalEstado({
             </span></span>
             <span>Nuevo estado: <span
               style={{
-                marginLeft: 5,
+                marginLeft: 2.5,
                 color: colorEstado === "red" ? "green" : "red",
                 fontWeight: "600",
               }}
             >
               {textoEstado}
             </span></span>
-
           </Box>
+          {index !== pedidos.length - 1 && <Divider sx={{ width: 340, border: '1.5px solid grey', borderRadius: 10, mt: 1, mb: -1 }} light />}
         </ListItemText>
       </ListItem>
     );
@@ -99,12 +101,12 @@ function ModalEstado({
             sx={{ display: "flex", flexDirection: "column" }}
             borderRadius={"0px 0px 10px 10px"}
           >
-            <Typography variant='body1' textAlign='start' component='h3'>
+            <Typography variant='body1' textAlign='center' component='h3'>
               Vas a cambiar los estados de los siguientes pedidos:
             </Typography>
             <List>
-              {pedidos.map((pedido) => (
-                <PedidoItem key={pedido.idpedido} id={pedido.idpedido} estado={pedido.estado} fechaentrega={pedido.fechaentrega} />
+              {pedidos.map((pedido, index) => (
+                <PedidoItem key={pedido.idpedido} id={pedido.idpedido} estado={pedido.estado} fechaentrega={pedido.fechaentrega} index={index} />
               ))}
             </List>
             <Box sx={{ display: "flex", gap: 5, justifyContent: "flex-end" }}>
