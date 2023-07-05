@@ -1,68 +1,22 @@
-import { useEffect, useState } from "react";
-import { AlertColor, Box, Button, Container, Typography } from "@mui/material";
+import { useState } from "react";
+import { Box, Button, Container, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
 import ModalEliminar from "./ModalEliminar";
 import buildColumns from "./agGrid/columns";
-import ORDER from "../../types/ORDER";
 import * as useCases from "../../services/orders.usecases";
-import { SelectionChangedEvent } from "ag-grid-community";
 import useSnackBar from "../shared/hooks/useSnackBar";
 import SnackbarCustom from "../shared/SnackbarCustom";
 import SELECTEDORDER from "../../types/SELECTEDORDER";
 import ModalEstado from "./ModalEstado";
-
-function useOrders({
-  openSnackBar,
-  closeModal,
-}: {
-  openSnackBar: (alertVariant: AlertColor, alertMessage: string) => void;
-  closeModal: () => void;
-}) {
-  const [orders, setOrders] = useState<ORDER[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<ORDER[]>([]);
-  useEffect(() => {
-    useCases.getAll().then((res) => {
-      setOrders(res.data);
-    });
-  }, []);
-
-  const handleChangeSelection = (e: SelectionChangedEvent<ORDER>) => {
-    setSelectedOrder(e.api.getSelectedRows());
-  };
-
-  const updateGrid = (response: any) => {
-    if (response.errors !== null) {
-      openSnackBar("error", "Hubo un error al agregar el pedido 😞");
-      closeModal();
-    } else {
-      setOrders(response.data);
-      openSnackBar("success", "Pedido agregado correctamente 👍");
-      closeModal();
-    }
-  };
-
-  const updateDeleteGrid = (data: any) => {
-    setOrders(data);
-    openSnackBar("success", "Pedido agregado correctamente 👍");
-    closeModal();
-  };
-
-  return {
-    orders,
-    selectedOrder,
-    handleChangeSelection,
-    updateGrid,
-    updateDeleteGrid,
-  };
-}
+import useOrders from "./useOrders";
 
 function Orders() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
-  const [openModalPrueba, setOpenModalPrueba] = useState(true);
+  const [openModalEstado, setOpenModalEstado] = useState(true);
   const [rowsSelected, setRowsSelected] = useState<SELECTEDORDER[]>([]);
   const columns = buildColumns();
 
@@ -90,8 +44,11 @@ function Orders() {
 
   const closeModalAgregar = () => setOpenModalAgregar(false);
 
+  const handleCloseModalEstado = () => setOpenModalEstado(false);
+
   const { openSnackBar, closeSnackBar, isSnackBarOpen, snackOptions } =
     useSnackBar();
+
   const {
     orders,
     handleChangeSelection,
@@ -197,7 +154,12 @@ function Orders() {
         orders={rowsSelected}
         handleRemoveSubmit={handleDeleteOrders}
       />
-      <ModalEstado open={openModalPrueba} />
+      <ModalEstado
+        open={openModalEstado}
+        pedidos={rowsSelected}
+        handleClose={handleCloseModalEstado}
+        handleSubmit={() => console.log("submit")}
+      />
     </Container>
   );
 }

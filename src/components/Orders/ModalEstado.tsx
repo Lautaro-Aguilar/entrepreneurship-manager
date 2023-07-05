@@ -1,23 +1,35 @@
-import { Box, Button, List, ListItem, ListItemText, Modal, Typography } from '@mui/material'
-import styleModal from '../Clientes/styleModal'
-import { useTheme } from '@emotion/react'
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import {
+  Box,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Modal,
+  Typography,
+} from "@mui/material";
+import styleModal from "../Clientes/styleModal";
+import { useTheme } from "@emotion/react";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import SELECTEDORDER from "../../types/SELECTEDORDER";
 
+interface ModalEstadoProps {
+  open: boolean;
+  handleClose: () => void;
+  pedidos: SELECTEDORDER[];
+  handleSubmit: () => void;
+}
 
-function ModalEstado(open: boolean) {
-  const theme = useTheme()
-
-  const pedidos = [
-    { id: 1, estado: "Pendiente" },
-    { id: 2, estado: "Finalizado" },
-    { id: 3, estado: "Finalizado" },
-    { id: 4, estado: "Pendiente" },
-  ]
-
+function ModalEstado({
+  open,
+  handleClose,
+  pedidos,
+  handleSubmit,
+}: ModalEstadoProps) {
+  const theme: any = useTheme();
 
   return (
     <div>
-      <Modal open={open} onClose={() => console.log('asd')}>
+      <Modal open={open} onClose={handleClose}>
         <Box sx={styleModal}>
           <Box
             className='headerModal'
@@ -51,35 +63,53 @@ function ModalEstado(open: boolean) {
               {pedidos.map((element, index) => (
                 <ListItem key={index}>
                   <ListItemText>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      ID: {element.id},
-                      Estado:
-                      <span style={{ marginLeft: 5, color: element.estado === "Pendiente" ? 'red' : 'green', fontWeight: '600' }}>{element.estado}</span>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      ID: {element.idpedido}, Estado:
+                      <span
+                        style={{
+                          marginLeft: 5,
+                          color:
+                            element.estado === "Pendiente" ? "red" : "green",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {element.estado}
+                      </span>
                       <ArrowRightAltIcon />
-                      <span style={{ marginLeft: 5, color: element.estado === "Pendiente" ? 'green' : 'red', fontWeight: '600' }}>{element.estado === "Pendiente" ? "Finalizado" : "Pendiente"}</span>
-
+                      <span
+                        style={{
+                          marginLeft: 5,
+                          color:
+                            element.estado === "Pendiente" ? "green" : "red",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {element.estado === "Pendiente"
+                          ? "Finalizado"
+                          : "Pendiente"}
+                      </span>
                     </Box>
                   </ListItemText>
                 </ListItem>
               ))}
             </List>
             <Box sx={{ display: "flex", gap: 5, justifyContent: "flex-end" }}>
-              <Button variant='contained' color='error'>
+              <Button variant='contained' color='error' onClick={handleClose}>
                 Cancelar
               </Button>
               <Button
                 variant='contained'
                 color='success'
+                onClick={handleSubmit}
               >
                 Aceptar
               </Button>
             </Box>
           </Box>
-
         </Box>
       </Modal>
     </div>
-  )
+  );
 }
 
-export default ModalEstado
+export default ModalEstado;

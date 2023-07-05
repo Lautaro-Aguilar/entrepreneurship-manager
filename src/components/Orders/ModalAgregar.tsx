@@ -6,12 +6,11 @@ import {
   Autocomplete,
   TextField,
   Button,
-  InputAdornment,
+  useTheme,
 } from "@mui/material";
-import { useTheme } from "@emotion/react";
 import { Add, Delete } from "@mui/icons-material";
 import PRODUCTLIST from "../../types/PRODUCTLIST";
-import useOrders from "./useOrders";
+import useOrders from "./useOrdersAction";
 
 type ModalAgregarProps = {
   open: boolean;
@@ -121,8 +120,8 @@ function ModalAgregar({ open, setOpen, updateGrid }: ModalAgregarProps) {
     handleSubmit,
   } = useOrders({ open, updateGrid });
   const handleClose = () => {
-    setOpen(false)
-    setTotal(0)
+    setOpen(false);
+    setTotal(0);
   };
   const theme: any = useTheme();
 
