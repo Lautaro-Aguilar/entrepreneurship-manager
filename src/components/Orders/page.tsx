@@ -25,11 +25,11 @@ function Orders() {
 
   const handleDeleteOrders = (orders: SELECTEDORDER[]) => {
     const orderIDs = orders.map((order) => {
-      return order.idpedido
-    })
+      return order.idpedido;
+    });
     useCases.destroy(orderIDs).then((response) => {
-      updateDeleteGrid(response)
-    })
+      updateDeleteGrid(response);
+    });
   };
 
   const closeModalAgregar = () => setOpenModalAgregar(false);
@@ -51,6 +51,7 @@ function Orders() {
   } = useOrders({
     openSnackBar,
     closeModal: closeModalAgregar,
+    closeModalEstado: handleCloseModalEstado,
   });
 
   return (

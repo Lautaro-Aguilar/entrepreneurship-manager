@@ -215,7 +215,7 @@ function ModalModificar({
                   onChange={(event) => {
                     const { value } = event.target;
                     const enteredValue = Number(value);
-                    const updatedQuantities = [...cantidades];
+                    const updatedQuantities: any = [...cantidades];
                     if (enteredValue <= -1) {
                       updatedQuantities[index] = 0;
                       setCantidades(updatedQuantities);

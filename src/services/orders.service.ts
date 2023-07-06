@@ -120,7 +120,6 @@ export async function deleteOrders(orderIDs: number[]) {
   return response;
 }
 
-
 export async function updateStateOrder(orders: SELECTEDORDER[]) {
   const updatedOrders = orders.map((order) => {
     return {
@@ -129,14 +128,17 @@ export async function updateStateOrder(orders: SELECTEDORDER[]) {
     };
   });
 
-  const { data, error } = await supabase
+  const { data: updatedData, error: errorUpdate } = await supabase
     .from("pedidos")
     .upsert(updatedOrders)
     .select("*");
 
+  const { data } = await supabase.from("vista_pedidos").select("*");
+
   const response = {
+    updatedData,
     data,
-    errors: error,
+    errors: errorUpdate,
   };
 
   return response;

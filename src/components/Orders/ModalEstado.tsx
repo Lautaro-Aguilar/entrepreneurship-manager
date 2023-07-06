@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import styleModal from "../Clientes/styleModal";
 import { useTheme } from "@emotion/react";
-import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import SELECTEDORDER from "../../types/SELECTEDORDER";
 
 interface ModalEstadoProps {
@@ -27,7 +26,6 @@ interface PedidoItemProps {
   index: number;
 }
 
-
 function ModalEstado({
   open,
   handleClose,
@@ -43,34 +41,56 @@ function ModalEstado({
     return (
       <ListItem>
         <ListItemText>
-          <Box sx={{ display: "flex", justifyContent: "center", flexDirection: 'column' }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+          >
             <span>ID Pedido: {id}</span>
             <span>Fecha entrega: {fechaentrega?.toLocaleString()}</span>
-            <span>Estado actual: <span
-              style={{
-                marginLeft: 2.5,
-                color: colorEstado,
-                fontWeight: "600",
-              }}
-            >
-              {estado}
-            </span></span>
-            <span>Nuevo estado: <span
-              style={{
-                marginLeft: 2.5,
-                color: colorEstado === "red" ? "green" : "red",
-                fontWeight: "600",
-              }}
-            >
-              {textoEstado}
-            </span></span>
+            <span>
+              Estado actual:{" "}
+              <span
+                style={{
+                  marginLeft: 2.5,
+                  color: colorEstado,
+                  fontWeight: "600",
+                }}
+              >
+                {estado}
+              </span>
+            </span>
+            <span>
+              Nuevo estado:{" "}
+              <span
+                style={{
+                  marginLeft: 2.5,
+                  color: colorEstado === "red" ? "green" : "red",
+                  fontWeight: "600",
+                }}
+              >
+                {textoEstado}
+              </span>
+            </span>
           </Box>
-          {index !== pedidos.length - 1 && <Divider sx={{ width: 340, border: '1.5px solid grey', borderRadius: 10, mt: 1, mb: -1 }} light />}
+          {index !== pedidos.length - 1 && (
+            <Divider
+              sx={{
+                width: 340,
+                border: "1.5px solid grey",
+                borderRadius: 10,
+                mt: 1,
+                mb: -1,
+              }}
+              light
+            />
+          )}
         </ListItemText>
       </ListItem>
     );
   };
-
 
   return (
     <div>
@@ -106,7 +126,13 @@ function ModalEstado({
             </Typography>
             <List>
               {pedidos.map((pedido, index) => (
-                <PedidoItem key={pedido.idpedido} id={pedido.idpedido} estado={pedido.estado} fechaentrega={pedido.fechaentrega} index={index} />
+                <PedidoItem
+                  key={pedido.idpedido}
+                  id={pedido.idpedido}
+                  estado={pedido.estado}
+                  fechaentrega={pedido.fechaentrega}
+                  index={index}
+                />
               ))}
             </List>
             <Box sx={{ display: "flex", gap: 5, justifyContent: "flex-end" }}>

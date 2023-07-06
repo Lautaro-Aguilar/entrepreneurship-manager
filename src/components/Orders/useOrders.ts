@@ -4,13 +4,16 @@ import { useEffect, useState } from "react";
 import { AlertColor } from "@mui/material";
 import * as useCases from "../../services/orders.usecases";
 import SELECTEDORDER from "../../types/SELECTEDORDER";
+import formatDate from "../../utils/formatDate";
 
 export default function useOrders({
   openSnackBar,
   closeModal,
+  closeModalEstado,
 }: {
   openSnackBar: (alertVariant: AlertColor, alertMessage: string) => void;
   closeModal: () => void;
+  closeModalEstado: () => void;
 }) {
   const [orders, setOrders] = useState<ORDER[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<ORDER[]>([]);
@@ -18,6 +21,7 @@ export default function useOrders({
 
   useEffect(() => {
     useCases.getAll().then((res) => {
+      console.log(res.data);
       setOrders(res.data);
     });
   }, []);
@@ -49,17 +53,22 @@ export default function useOrders({
   };
 
   const handleUpdateStateOrder = (orders: SELECTEDORDER[]) => {
-    console.log("original orders:", orders);
     useCases.updateState(orders).then((response) => {
-      const updatedOrders = response.data;
-      const newOrders = orders.map((originalOrder) => {
-        const updatedOrder = updatedOrders?.find(
-          (updOrder) => updOrder.idpedido === originalOrder.idpedido
-        );
-        return updatedOrder || originalOrder;
-      });
-      console.log("new orders", newOrders);
-      /* setOrders(newOrders); */
+      const newOrders = response.data;
+      if (newOrders) {
+        const formatedOrders = newOrders.map((order) => ({
+          ...order,
+          cantidades:
+            order.arraydecantidad.length > 1
+              ? order.arraydecantidad.join(", ")
+              : order.arraydecantidad[0].toString(),
+          fechaentrega: formatDate(new Date(order.fechaentrega)),
+          fecharealizado: formatDate(new Date(order.fecharealizado)),
+        }));
+        setOrders(formatedOrders);
+        openSnackBar("success", "Estado actualizado correctamente 👍");
+        closeModalEstado();
+      }
     });
   };
 
