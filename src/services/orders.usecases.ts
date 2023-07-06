@@ -2,7 +2,7 @@ import ORDER from "../types/ORDER";
 import SELECTEDORDER from "../types/SELECTEDORDER";
 import {
   createOrder,
-  deleteOrder,
+  deleteOrders,
   getOrder,
   getOrders,
   updateOrder,
@@ -17,7 +17,7 @@ export const create = (data: ORDER) => createOrder(data);
 
 export const update = (data: ORDER, id: number) => updateOrder(data, id);
 
-export const destroy = (id: number) => deleteOrder(id);
-
 export const updateState = (orders: SELECTEDORDER[]) =>
   updateStateOrder(orders);
+
+export const destroy = (orderIDs: number[]) => deleteOrders(orderIDs)

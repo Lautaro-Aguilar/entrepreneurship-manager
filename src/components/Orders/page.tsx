@@ -15,7 +15,6 @@ import useOrders from "./useOrders";
 function Orders() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
-  const [openModalEliminar, setOpenModalEliminar] = useState(false);
   const [openModalEstado, setOpenModalEstado] = useState(false);
   const [rowsSelected, setRowsSelected] = useState<SELECTEDORDER[]>([]);
   const columns = buildColumns();
@@ -25,21 +24,12 @@ function Orders() {
   };
 
   const handleDeleteOrders = (orders: SELECTEDORDER[]) => {
-    const promises = orders.map((order) => {
-      return new Promise((resolve, reject) => {
-        useCases.destroy(order.idpedido).then((response) => {
-          resolve(response);
-        });
-      });
-    });
-
-    Promise.all(promises).then((resultados) => {
-      useCases.getAll().then(({ data }) => {
-        updateDeleteGrid(data);
-        setOpenModalEliminar(false);
-        openSnackBar("success", "Pedido removido correctamente 👍");
-      });
-    });
+    const orderIDs = orders.map((order) => {
+      return order.idpedido
+    })
+    useCases.destroy(orderIDs).then((response) => {
+      updateDeleteGrid(response)
+    })
   };
 
   const closeModalAgregar = () => setOpenModalAgregar(false);
@@ -55,6 +45,8 @@ function Orders() {
     updateGrid,
     selectedOrder,
     updateDeleteGrid,
+    openModalEliminar,
+    setOpenModalEliminar,
     handleUpdateStateOrder,
   } = useOrders({
     openSnackBar,

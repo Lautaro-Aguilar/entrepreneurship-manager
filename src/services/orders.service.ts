@@ -97,19 +97,29 @@ export async function updateOrder(data: ORDER, id: number) {
   return response;
 }
 
-export async function deleteOrder(id: number) {
-  const { data: supabaseResponse, error } = await supabase
+export async function deleteOrders(orderIDs: number[]) {
+  const { data: deletedData, error } = await supabase
     .from("pedidos")
     .delete()
-    .eq("idpedido", id);
+    .in("idpedido", orderIDs);
+
+  if (error) {
+    return { data: null, errors: error };
+  }
+
+  const { data: remainingData, error: remainingError } = await supabase
+    .from("vista_pedidos")
+    .select("*");
 
   const response = {
-    data: supabaseResponse,
-    errors: error,
+    deletedData,
+    data: remainingData,
+    errors: remainingError,
   };
 
   return response;
 }
+
 
 export async function updateStateOrder(orders: SELECTEDORDER[]) {
   const updatedOrders = orders.map((order) => {
