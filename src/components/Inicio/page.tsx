@@ -1,5 +1,6 @@
 import { Box } from '@mui/material'
 import logo from "./logo.png"
+import client from '../../supabase/supabase'
 
 function Inicio() {
   return (

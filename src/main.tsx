@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/Root";
-import "./app.css";
+import "./App.css";
 import Clientes from "./components/Clientes/page";
-import Pedidos from "./components/Pedidos/page";
+import Orders from "./components/Orders/page";
 import Productos from "./components/Productos/page";
 import Inicio from "./components/Inicio/page";
 import { createTheme, ThemeProvider } from "@mui/material";
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/Pedidos",
-        element: <Pedidos />,
+        element: <Orders />,
       },
       {
         path: "/Productos",
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-const theme = createTheme({
+const darkTheme = createTheme({
   palette: {
     mode: "dark",
     primary: {
@@ -96,7 +96,7 @@ const theme = createTheme({
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={darkTheme}>
       <RouterProvider router={router} />
     </ThemeProvider>
   </React.StrictMode>
