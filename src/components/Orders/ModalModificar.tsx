@@ -6,23 +6,34 @@ import {
   Autocomplete,
   TextField,
   Button,
-  InputAdornment,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
-import useOrders from "./useOrders";
+import useOrdersAction from "./useOrdersAction";
 import CUSTOMER from "../../types/CUSTOMER";
 import SELECTEDORDER from "../../types/SELECTEDORDER";
 import PRODUCTLIST from "../../types/PRODUCTLIST";
 import { Add, Delete } from "@mui/icons-material";
 import REQUESTORDER from "../../types/REQUESTORDER";
 import * as orderUseCases from "../../services/orders.usecases";
+import transformDate from "./utils/transformDate";
+import ORDER from "../../types/ORDER";
+import formatDate from "../../utils/formatDate";
+import useOrders from "./useOrders";
 
+interface HandleSubmitModificar {
+  (products: PRODUCTLIST[],
+    clientToModify: CUSTOMER,
+    orderToModify: any,
+    cantidades: (number | undefined)[],
+    total: number): void
+}
 
 type ModalModificarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedOrder: SELECTEDORDER[];
+  selectedOrder: SELECTEDORDER[] | ORDER[];
   updateGrid: (data: any) => void;
+  handleSubmitModificar: HandleSubmitModificar
 };
 
 function ModalModificar({
@@ -30,11 +41,13 @@ function ModalModificar({
   setOpen,
   selectedOrder,
   updateGrid,
+  handleSubmitModificar
 }: ModalModificarProps) {
-  const { customers, productList } = useOrders({
+  const { customers, productList } = useOrdersAction({
     open,
     updateGrid,
   });
+
   const theme: any = useTheme();
   const handleClose = () => setOpen(false);
   const [clientToModify, setClientToModify] = useState<CUSTOMER>({
@@ -43,7 +56,7 @@ function ModalModificar({
     direccion: "",
     telefono: "",
   });
-  const [orderToModify, setOrderToModify] = useState<SELECTEDORDER>({
+  const [orderToModify, setOrderToModify] = useState<any>({
     cliente: "",
     cantidades: "",
     estado: "",
@@ -51,48 +64,37 @@ function ModalModificar({
     fecharealizado: "",
     idpedido: 0,
     productos: "",
-    sena: 0,
-    total: 41,
+    total: 0,
   });
-  const [coincidingProducts, setCoincidingProducts] = useState<PRODUCTLIST[]>([]);
-  const [cantidades, setCantidades] = useState<(number | undefined)[]>([])
+  const [products, setProducts] = useState<PRODUCTLIST[]>([]);
+  const [cantidades, setCantidades] = useState<(number | undefined)[]>([]);
+  const [total, setTotal] = useState(0);
 
   const handleAgregarInput = (index: number) => {
-    const updatedProducts = [...coincidingProducts];
-    const updatedQuantities = [...cantidades]
-    updatedQuantities.splice(index + 1, 0, 1)
-    setCantidades(updatedQuantities)
+    const updatedProducts = [...products];
+    const updatedQuantities = [...cantidades];
+    updatedQuantities.splice(index + 1, 0, 0);
+    setCantidades(updatedQuantities);
     updatedProducts.splice(index + 1, 0, {
       nombre: "",
       quantity: 0,
       costo: 0,
       precio: 0,
     });
-    setCoincidingProducts(updatedProducts);
+    setProducts(updatedProducts);
   };
 
-  function padZero(value: any) {
-    return value.toString().padStart(2, '0');
-  }
-
-  const transformDate = (date: string | Date) => {
-    const dateObj = new Date(date);
-
-    const year = dateObj.getFullYear();
-    const month = padZero(dateObj.getMonth() + 1);
-    const day = padZero(dateObj.getDate());
-    const hours = padZero(dateObj.getHours());
-    const minutes = padZero(dateObj.getMinutes());
-
-    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
-
-    return formattedDate
-  }
+  const resolveTotal = (value: number) => {
+    setTotal(total + value);
+    setOrderToModify({ ...orderToModify, total: total });
+  };
 
   useEffect(() => {
     if (selectedOrder[0]) {
-      const defaultDate = transformDate(selectedOrder[0].fechaentrega)
-      const order = { ...selectedOrder[0], fechaentrega: defaultDate }
+      const defaultDate = transformDate(
+        selectedOrder[0].fechaentrega || new Date()
+      );
+      const order = { ...selectedOrder[0], fechaentrega: defaultDate };
       setOrderToModify(order);
 
       if (orderToModify) {
@@ -112,10 +114,12 @@ function ModalModificar({
         const coincidingProducts = productList.filter((producto) =>
           orderToModify.productos.includes(producto.nombre)
         );
-        setCoincidingProducts(coincidingProducts);
+        setProducts(coincidingProducts);
 
         const cantidadesArray = orderToModify.cantidades.split(",").map(Number);
-        setCantidades(cantidadesArray)
+        setCantidades(cantidadesArray);
+
+        setTotal(orderToModify.total);
       }
     }
   }, [open, selectedOrder]);
@@ -125,35 +129,44 @@ function ModalModificar({
     precio: number,
     cantidad: number | undefined
   ) => {
-    const updatedProducts = [...coincidingProducts];
+    const updatedProducts = [...products];
     updatedProducts.splice(index, 1);
-    setCoincidingProducts(updatedProducts);
-    const updateQuantities = [...cantidades]
-    updateQuantities.splice(index, 1)
-    setCantidades(updateQuantities)
+    setProducts(updatedProducts);
+    const updateQuantities = [...cantidades];
+    updateQuantities.splice(index, 1);
+    setCantidades(updateQuantities);
 
-    /*     if (cantidad) {
-          const totalRestar = precio * cantidad;
-          resolveTotal(-totalRestar);
-        } */
+    if (cantidad) {
+      const totalRestar = precio * cantidad;
+      resolveTotal(-totalRestar);
+    }
   };
 
   const handleSubmit = () => {
-    const arrayidsproductos = coincidingProducts.map((prod) => prod.id)
+    const arrayidsproductos = products.map((prod) => prod.id);
     const request: REQUESTORDER = {
       idcliente: clientToModify.id,
       arrayidsproductos,
       arraydecantidad: cantidades,
       fechaentrega: orderToModify.fechaentrega,
-      sena: orderToModify.sena,
-      total: 0,
-      estado: "Pendiente"
-    }
-    console.log(request)
-    /*  orderUseCases.update(request, orderToModify.idpedido).then((response) => {
-       const newOrder = response.data
-       updateGrid(newOrder)
-     }) */
+      total,
+      estado: "Pendiente",
+    };
+    orderUseCases.update(request, orderToModify.idpedido).then((response) => {
+      const newOrders = response.data
+      if (newOrders) {
+        const formatedOrders = newOrders.map((order) => ({
+          ...order,
+          cantidades:
+            order.arraydecantidad.length > 1
+              ? order.arraydecantidad.join(", ")
+              : order.arraydecantidad[0].toString(),
+          fechaentrega: formatDate(new Date(order.fechaentrega)),
+          fecharealizado: formatDate(new Date(order.fecharealizado)),
+        }));
+
+      }
+    });
   };
 
   return (
@@ -195,8 +208,8 @@ function ModalModificar({
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             borderRadius={"0px 0px 10px 10px"}
           >
-            {coincidingProducts.map((product: PRODUCTLIST, index: number) => (
-              <Box key={index} sx={{ display: 'flex', gap: 3 }}>
+            {products.map((product: PRODUCTLIST, index: number) => (
+              <Box key={index} sx={{ display: "flex", gap: 3 }}>
                 <Autocomplete
                   disablePortal
                   style={{ width: "70%" }}
@@ -204,28 +217,44 @@ function ModalModificar({
                   value={product}
                   onChange={(event, newValue) => {
                     if (newValue) {
-                      const updateProducts = [...coincidingProducts]
-                      updateProducts[index].nombre = newValue.nombre
-                      updateProducts[index].precio = newValue.precio
-                      updateProducts[index].id = newValue.id
-                      setCoincidingProducts(updateProducts)
+                      const updateProducts = [...products];
+                      updateProducts[index].nombre = newValue.nombre;
+                      updateProducts[index].precio = newValue.precio;
+                      updateProducts[index].id = newValue.id;
+                      setProducts(updateProducts);
                     }
                   }}
                   getOptionLabel={(option) => option.nombre}
-                  renderInput={(params) => <TextField {...params} label='Producto' />}
+                  renderInput={(params) => (
+                    <TextField {...params} label='Producto' />
+                  )}
                 />
 
                 <TextField
-                  label="Cantidad"
-                  type="number"
+                  label='Cantidad'
+                  type='number'
                   value={cantidades[index]}
+                  InputProps={{ inputProps: { min: -1, max: 10 } }}
                   onChange={(event) => {
-                    const { value } = event.target
-                    const updatedQuantities = [...cantidades]
-                    updatedQuantities[index] = Number(value)
-                    setCantidades(updatedQuantities)
+                    const { value } = event.target;
+                    const enteredValue = Number(value);
+                    const updatedQuantities: any = [...cantidades];
+                    if (enteredValue <= -1) {
+                      updatedQuantities[index] = 0;
+                      setCantidades(updatedQuantities);
+                    } else {
+                      const product = products[index];
+                      const previousTotal =
+                        product.precio * updatedQuantities[index];
+                      const newQuantity = parseInt(value) || 0;
+                      const newTotal = product.precio * newQuantity;
+                      resolveTotal(newTotal - previousTotal);
+                      updatedQuantities[index] = newQuantity;
+                      setCantidades(updatedQuantities);
+                    }
                   }}
-                  InputLabelProps={{ shrink: true }} />
+                  InputLabelProps={{ shrink: true }}
+                />
 
                 <Button
                   variant='outlined'
@@ -233,7 +262,11 @@ function ModalModificar({
                   size='small'
                   sx={{ marginLeft: "auto", borderRadius: 0 }}
                   onClick={() =>
-                    handleEliminarInput(index, product.precio, product.quantity)
+                    handleEliminarInput(
+                      index,
+                      product.precio,
+                      cantidades[index]
+                    )
                   }
                 >
                   <Delete fontSize='small' />
@@ -255,7 +288,7 @@ function ModalModificar({
               fullWidth
               onChange={(event, value) => {
                 if (value) {
-                  setClientToModify(value)
+                  setClientToModify(value);
                 }
               }}
               renderInput={(params) => (
@@ -274,22 +307,6 @@ function ModalModificar({
                   fechaentrega: e.target.value,
                 });
               }}
-            />
-
-            <TextField
-              label='Seña'
-              type='number'
-              value={orderToModify.sena}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>$</InputAdornment>
-                ),
-              }}
-              onChange={(e) => {
-                const { value } = e.target
-                setOrderToModify({ ...orderToModify, sena: Number(value) });
-              }}
-              InputLabelProps={{ shrink: true }}
             />
 
             <Box
@@ -316,7 +333,7 @@ function ModalModificar({
                   fontWeight='bold'
                   display='inline-block'
                 >
-                  ${orderToModify.total}
+                  ${total}
                 </Typography>
               </Box>
             </Box>
@@ -327,16 +344,16 @@ function ModalModificar({
               fullWidth
               sx={{ borderRadius: 0 }}
               startIcon={<Add />}
-              onClick={() => handleAgregarInput(coincidingProducts.length - 1)}
+              onClick={() => handleAgregarInput(products.length - 1)}
             >
               Agregar producto
             </Button>
           </Box>
           <Box display='flex' justifyContent='flex-end' gap={2} mr={2} mb={2}>
-            <Button variant='contained' color='error'>
+            <Button variant='contained' color='error' onClick={handleClose}>
               Cancelar
             </Button>
-            <Button variant='contained' color='success' onClick={handleSubmit}>
+            <Button variant='contained' color='success' onClick={() => handleSubmitModificar(products, clientToModify, orderToModify, cantidades, total)}>
               Aceptar
             </Button>
           </Box>

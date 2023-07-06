@@ -44,7 +44,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-const theme = createTheme({
+const darkTheme = createTheme({
   palette: {
     mode: "dark",
     primary: {
@@ -101,7 +101,7 @@ const theme = createTheme({
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={darkTheme}>
       <RouterProvider router={router} />
     </ThemeProvider>
   </React.StrictMode>

@@ -1,60 +1,62 @@
-import { useEffect, useState } from "react";
-import { AlertColor, Box, Button, Container, Typography } from "@mui/material";
+import { useState } from "react";
+import { Box, Button, Container, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalModificar from "./ModalModificar";
 import ModalEliminar from "./ModalEliminar";
 import buildColumns from "./agGrid/columns";
-import ORDER from "../../types/ORDER";
 import * as useCases from "../../services/orders.usecases";
-import { SelectionChangedEvent } from "ag-grid-community";
 import useSnackBar from "../shared/hooks/useSnackBar";
 import SnackbarCustom from "../shared/SnackbarCustom";
-
-function useOrders({
-  openSnackBar,
-  closeModal,
-}: {
-  openSnackBar: (alertVariant: AlertColor, alertMessage: string) => void;
-  closeModal: () => void;
-}) {
-  const [orders, setOrders] = useState<ORDER[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<ORDER[]>([]);
-
-  useEffect(() => {
-    useCases.getAll().then((res) => {
-      setOrders(res.data);
-    });
-  }, []);
-
-  const handleChangeSelection = (e: SelectionChangedEvent<ORDER>) => {
-    setSelectedOrder(e.api.getSelectedRows());
-  };
-
-  const updateGrid = (values: any) => {
-    setOrders(values);
-    openSnackBar("success", "Pedido agregado correctamente 👍");
-    closeModal();
-  };
-
-  return { orders, selectedOrder, handleChangeSelection, updateGrid };
-}
+import SELECTEDORDER from "../../types/SELECTEDORDER";
+import ModalEstado from "./ModalEstado";
+import useOrders from "./useOrders";
 
 function Orders() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
   const [openModalModificar, setOpenModalModificar] = useState(false);
-  const [openModalEliminar, setOpenModalEliminar] = useState(false);
+  const [openModalEstado, setOpenModalEstado] = useState(false);
+  const [rowsSelected, setRowsSelected] = useState<SELECTEDORDER[]>([]);
   const columns = buildColumns();
+
+  const handleRowsSelected = (e: any) => {
+    setRowsSelected(e.api.getSelectedRows());
+  };
+
+  const handleDeleteOrders = (orders: SELECTEDORDER[]) => {
+    const orderIDs = orders.map((order) => {
+      return order.idpedido;
+    });
+    useCases.destroy(orderIDs).then((response) => {
+      updateDeleteGrid(response);
+    });
+  };
 
   const closeModalAgregar = () => setOpenModalAgregar(false);
 
+  const handleCloseModalEstado = () => setOpenModalEstado(false);
+
+  const handleCloseModalModificar = () => setOpenModalModificar(false)
+
   const { openSnackBar, closeSnackBar, isSnackBarOpen, snackOptions } =
     useSnackBar();
-  const { orders, handleChangeSelection, updateGrid, selectedOrder } =
-    useOrders({
-      openSnackBar,
-      closeModal: closeModalAgregar,
-    });
+
+  const {
+    orders,
+    handleChangeSelection,
+    updateGrid,
+    selectedOrder,
+    updateDeleteGrid,
+    openModalEliminar,
+    setOpenModalEliminar,
+    handleUpdateStateOrder,
+    handleSubmitModificar
+  } = useOrders({
+    openSnackBar,
+    closeModal: closeModalAgregar,
+    closeModalEstado: handleCloseModalEstado,
+    closeModalModificar: handleCloseModalModificar
+  });
 
   return (
     <Container
@@ -81,18 +83,20 @@ function Orders() {
           style={{ height: 400, width: "100%" }}
         >
           <AgGridReact
+            rowMultiSelectWithClick
             columnDefs={columns}
             rowData={orders}
             gridOptions={{ defaultColDef: { resizable: true, filter: true } }}
             onSelectionChanged={handleChangeSelection}
             rowSelection='multiple'
+            onRowSelected={handleRowsSelected}
           />
         </Box>
 
         <Box sx={{ display: "flex", my: 2, justifyContent: "space-around" }}>
           <Button
             variant='contained'
-            color='info'
+            color='success'
             size='large'
             onClick={() => setOpenModalAgregar(true)}
           >
@@ -101,14 +105,29 @@ function Orders() {
           <Button
             variant='contained'
             color='secondary'
+            disabled={
+              selectedOrder.length > 0 && rowsSelected.length < 2 ? false : true
+            }
             size='large'
-            onClick={() => setOpenModalModificar(true)}
+            onClick={() => {
+              setOpenModalModificar(true);
+            }}
           >
             Modificar
           </Button>
           <Button
             variant='contained'
+            color='info'
+            disabled={rowsSelected.length < 1}
+            size='large'
+            onClick={() => setOpenModalEstado(true)}
+          >
+            Cambiar Estado
+          </Button>
+          <Button
+            variant='contained'
             color='error'
+            disabled={rowsSelected.length < 1}
             size='large'
             onClick={() => setOpenModalEliminar(true)}
           >
@@ -125,8 +144,21 @@ function Orders() {
         open={openModalModificar}
         setOpen={setOpenModalModificar}
         selectedOrder={selectedOrder}
+        updateGrid={updateGrid}
+        handleSubmitModificar={handleSubmitModificar}
       />
-      <ModalEliminar open={openModalEliminar} setOpen={setOpenModalEliminar} />
+      <ModalEliminar
+        open={openModalEliminar}
+        setOpen={setOpenModalEliminar}
+        orders={rowsSelected}
+        handleRemoveSubmit={handleDeleteOrders}
+      />
+      <ModalEstado
+        open={openModalEstado}
+        pedidos={rowsSelected}
+        handleClose={handleCloseModalEstado}
+        handleSubmit={() => handleUpdateStateOrder(rowsSelected)}
+      />
     </Container>
   );
 }

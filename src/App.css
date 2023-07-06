@@ -77,3 +77,19 @@ a {
 ::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
+
+.cell-red .estado-valor {
+  padding: 5px 12.5px;
+  border-radius: 15px;
+  background-color: #ed8a8a;
+  color: #ec2525;
+  font-weight: 600;
+}
+
+.cell-green .estado-valor {
+  padding: 5px 12.5px;
+  border-radius: 15px;
+  background-color: #94e0bc;
+  color: #27513d;
+  font-weight: 600;
+}

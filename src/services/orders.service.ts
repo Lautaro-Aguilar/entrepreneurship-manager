@@ -1,5 +1,6 @@
 import supabase from "../supabase/supabase";
 import ORDER from "../types/ORDER";
+import SELECTEDORDER from "../types/SELECTEDORDER";
 import formatDate from "../utils/formatDate";
 
 interface __TORDER extends ORDER {
@@ -82,29 +83,65 @@ export async function createOrder(data: ORDER) {
   return response;
 }
 
-export async function updateOrder(data: ORDER, id: number) {
+export async function updateOrder(order: ORDER, id: number) {
   const { data: newOrder, error } = await supabase
     .from("pedidos")
-    .update(data)
+    .update(order)
     .eq("idpedido", id);
 
+  const { data } = await supabase.from("vista_pedidos").select("*");
+
   const response = {
-    data: newOrder,
+    newOrder,
+    data,
     errors: error,
   };
 
   return response;
 }
 
-export async function deleteOrder(id: number) {
-  const { data: supabaseResponse, error } = await supabase
+export async function deleteOrders(orderIDs: number[]) {
+  const { data: deletedData, error } = await supabase
     .from("pedidos")
     .delete()
-    .eq("idpedido", id);
+    .in("idpedido", orderIDs);
+
+  if (error) {
+    return { data: null, errors: error };
+  }
+
+  const { data: remainingData, error: remainingError } = await supabase
+    .from("vista_pedidos")
+    .select("*");
 
   const response = {
-    data: supabaseResponse,
-    errors: error,
+    deletedData,
+    data: remainingData,
+    errors: remainingError,
+  };
+
+  return response;
+}
+
+export async function updateStateOrder(orders: SELECTEDORDER[]) {
+  const updatedOrders = orders.map((order) => {
+    return {
+      idpedido: order.idpedido,
+      estado: order.estado === "Finalizado" ? "Pendiente" : "Finalizado",
+    };
+  });
+
+  const { data: updatedData, error: errorUpdate } = await supabase
+    .from("pedidos")
+    .upsert(updatedOrders)
+    .select("*");
+
+  const { data } = await supabase.from("vista_pedidos").select("*");
+
+  const response = {
+    updatedData,
+    data,
+    errors: errorUpdate,
   };
 
   return response;
