@@ -112,8 +112,6 @@ export async function deleteOrder(id: number) {
 }
 
 export async function updateStateOrder(orders: SELECTEDORDER[]) {
-  const arrayIDs = orders.map((order) => order.idpedido);
-
   const updatedOrders = orders.map((order) => {
     return {
       idpedido: order.idpedido,
@@ -124,7 +122,7 @@ export async function updateStateOrder(orders: SELECTEDORDER[]) {
   const { data, error } = await supabase
     .from("pedidos")
     .upsert(updatedOrders)
-    .select("*")
+    .select("*");
 
   const response = {
     data,

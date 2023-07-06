@@ -14,6 +14,8 @@ export default function useOrders({
 }) {
   const [orders, setOrders] = useState<ORDER[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<ORDER[]>([]);
+  const [openModalEliminar, setOpenModalEliminar] = useState(false);
+
   useEffect(() => {
     useCases.getAll().then((res) => {
       setOrders(res.data);
@@ -35,15 +37,29 @@ export default function useOrders({
     }
   };
 
-  const updateDeleteGrid = (data: any) => {
-    setOrders(data);
-    openSnackBar("success", "Pedido agregado correctamente 👍");
-    closeModal();
+  const updateDeleteGrid = (response: any) => {
+    if (response.errors !== null) {
+      openSnackBar("error", "Hubo un error al eliminar el pedido 😞");
+      setOpenModalEliminar(false);
+    } else {
+      setOrders(response.data);
+      openSnackBar("success", "Pedido eliminado correctamente 👍");
+      setOpenModalEliminar(false);
+    }
   };
 
   const handleUpdateStateOrder = (orders: SELECTEDORDER[]) => {
+    console.log("original orders:", orders);
     useCases.updateState(orders).then((response) => {
-      console.log(response);
+      const updatedOrders = response.data;
+      const newOrders = orders.map((originalOrder) => {
+        const updatedOrder = updatedOrders?.find(
+          (updOrder) => updOrder.idpedido === originalOrder.idpedido
+        );
+        return updatedOrder || originalOrder;
+      });
+      console.log("new orders", newOrders);
+      /* setOrders(newOrders); */
     });
   };
 
@@ -54,5 +70,7 @@ export default function useOrders({
     updateGrid,
     updateDeleteGrid,
     handleUpdateStateOrder,
+    openModalEliminar,
+    setOpenModalEliminar,
   };
 }
