@@ -13,12 +13,8 @@ import CUSTOMER from "../../types/CUSTOMER";
 import SELECTEDORDER from "../../types/SELECTEDORDER";
 import PRODUCTLIST from "../../types/PRODUCTLIST";
 import { Add, Delete } from "@mui/icons-material";
-import REQUESTORDER from "../../types/REQUESTORDER";
-import * as orderUseCases from "../../services/orders.usecases";
 import transformDate from "./utils/transformDate";
 import ORDER from "../../types/ORDER";
-import formatDate from "../../utils/formatDate";
-import useOrders from "./useOrders";
 
 interface HandleSubmitModificar {
   (products: PRODUCTLIST[],
@@ -140,33 +136,6 @@ function ModalModificar({
       const totalRestar = precio * cantidad;
       resolveTotal(-totalRestar);
     }
-  };
-
-  const handleSubmit = () => {
-    const arrayidsproductos = products.map((prod) => prod.id);
-    const request: REQUESTORDER = {
-      idcliente: clientToModify.id,
-      arrayidsproductos,
-      arraydecantidad: cantidades,
-      fechaentrega: orderToModify.fechaentrega,
-      total,
-      estado: "Pendiente",
-    };
-    orderUseCases.update(request, orderToModify.idpedido).then((response) => {
-      const newOrders = response.data
-      if (newOrders) {
-        const formatedOrders = newOrders.map((order) => ({
-          ...order,
-          cantidades:
-            order.arraydecantidad.length > 1
-              ? order.arraydecantidad.join(", ")
-              : order.arraydecantidad[0].toString(),
-          fechaentrega: formatDate(new Date(order.fechaentrega)),
-          fecharealizado: formatDate(new Date(order.fecharealizado)),
-        }));
-
-      }
-    });
   };
 
   return (
