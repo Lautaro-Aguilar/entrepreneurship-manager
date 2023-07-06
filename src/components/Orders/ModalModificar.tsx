@@ -8,7 +8,7 @@ import {
   Button,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
-import useOrders from "./useOrdersAction";
+import useOrdersAction from "./useOrdersAction";
 import CUSTOMER from "../../types/CUSTOMER";
 import SELECTEDORDER from "../../types/SELECTEDORDER";
 import PRODUCTLIST from "../../types/PRODUCTLIST";
@@ -17,12 +17,23 @@ import REQUESTORDER from "../../types/REQUESTORDER";
 import * as orderUseCases from "../../services/orders.usecases";
 import transformDate from "./utils/transformDate";
 import ORDER from "../../types/ORDER";
+import formatDate from "../../utils/formatDate";
+import useOrders from "./useOrders";
+
+interface HandleSubmitModificar {
+  (products: PRODUCTLIST[],
+    clientToModify: CUSTOMER,
+    orderToModify: any,
+    cantidades: (number | undefined)[],
+    total: number): void
+}
 
 type ModalModificarProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedOrder: SELECTEDORDER[] | ORDER[];
   updateGrid: (data: any) => void;
+  handleSubmitModificar: HandleSubmitModificar
 };
 
 function ModalModificar({
@@ -30,11 +41,13 @@ function ModalModificar({
   setOpen,
   selectedOrder,
   updateGrid,
+  handleSubmitModificar
 }: ModalModificarProps) {
-  const { customers, productList } = useOrders({
+  const { customers, productList } = useOrdersAction({
     open,
     updateGrid,
   });
+
   const theme: any = useTheme();
   const handleClose = () => setOpen(false);
   const [clientToModify, setClientToModify] = useState<CUSTOMER>({
@@ -124,9 +137,7 @@ function ModalModificar({
     setCantidades(updateQuantities);
 
     if (cantidad) {
-      console.log("CANTIDAD:", cantidad);
       const totalRestar = precio * cantidad;
-      console.log(totalRestar);
       resolveTotal(-totalRestar);
     }
   };
@@ -142,7 +153,19 @@ function ModalModificar({
       estado: "Pendiente",
     };
     orderUseCases.update(request, orderToModify.idpedido).then((response) => {
-      updateGrid(response);
+      const newOrders = response.data
+      if (newOrders) {
+        const formatedOrders = newOrders.map((order) => ({
+          ...order,
+          cantidades:
+            order.arraydecantidad.length > 1
+              ? order.arraydecantidad.join(", ")
+              : order.arraydecantidad[0].toString(),
+          fechaentrega: formatDate(new Date(order.fechaentrega)),
+          fecharealizado: formatDate(new Date(order.fecharealizado)),
+        }));
+
+      }
     });
   };
 
@@ -330,7 +353,7 @@ function ModalModificar({
             <Button variant='contained' color='error' onClick={handleClose}>
               Cancelar
             </Button>
-            <Button variant='contained' color='success' onClick={handleSubmit}>
+            <Button variant='contained' color='success' onClick={() => handleSubmitModificar(products, clientToModify, orderToModify, cantidades, total)}>
               Aceptar
             </Button>
           </Box>

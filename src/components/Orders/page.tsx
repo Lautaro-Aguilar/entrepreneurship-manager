@@ -36,6 +36,8 @@ function Orders() {
 
   const handleCloseModalEstado = () => setOpenModalEstado(false);
 
+  const handleCloseModalModificar = () => setOpenModalModificar(false)
+
   const { openSnackBar, closeSnackBar, isSnackBarOpen, snackOptions } =
     useSnackBar();
 
@@ -48,10 +50,12 @@ function Orders() {
     openModalEliminar,
     setOpenModalEliminar,
     handleUpdateStateOrder,
+    handleSubmitModificar
   } = useOrders({
     openSnackBar,
     closeModal: closeModalAgregar,
     closeModalEstado: handleCloseModalEstado,
+    closeModalModificar: handleCloseModalModificar
   });
 
   return (
@@ -141,6 +145,7 @@ function Orders() {
         setOpen={setOpenModalModificar}
         selectedOrder={selectedOrder}
         updateGrid={updateGrid}
+        handleSubmitModificar={handleSubmitModificar}
       />
       <ModalEliminar
         open={openModalEliminar}

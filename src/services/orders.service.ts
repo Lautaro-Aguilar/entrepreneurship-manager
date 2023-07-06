@@ -83,14 +83,17 @@ export async function createOrder(data: ORDER) {
   return response;
 }
 
-export async function updateOrder(data: ORDER, id: number) {
+export async function updateOrder(order: ORDER, id: number) {
   const { data: newOrder, error } = await supabase
     .from("pedidos")
-    .update(data)
+    .update(order)
     .eq("idpedido", id);
 
+  const { data } = await supabase.from("vista_pedidos").select("*");
+
   const response = {
-    data: newOrder,
+    newOrder,
+    data,
     errors: error,
   };
 
