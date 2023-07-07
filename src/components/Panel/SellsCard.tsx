@@ -2,9 +2,9 @@ import { AttachMoneyRounded } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
 
 interface SellsCard {
-  customerName: string;
-  total: number;
-  date: string | Date;
+  customerName?: string;
+  total?: number;
+  date?: string | Date;
 }
 
 const SellsCard = ({ customerName, date, total }: SellsCard) => {
@@ -23,7 +23,7 @@ const SellsCard = ({ customerName, date, total }: SellsCard) => {
           {customerName}
         </Typography>
         <Typography fontWeight='bold'>${total}</Typography>
-        <Typography fontSize='.8em'>{date.toString()}</Typography>
+        <Typography fontSize='.8em'>{date?.toString()}</Typography>
       </Box>
       <Box display='flex' flexDirection='column' margin='auto'>
         <AttachMoneyRounded fontSize='large' />

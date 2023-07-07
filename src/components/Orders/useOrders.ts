@@ -10,13 +10,14 @@ import * as orderUseCases from "../../services/orders.usecases";
 import PRODUCTLIST from "../../types/PRODUCTLIST";
 import CUSTOMER from "../../types/CUSTOMER";
 
-
 interface HandleSubmitModificar {
-  (products: PRODUCTLIST[],
+  (
+    products: PRODUCTLIST[],
     clientToModify: CUSTOMER,
     orderToModify: any,
     cantidades: (number | undefined)[],
-    total: number): void
+    total: number
+  ): void;
 }
 
 export default function useOrders({
@@ -28,16 +29,14 @@ export default function useOrders({
   openSnackBar: (alertVariant: AlertColor, alertMessage: string) => void;
   closeModal: () => void;
   closeModalEstado: () => void;
-  closeModalModificar: () => void
+  closeModalModificar: () => void;
 }) {
   const [orders, setOrders] = useState<ORDER[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<ORDER[]>([]);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
 
   useEffect(() => {
-    useCases.getAll().then((res) => {
-      setOrders(res.data);
-    });
+    useCases.getAll().then((res) => setOrders(res.data));
   }, []);
 
   const handleChangeSelection = (e: SelectionChangedEvent<ORDER>) => {
@@ -60,15 +59,18 @@ export default function useOrders({
       openSnackBar("error", "Hubo un error al eliminar el pedido 😞");
       setOpenModalEliminar(false);
     } else {
-      const newOrders = response.data
+      const newOrders = response.data;
       if (newOrders) {
         const formatedOrders: any = newOrders.map((order: any) => ({
           ...order,
-          cantidades: order.arraydecantidad.length > 1 ? order.arraydecantidad.join(", ") : order.arraydecantidad[0].toString(),
+          cantidades:
+            order.arraydecantidad.length > 1
+              ? order.arraydecantidad.join(", ")
+              : order.arraydecantidad[0].toString(),
           fechaentrega: formatDate(new Date(order.fechaentrega)),
           fecharealizado: formatDate(new Date(order.fecharealizado)),
-        }))
-        setOrders(formatedOrders)
+        }));
+        setOrders(formatedOrders);
         openSnackBar("success", "Pedido eliminado correctamente 👍");
         setOpenModalEliminar(false);
       }
@@ -95,7 +97,13 @@ export default function useOrders({
     });
   };
 
-  const handleSubmitModificar: HandleSubmitModificar = (products, clientToModify, orderToModify, cantidades, total) => {
+  const handleSubmitModificar: HandleSubmitModificar = (
+    products,
+    clientToModify,
+    orderToModify,
+    cantidades,
+    total
+  ) => {
     const arrayidsproductos = products.map((prod) => prod.id);
     const request: REQUESTORDER = {
       idcliente: clientToModify.id,
@@ -106,7 +114,7 @@ export default function useOrders({
       estado: "Pendiente",
     };
     orderUseCases.update(request, orderToModify.idpedido).then((response) => {
-      const newOrders = response.data
+      const newOrders = response.data;
       if (newOrders) {
         const formatedOrders: any = newOrders.map((order) => ({
           ...order,
@@ -117,12 +125,12 @@ export default function useOrders({
           fechaentrega: formatDate(new Date(order.fechaentrega)),
           fecharealizado: formatDate(new Date(order.fecharealizado)),
         }));
-        setOrders(formatedOrders)
-        openSnackBar("success", "Estado modificado correctamente 👍")
-        closeModalModificar()
+        setOrders(formatedOrders);
+        openSnackBar("success", "Estado modificado correctamente 👍");
+        closeModalModificar();
       }
     });
-  }
+  };
 
   return {
     orders,

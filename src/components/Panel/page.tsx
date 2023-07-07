@@ -3,18 +3,39 @@ import { Box, Container, TextField, Typography } from "@mui/material";
 import Card from "./Card";
 import ChartBar from "./ChartBar";
 import SellsCard from "./SellsCard";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as useCases from "../../services/dashboard.useCases";
+import ORDER from "../../types/ORDER";
+import formatDate from "../../utils/formatDate";
 
-const Dashboard = () => {
+function useDashboard() {
+  const [cardData, setCardData] = useState({
+    clientsCount: 0,
+    profit: 0,
+    sells: 0,
+  });
+
+  const [lastSells, setLastSells] = useState<ORDER[] | undefined>([]);
+
   useEffect(() => {
     useCases
       .getDashboardInitialData(
         new Date("2023-06-01 00:00:00"),
-        new Date("2023-07-10 00:00:00")
+        new Date("2023-07-11 00:00:00")
       )
-      .then((response) => console.log(response));
-  });
+      .then((response) => {
+        const { clientsCount, profit, sells, lastSellsResponse } =
+          response.data;
+        setCardData({ clientsCount, profit, sells });
+        setLastSells(lastSellsResponse);
+      });
+  }, []);
+
+  return { cardData, lastSells };
+}
+
+const Dashboard = () => {
+  const { cardData, lastSells } = useDashboard();
 
   return (
     <Container
@@ -51,23 +72,22 @@ const Dashboard = () => {
       </Box>
       <Box display='flex' gap={3} justifyContent='space-between' py={2} my={3}>
         <Card
-          title='Ganacia'
-          footer='10% more than last month'
-          icon={<AttachMoney />}
-          text='$140.200'
-        />
-
-        <Card
           title='Total Ventas'
-          footer='40% more than last month'
+          // footer='40% more than last month'
           icon={<Paid />}
-          text='$170.500'
+          text={`$${cardData.sells}`}
+        />
+        <Card
+          title='Ganacia'
+          // footer='10% more than last month'
+          icon={<AttachMoney />}
+          text={`$${cardData.profit}`}
         />
         <Card
           title='Clientes nuevos'
-          footer='20% less than last month'
+          // footer='20% less than last month'
           icon={<Person />}
-          text='+15'
+          text={`+${cardData.clientsCount}`}
         />
       </Box>
       <Box
@@ -89,21 +109,14 @@ const Dashboard = () => {
           <Typography variant='h4' fontWeight='bold'>
             Últimas ventas
           </Typography>
-          <SellsCard
-            customerName='Agustin Galante'
-            date='20-06-2023'
-            total={2500}
-          />
-          <SellsCard
-            customerName='Lautaro Aguilar'
-            date='20-06-2023'
-            total={3500}
-          />
-          <SellsCard
-            customerName='Marcos Reynoso'
-            date='20-06-2023'
-            total={5600}
-          />
+          {lastSells &&
+            lastSells.map((sell: ORDER) => (
+              <SellsCard
+                customerName={sell.cliente}
+                date={sell.fecharealizado}
+                total={sell.total}
+              />
+            ))}
         </Box>
       </Box>
     </Container>
@@ -111,3 +124,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+/* 
+
+*/
