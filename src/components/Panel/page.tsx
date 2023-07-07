@@ -3,8 +3,19 @@ import { Box, Container, TextField, Typography } from "@mui/material";
 import Card from "./Card";
 import ChartBar from "./ChartBar";
 import SellsCard from "./SellsCard";
+import { useEffect } from "react";
+import * as useCases from "../../services/dashboard.useCases";
 
-const page = () => {
+const Dashboard = () => {
+  useEffect(() => {
+    useCases
+      .getDashboardInitialData(
+        new Date("2023-06-01 00:00:00"),
+        new Date("2023-07-10 00:00:00")
+      )
+      .then((response) => console.log(response));
+  });
+
   return (
     <Container
       sx={{
@@ -99,4 +110,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Dashboard;
