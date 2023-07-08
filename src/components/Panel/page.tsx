@@ -1,41 +1,30 @@
 import { AttachMoney, Paid, Person } from "@mui/icons-material";
-import { Box, Container, TextField, Typography } from "@mui/material";
-import Card from "./Card";
-import ChartBar from "./ChartBar";
-import SellsCard from "./SellsCard";
-import { useEffect, useState } from "react";
-import * as useCases from "../../services/dashboard.useCases";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  TextField,
+  Typography,
+} from "@mui/material";
+import Card from "./Components/Card";
+import ChartBar from "./Components/ChartBar";
+import SellsCard from "./Components/SellsCard";
 import ORDER from "../../types/ORDER";
 import formatDate from "../../utils/formatDate";
-
-function useDashboard() {
-  const [cardData, setCardData] = useState({
-    clientsCount: 0,
-    profit: 0,
-    sells: 0,
-  });
-
-  const [lastSells, setLastSells] = useState<ORDER[] | undefined>([]);
-
-  useEffect(() => {
-    useCases
-      .getDashboardInitialData(
-        new Date("2023-06-01 00:00:00"),
-        new Date("2023-07-11 00:00:00")
-      )
-      .then((response) => {
-        const { clientsCount, profit, sells, lastSellsResponse } =
-          response.data;
-        setCardData({ clientsCount, profit, sells });
-        setLastSells(lastSellsResponse);
-      });
-  }, []);
-
-  return { cardData, lastSells };
-}
+import useDashboard from "./useDashboard";
+import FakeSellCard from "./Components/FakeSellCart";
+import FakeCard from "./Components/FakeCard";
 
 const Dashboard = () => {
-  const { cardData, lastSells } = useDashboard();
+  const {
+    cardData,
+    lastSells,
+    dates,
+    handleChangeDates,
+    isWorking,
+    chartBarData,
+  } = useDashboard();
 
   return (
     <Container
@@ -45,6 +34,7 @@ const Dashboard = () => {
         border: "2px solid #e85d04",
         borderRadius: 4,
       }}
+      maxWidth='lg'
     >
       <Box display='flex' justifyContent='space-between'>
         <Typography
@@ -57,38 +47,56 @@ const Dashboard = () => {
         </Typography>
         <Box display='flex' gap={2}>
           <TextField
+            name='from'
             label='Desde'
             type='datetime-local'
             InputLabelProps={{ shrink: true }}
-            onChange={(e) => console.log(e.target.value)}
+            value={dates.from}
+            onChange={handleChangeDates}
           />
           <TextField
             label='Hasta'
+            name='until'
             type='datetime-local'
             InputLabelProps={{ shrink: true }}
-            onChange={(e) => console.log(e.target.value)}
+            value={dates.until}
+            onChange={handleChangeDates}
           />
+          <Button
+            variant='contained'
+            color='info'
+            onClick={() => console.log(dates)}
+          >
+            Buscar
+          </Button>
         </Box>
       </Box>
       <Box display='flex' gap={3} justifyContent='space-between' py={2} my={3}>
-        <Card
-          title='Total Ventas'
-          // footer='40% more than last month'
-          icon={<Paid />}
-          text={`$${cardData.sells}`}
-        />
-        <Card
-          title='Ganacia'
-          // footer='10% more than last month'
-          icon={<AttachMoney />}
-          text={`$${cardData.profit}`}
-        />
-        <Card
-          title='Clientes nuevos'
-          // footer='20% less than last month'
-          icon={<Person />}
-          text={`+${cardData.clientsCount}`}
-        />
+        {isWorking ? (
+          <>
+            <FakeCard />
+            <FakeCard />
+            <FakeCard />
+          </>
+        ) : (
+          <>
+            <Card
+              title='Total Ventas'
+              icon={<Paid />}
+              text={`$${cardData.sells}`}
+            />
+            <Card
+              title='Ganacia'
+              icon={<AttachMoney />}
+              text={`$${cardData.profit}`}
+            />
+            <Card
+              title='Clientes nuevos'
+              icon={<Person />}
+              text={`+${cardData.clientsCount}`}
+            />
+          </>
+        )}
       </Box>
       <Box
         sx={{
@@ -96,27 +104,48 @@ const Dashboard = () => {
           flex: 1,
           alignContent: "center",
         }}
+        justifyContent='space-between'
       >
         <Box
           display='flex'
           flexDirection='column'
           alignSelf='center'
-          width='70%'
+          width='65%'
         >
-          <ChartBar />
+          {isWorking ? (
+            <Box width={50} margin='auto'>
+              <CircularProgress color='primary' />
+            </Box>
+          ) : (
+            <ChartBar charData={chartBarData} />
+          )}
         </Box>
         <Box display='flex' flexDirection='column' width='30%' gap={3}>
           <Typography variant='h4' fontWeight='bold'>
             Últimas ventas
           </Typography>
-          {lastSells &&
-            lastSells.map((sell: ORDER) => (
-              <SellsCard
-                customerName={sell.cliente}
-                date={sell.fecharealizado}
-                total={sell.total}
-              />
-            ))}
+          {isWorking ? (
+            <>
+              <FakeSellCard />
+              <FakeSellCard />
+              <FakeSellCard />
+            </>
+          ) : (
+            lastSells &&
+            lastSells.map((sell: ORDER) => {
+              const formatedDate = formatDate(
+                new Date(sell.fecharealizado),
+                true
+              );
+              return (
+                <SellsCard
+                  customerName={sell.cliente}
+                  date={formatedDate}
+                  total={sell.total}
+                />
+              );
+            })
+          )}
         </Box>
       </Box>
     </Container>

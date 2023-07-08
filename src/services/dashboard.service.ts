@@ -8,7 +8,7 @@ export async function getDashboardInfo({
   initialDate: Date;
   lastDate: Date;
 }) {
-  let errors = [];
+  const errors = [];
 
   // Devuelve la suma de las ventas entre 2 fechas
   const { data: sells, error: sellsError } = await supabase.rpc(
@@ -49,14 +49,49 @@ export async function getDashboardInfo({
     .limit(3);
 
   const lastSellsResponse: ORDER[] | undefined = lastSells?.map((sell: any) => {
-    console.log("PEDIDO: ", sell);
     const newSell: ORDER = {
       ...sell,
     };
     return newSell;
   });
 
-  if (lastSellsError) errors.push(lastSellsError);
+  if (lastSellsError) errors.push({ lastSellsError });
+
+  const { data: chartBar, error: chartBarError } = await supabase.rpc(
+    "calcular_total_por_mes"
+  );
+
+  if (chartBarError) errors.push({ chartBarError });
+
+  const totalArray: number[] = chartBar.map(
+    ({ total }: { total: number }) => total
+  );
+
+  const monthLabels = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  const chartArrayResponse = {
+    labels: monthLabels,
+    datasets: [
+      {
+        label: "Ventas",
+        data: totalArray,
+        backgroundColor: "#E68F00",
+      },
+    ],
+  };
 
   const response = {
     data: {
@@ -64,6 +99,7 @@ export async function getDashboardInfo({
       profit,
       clientsCount,
       lastSellsResponse,
+      chartArrayResponse,
     },
     errors,
   };

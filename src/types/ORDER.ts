@@ -5,7 +5,7 @@ export default interface ORDER {
   arrayidsproductos?: (number | undefined)[];
   arraydecantidad?: (number | undefined)[];
   fechaentrega?: string | Date;
-  fecharealizado?: string | Date;
+  fecharealizado: string | Date;
   sena?: number;
   total?: number;
   inserted_at?: Date;
