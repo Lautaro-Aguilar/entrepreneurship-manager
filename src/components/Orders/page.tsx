@@ -11,6 +11,7 @@ import SnackbarCustom from "../shared/SnackbarCustom";
 import SELECTEDORDER from "../../types/SELECTEDORDER";
 import ModalEstado from "./ModalEstado";
 import useOrders from "./useOrders";
+import Cards from "./Cards";
 
 function Orders() {
   const [openModalAgregar, setOpenModalAgregar] = useState(false);
@@ -135,6 +136,7 @@ function Orders() {
           </Button>
         </Box>
       </Box>
+      <Cards orders={orders} />
       <ModalAgregar
         open={openModalAgregar}
         setOpen={setOpenModalAgregar}

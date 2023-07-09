@@ -1,24 +1,19 @@
 import supabase from "../supabase/supabase";
 import ORDER from "../types/ORDER";
 import SELECTEDORDER from "../types/SELECTEDORDER";
+import OrderResponse from '../types/OrderResponse';
 import formatDate from "../utils/formatDate";
 
-interface __TORDER extends ORDER {
-  cliente: string;
-  productos: string;
-  cantidades: string;
-  fecharealizado: string;
-}
 
 export async function getOrders() {
   const { data: orders, error } = await supabase
     .from("vista_pedidos")
     .select("*");
 
-  let orderResponse: __TORDER[] = [];
+  let orderResponse: OrderResponse[] = [];
   if (orders) {
     orderResponse = orders.map((order) => {
-      const newOrder: __TORDER = {
+      const newOrder: OrderResponse = {
         idpedido: order.idpedido,
         cliente: order.cliente,
         sena: order.sena,
