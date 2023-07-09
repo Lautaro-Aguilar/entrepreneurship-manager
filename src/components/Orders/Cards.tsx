@@ -9,20 +9,14 @@ type CardsProps = {
 
 function Cards({ orders }: CardsProps) {
 
-  const [pedidos, setPedidos] = useState<any[]>([])
   if (!orders.length) {
     return <Typography>Loading...</Typography>;
   }
 
-  useEffect(() => {
-    setPedidos(orders)
-  }, [orders])
-
-  console.log('orrrrrderss', orders)
 
   return (
-    <Grid container direction="row" justifyContent='flex-start' gap={5}>
-      {pedidos.length > 0 && pedidos?.map((order) => {
+    <Grid container direction="row" justifyContent='flex-start' rowSpacing={1} rowGap={1} columnSpacing={10}>
+      {orders.length > 0 && orders?.map((order) => {
         if (order.estado === "Pendiente") {
           console.log('productos: ', order.productos)
           const qts = order.cantidades
@@ -32,7 +26,7 @@ function Cards({ orders }: CardsProps) {
 
           return (
             <Grid key={order.idpedido} item xs={12} lg={6} xl={4}>
-              <Box bgcolor="#fff" maxWidth={400} minWidth={400} maxHeight={300} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', margin: 0 }}>
+              <Box bgcolor="#fff" maxWidth={400} minWidth={400} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', margin: 0, height: '100%' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 5, px: 2.5, paddingTop: 2.5 }} className="headerCard">
                   <Box sx={{ backgroundColor: '#ED8A8A', borderRadius: '15px', py: '3px', px: '12.5px' }}>
                     <Typography variant='body1' component="p" fontWeight="bold" color="#EC2525">{order.estado}</Typography>
@@ -47,9 +41,10 @@ function Cards({ orders }: CardsProps) {
                   <Box px={2} pt={1.5}>
                     <Typography color="grey" fontWeight="500" variant="body2" textTransform="uppercase">Cliente: {order.cliente}</Typography>
                   </Box>
-                  <Box className="productsList" sx={{ flex: '1', overflowY: 'scroll', border: '1px solid red', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 1.5, px: 2, pb: .5 }}>
+
+                  <Box className="productsList" sx={{ maxHeight: '100px', overflow: 'auto', px: 2, pb: .5 }}>
                     {productos?.map((producto: string, index: number) => (
-                      <Box key={index} sx={{ bgcolor: "#E8E8E8", display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, borderRadius: "10px", py: .5 }}>
+                      <Box key={index} sx={{ my: 1, bgcolor: "#E8E8E8", display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, borderRadius: "10px", py: .5 }}>
                         <Typography color="black" fontWeight="bold">{producto}</Typography>
                         <Typography color="black" fontWeight="bold">{cantidades[index]}</Typography>
                       </Box>
