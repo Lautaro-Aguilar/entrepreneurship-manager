@@ -15,12 +15,11 @@ function useDashboard() {
     labels: [],
     datasets: [],
   });
-
   const [lastSells, setLastSells] = useState<ORDER[] | undefined>([]);
 
   const [dates, setDates] = useState({
-    from: "",
-    until: "",
+    from: new Date(),
+    until: new Date(),
   });
 
   const [isWorking, setIsWorking] = useState(true);
@@ -33,12 +32,28 @@ function useDashboard() {
 
   useEffect(() => {
     const getInitialData = async () => {
+      function obtenerFechas(): [Date, Date] {
+        const hoy = new Date(); // Obtiene la fecha actual
+
+        // Copia la fecha actual y resta un mes
+        const fechaHaceUnMes = new Date(
+          hoy.getFullYear(),
+          hoy.getMonth() - 1,
+          hoy.getDate(),
+          hoy.getHours(),
+          hoy.getMinutes(),
+          hoy.getSeconds()
+        );
+
+        return [hoy, fechaHaceUnMes];
+      }
+
       setIsWorking(true);
-      const initialDate = new Date("2023-06-01 00:00:00");
-      const lastDate = new Date("2023-07-11 00:00:00");
+      const [fechaActual, fechaAnterior] = obtenerFechas();
+      setDates({ from: fechaAnterior, until: fechaActual });
       const { data, errors } = await useCases.getDashboardInitialData(
-        initialDate,
-        lastDate
+        fechaAnterior,
+        fechaActual
       );
 
       const {
