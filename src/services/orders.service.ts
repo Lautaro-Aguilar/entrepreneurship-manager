@@ -1,24 +1,19 @@
 import supabase from "../supabase/supabase";
 import ORDER from "../types/ORDER";
 import SELECTEDORDER from "../types/SELECTEDORDER";
+import OrderResponse from '../types/OrderResponse';
 import formatDate from "../utils/formatDate";
 
-interface __TORDER extends ORDER {
-  cliente: string;
-  productos: string;
-  cantidades: string;
-  fecharealizado: string;
-}
 
 export async function getOrders() {
   const { data: orders, error } = await supabase
     .from("vista_pedidos")
     .select("*");
 
-  let orderResponse: __TORDER[] = [];
+  let orderResponse: OrderResponse[] = [];
   if (orders) {
     orderResponse = orders.map((order) => {
-      const newOrder: __TORDER = {
+      const newOrder: OrderResponse = {
         idpedido: order.idpedido,
         cliente: order.cliente,
         sena: order.sena,
@@ -123,20 +118,20 @@ export async function deleteOrders(orderIDs: number[]) {
   return response;
 }
 
-export async function updateStateOrder(orders: SELECTEDORDER[]) {
-  const updatedOrders = orders.map((order) => {
-    return {
-      idpedido: order.idpedido,
-      estado: order.estado === "Finalizado" ? "Pendiente" : "Finalizado",
-    };
-  });
+export async function updateStateOrder(orders: SELECTEDORDER | SELECTEDORDER[]) {
+  const updatedOrders = Array.isArray(orders) ? orders : [orders];
+
+  const updatedDataArray = updatedOrders.map((order) => ({
+    idpedido: order.idpedido,
+    estado: order.estado === 'Finalizado' ? 'Pendiente' : 'Finalizado',
+  }));
 
   const { data: updatedData, error: errorUpdate } = await supabase
-    .from("pedidos")
-    .upsert(updatedOrders)
-    .select("*");
+    .from('pedidos')
+    .upsert(updatedDataArray)
+    .select('*');
 
-  const { data } = await supabase.from("vista_pedidos").select("*");
+  const { data } = await supabase.from('vista_pedidos').select('*');
 
   const response = {
     updatedData,
@@ -146,3 +141,4 @@ export async function updateStateOrder(orders: SELECTEDORDER[]) {
 
   return response;
 }
+

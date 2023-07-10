@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 package-lock.json
 .env
+.eslintrc.json
+pnpm-lock.yaml
+pnpm-lock.yaml
+pnpm-lock.yaml
