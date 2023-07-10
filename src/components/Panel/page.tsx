@@ -12,6 +12,7 @@ const Dashboard = () => {
     handleChangeDates,
     isWorking,
     chartBarData,
+    handleBusquedaDatos
   } = useDashboard();
 
   return (
@@ -53,7 +54,7 @@ const Dashboard = () => {
           <Button
             variant='contained'
             color='info'
-            onClick={() => console.log(dates)}
+            onClick={handleBusquedaDatos}
           >
             Buscar
           </Button>

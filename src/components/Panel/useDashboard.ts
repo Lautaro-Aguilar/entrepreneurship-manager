@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import ORDER from "../../types/ORDER";
 import * as useCases from "../../services/dashboard.useCases";
 import { ChartData } from "chart.js";
-import { format } from 'date-fns';
+import obtenerFechas from "../../utils/obtenerFechas";
+import { format } from "date-fns";
 
 function useDashboard() {
   const [cardData, setCardData] = useState({
@@ -10,17 +11,19 @@ function useDashboard() {
     profit: 0,
     sells: 0,
   });
+
   const [chartBarData, setChartBarData] = useState<
     ChartData<"bar", (number | [number, number] | null)[], unknown>
   >({
     labels: [],
     datasets: [],
   });
+
   const [lastSells, setLastSells] = useState<ORDER[] | undefined>([]);
 
   const [dates, setDates] = useState({
-    from: new Date(),
-    until: new Date(),
+    from: "",
+    until: "",
   });
 
   const [isWorking, setIsWorking] = useState(true);
@@ -29,29 +32,41 @@ function useDashboard() {
   const handleChangeDates = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setDates({ ...dates, [name]: value });
-    console.log(value)
+  };
+
+  const handleBusquedaDatos = async () => {
+    setIsWorking(true);
+    const newDates = {
+      from: format(new Date(dates.from), "MM-dd-yyyy"),
+      until: format(new Date(dates.until), "MM-dd-yyyy"),
+    };
+
+    const { data } = await useCases.getDashboardInitialData(
+      newDates.from,
+      newDates.until
+    );
+
+    const {
+      chartArrayResponse,
+      clientsCount,
+      lastSellsResponse,
+      profit,
+      sells,
+    } = data;
+
+    setCardData({
+      clientsCount,
+      profit,
+      sells,
+    });
+
+    setChartBarData(chartArrayResponse);
+    setLastSells(lastSellsResponse);
+    setIsWorking(false);
   };
 
   useEffect(() => {
     const getInitialData = async () => {
-      function obtenerFechas(): [Date, Date] {
-        const hoy = new Date();
-        const fechaHoyFormateada = format(hoy, 'yyyy-MM-dd') // Obtiene la fecha actual
-
-        // Copia la fecha actual y resta un mes
-        const fechaHaceUnMes = new Date(
-          hoy.getFullYear(),
-          hoy.getMonth() - 1,
-          hoy.getDate(),
-          hoy.getHours(),
-          hoy.getMinutes(),
-          hoy.getSeconds()
-        );
-        const fechaHaceUnMesFormateada = format(fechaHaceUnMes, 'yyyy-MM-dd')
-
-        return [fechaHoyFormateada, fechaHaceUnMesFormateada];
-      }
-
       setIsWorking(true);
       const [fechaActual, fechaAnterior] = obtenerFechas();
       setDates({
@@ -92,6 +107,7 @@ function useDashboard() {
     isWorking,
     chartBarData,
     errors,
+    handleBusquedaDatos,
   };
 }
 

@@ -5,8 +5,8 @@ export async function getDashboardInfo({
   initialDate,
   lastDate,
 }: {
-  initialDate: Date;
-  lastDate: Date;
+  initialDate: string;
+  lastDate: string;
 }) {
   const errors = [];
 
