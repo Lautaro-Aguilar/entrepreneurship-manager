@@ -118,20 +118,20 @@ export async function deleteOrders(orderIDs: number[]) {
   return response;
 }
 
-export async function updateStateOrder(orders: SELECTEDORDER[]) {
-  const updatedOrders = orders.map((order) => {
-    return {
-      idpedido: order.idpedido,
-      estado: order.estado === "Finalizado" ? "Pendiente" : "Finalizado",
-    };
-  });
+export async function updateStateOrder(orders: SELECTEDORDER | SELECTEDORDER[]) {
+  const updatedOrders = Array.isArray(orders) ? orders : [orders];
+
+  const updatedDataArray = updatedOrders.map((order) => ({
+    idpedido: order.idpedido,
+    estado: order.estado === 'Finalizado' ? 'Pendiente' : 'Finalizado',
+  }));
 
   const { data: updatedData, error: errorUpdate } = await supabase
-    .from("pedidos")
-    .upsert(updatedOrders)
-    .select("*");
+    .from('pedidos')
+    .upsert(updatedDataArray)
+    .select('*');
 
-  const { data } = await supabase.from("vista_pedidos").select("*");
+  const { data } = await supabase.from('vista_pedidos').select('*');
 
   const response = {
     updatedData,
@@ -141,3 +141,4 @@ export async function updateStateOrder(orders: SELECTEDORDER[]) {
 
   return response;
 }
+
