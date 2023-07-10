@@ -17,11 +17,13 @@ import transformDate from "./utils/transformDate";
 import ORDER from "../../types/ORDER";
 
 interface HandleSubmitModificar {
-  (products: PRODUCTLIST[],
+  (
+    products: PRODUCTLIST[],
     clientToModify: CUSTOMER,
     orderToModify: any,
     cantidades: (number | undefined)[],
-    total: number): void
+    total: number
+  ): void;
 }
 
 type ModalModificarProps = {
@@ -29,7 +31,7 @@ type ModalModificarProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedOrder: SELECTEDORDER[] | ORDER[];
   updateGrid: (data: any) => void;
-  handleSubmitModificar: HandleSubmitModificar
+  handleSubmitModificar: HandleSubmitModificar;
 };
 
 function ModalModificar({
@@ -37,7 +39,7 @@ function ModalModificar({
   setOpen,
   selectedOrder,
   updateGrid,
-  handleSubmitModificar
+  handleSubmitModificar,
 }: ModalModificarProps) {
   const { customers, productList } = useOrdersAction({
     open,
@@ -322,7 +324,19 @@ function ModalModificar({
             <Button variant='contained' color='error' onClick={handleClose}>
               Cancelar
             </Button>
-            <Button variant='contained' color='success' onClick={() => handleSubmitModificar(products, clientToModify, orderToModify, cantidades, total)}>
+            <Button
+              variant='contained'
+              color='success'
+              onClick={() =>
+                handleSubmitModificar(
+                  products,
+                  clientToModify,
+                  orderToModify,
+                  cantidades,
+                  total
+                )
+              }
+            >
               Aceptar
             </Button>
           </Box>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AlertColor } from "@mui/material";
 import * as useCases from "../../services/orders.usecases";
 import SELECTEDORDER from "../../types/SELECTEDORDER";
+import OrderResponse from "../../types/OrderResponse";
 import formatDate from "../../utils/formatDate";
 import REQUESTORDER from "../../types/REQUESTORDER";
 import * as orderUseCases from "../../services/orders.usecases";
@@ -31,7 +32,7 @@ export default function useOrders({
   closeModalEstado: () => void;
   closeModalModificar: () => void;
 }) {
-  const [orders, setOrders] = useState<ORDER[]>([]);
+  const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<ORDER[]>([]);
   const [openModalEliminar, setOpenModalEliminar] = useState(false);
 
