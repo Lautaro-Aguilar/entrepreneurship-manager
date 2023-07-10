@@ -1,6 +1,6 @@
 import ORDER from "../../../types/ORDER";
 import { Box, Typography } from "@mui/material";
-import FakeSellCard from "./FakeSellCart";
+import FakeSellCard from "./FakeSellCard";
 import formatDate from "../../../utils/formatDate";
 import SellsCard from "./SellsCard";
 
@@ -27,6 +27,7 @@ const SellsList = ({ isWorking, lastSells }: Props) => {
           const formatedDate = formatDate(new Date(sell.fecharealizado), true);
           return (
             <SellsCard
+              key={sell.idpedido}
               customerName={sell.cliente}
               date={formatedDate}
               total={sell.total}

@@ -18,8 +18,8 @@ function useDashboard() {
   const [lastSells, setLastSells] = useState<ORDER[] | undefined>([]);
 
   const [dates, setDates] = useState({
-    from: new Date(),
-    until: new Date(),
+    from: new Date().toLocaleDateString("es-es"),
+    until: new Date().toLocaleDateString("es-es"),
   });
 
   const [isWorking, setIsWorking] = useState(true);
@@ -50,7 +50,10 @@ function useDashboard() {
 
       setIsWorking(true);
       const [fechaActual, fechaAnterior] = obtenerFechas();
-      setDates({ from: fechaAnterior, until: fechaActual });
+      setDates({
+        from: fechaAnterior.toDateString(),
+        until: fechaActual.toDateString(),
+      });
       const { data, errors } = await useCases.getDashboardInitialData(
         fechaAnterior,
         fechaActual
