@@ -37,7 +37,7 @@ const Dashboard = () => {
           <TextField
             name='from'
             label='Desde'
-            type='datetime-local'
+            type='date'
             InputLabelProps={{ shrink: true }}
             value={dates.from}
             onChange={handleChangeDates}
@@ -45,7 +45,7 @@ const Dashboard = () => {
           <TextField
             label='Hasta'
             name='until'
-            type='datetime-local'
+            type='date'
             InputLabelProps={{ shrink: true }}
             value={dates.until}
             onChange={handleChangeDates}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ORDER from "../../types/ORDER";
 import * as useCases from "../../services/dashboard.useCases";
 import { ChartData } from "chart.js";
+import { format } from 'date-fns';
 
 function useDashboard() {
   const [cardData, setCardData] = useState({
@@ -18,8 +19,8 @@ function useDashboard() {
   const [lastSells, setLastSells] = useState<ORDER[] | undefined>([]);
 
   const [dates, setDates] = useState({
-    from: new Date().toLocaleDateString("es-es"),
-    until: new Date().toLocaleDateString("es-es"),
+    from: new Date(),
+    until: new Date(),
   });
 
   const [isWorking, setIsWorking] = useState(true);
@@ -28,12 +29,14 @@ function useDashboard() {
   const handleChangeDates = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setDates({ ...dates, [name]: value });
+    console.log(value)
   };
 
   useEffect(() => {
     const getInitialData = async () => {
       function obtenerFechas(): [Date, Date] {
-        const hoy = new Date(); // Obtiene la fecha actual
+        const hoy = new Date();
+        const fechaHoyFormateada = format(hoy, 'yyyy-MM-dd') // Obtiene la fecha actual
 
         // Copia la fecha actual y resta un mes
         const fechaHaceUnMes = new Date(
@@ -44,15 +47,16 @@ function useDashboard() {
           hoy.getMinutes(),
           hoy.getSeconds()
         );
+        const fechaHaceUnMesFormateada = format(fechaHaceUnMes, 'yyyy-MM-dd')
 
-        return [hoy, fechaHaceUnMes];
+        return [fechaHoyFormateada, fechaHaceUnMesFormateada];
       }
 
       setIsWorking(true);
       const [fechaActual, fechaAnterior] = obtenerFechas();
       setDates({
-        from: fechaAnterior.toDateString(),
-        until: fechaActual.toDateString(),
+        from: fechaAnterior,
+        until: fechaActual,
       });
       const { data, errors } = await useCases.getDashboardInitialData(
         fechaAnterior,
