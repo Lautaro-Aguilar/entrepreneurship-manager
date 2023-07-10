@@ -2,12 +2,12 @@ import { Box, Typography } from "@mui/material";
 
 interface CardProps {
   title: string;
-  footer: string;
-  text: string;
+  footer?: string;
+  text: string | number;
   icon: React.ReactNode;
 }
 
-const Card = ({ title, text, footer, icon }: CardProps) => {
+const Card = ({ title, text, /* footer, */ icon }: CardProps) => {
   return (
     <Box
       width={300}
@@ -20,7 +20,7 @@ const Card = ({ title, text, footer, icon }: CardProps) => {
       <Typography component='h4' variant='h4' fontWeight='bold'>
         {text}
       </Typography>
-      <Typography sx={{ color: "rgb(132, 132, 132)" }}>{footer}</Typography>
+      {/* <Typography sx={{ color: "rgb(132, 132, 132)" }}>{footer}</Typography> */}
     </Box>
   );
 };

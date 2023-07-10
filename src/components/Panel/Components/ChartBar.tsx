@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -27,26 +26,13 @@ export const options = {
     },
     title: {
       display: true,
-      text: "Ventas",
+      text: "Estádisticas",
     },
   },
 };
 
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Dataset 1",
-      data: [40, 50, 60],
-      backgroundColor: "#E68F00",
-    },
-  ],
-};
-
-const ChartBar = () => {
-  return <Bar options={options} data={data} />;
+const ChartBar = ({ charData }: { charData: any }) => {
+  return <Bar options={options} data={charData} />;
 };
 
 export default ChartBar;

@@ -29,6 +29,9 @@ dependencies:
   chart.js:
     specifier: ^4.3.0
     version: 4.3.0
+  date-fns:
+    specifier: ^2.30.0
+    version: 2.30.0
   localforage:
     specifier: ^1.10.0
     version: 1.10.0
@@ -1465,6 +1468,13 @@ packages:
     dependencies:
       es5-ext: 0.10.62
       type: 1.2.0
+    dev: false
+
+  /date-fns@2.30.0:
+    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
+    engines: {node: '>=0.11'}
+    dependencies:
+      '@babel/runtime': 7.22.5
     dev: false
 
   /debug@2.6.9:

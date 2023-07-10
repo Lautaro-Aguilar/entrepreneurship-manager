@@ -1,10 +1,20 @@
-import { AttachMoney, Paid, Person } from "@mui/icons-material";
-import { Box, Container, TextField, Typography } from "@mui/material";
-import Card from "./Card";
-import ChartBar from "./ChartBar";
-import SellsCard from "./SellsCard";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import useDashboard from "./useDashboard";
+import CardList from "./components/CardList";
+import SellsList from "./components/SellsList";
+import DataChart from "./components/DataChart";
 
-const page = () => {
+const Dashboard = () => {
+  const {
+    cardData,
+    lastSells,
+    dates,
+    handleChangeDates,
+    isWorking,
+    chartBarData,
+    handleBusquedaDatos
+  } = useDashboard();
+
   return (
     <Container
       sx={{
@@ -13,6 +23,7 @@ const page = () => {
         border: "2px solid #e85d04",
         borderRadius: 4,
       }}
+      maxWidth='lg'
     >
       <Box display='flex' justifyContent='space-between'>
         <Typography
@@ -25,78 +36,45 @@ const page = () => {
         </Typography>
         <Box display='flex' gap={2}>
           <TextField
+            name='from'
             label='Desde'
-            type='datetime-local'
+            type='date'
             InputLabelProps={{ shrink: true }}
-            onChange={(e) => console.log(e.target.value)}
+            value={dates.from}
+            onChange={handleChangeDates}
           />
           <TextField
             label='Hasta'
-            type='datetime-local'
+            name='until'
+            type='date'
             InputLabelProps={{ shrink: true }}
-            onChange={(e) => console.log(e.target.value)}
+            value={dates.until}
+            onChange={handleChangeDates}
           />
+          <Button
+            variant='contained'
+            color='info'
+            onClick={handleBusquedaDatos}
+          >
+            Buscar
+          </Button>
         </Box>
       </Box>
-      <Box display='flex' gap={3} justifyContent='space-between' py={2} my={3}>
-        <Card
-          title='Ganacia'
-          footer='10% more than last month'
-          icon={<AttachMoney />}
-          text='$140.200'
-        />
-
-        <Card
-          title='Total Ventas'
-          footer='40% more than last month'
-          icon={<Paid />}
-          text='$170.500'
-        />
-        <Card
-          title='Clientes nuevos'
-          footer='20% less than last month'
-          icon={<Person />}
-          text='+15'
-        />
-      </Box>
+      <CardList cardData={cardData} isWorking={isWorking} />
       <Box
-        sx={{
-          display: "flex",
-          flex: 1,
-          alignContent: "center",
-        }}
+        display='flex'
+        flex={1}
+        alignContent='center'
+        justifyContent='space-between'
       >
-        <Box
-          display='flex'
-          flexDirection='column'
-          alignSelf='center'
-          width='70%'
-        >
-          <ChartBar />
-        </Box>
-        <Box display='flex' flexDirection='column' width='30%' gap={3}>
-          <Typography variant='h4' fontWeight='bold'>
-            Últimas ventas
-          </Typography>
-          <SellsCard
-            customerName='Agustin Galante'
-            date='20-06-2023'
-            total={2500}
-          />
-          <SellsCard
-            customerName='Lautaro Aguilar'
-            date='20-06-2023'
-            total={3500}
-          />
-          <SellsCard
-            customerName='Marcos Reynoso'
-            date='20-06-2023'
-            total={5600}
-          />
-        </Box>
+        <DataChart chartBarData={chartBarData} isWorking={isWorking} />
+        <SellsList isWorking={isWorking} lastSells={lastSells} />
       </Box>
     </Container>
   );
 };
 
-export default page;
+export default Dashboard;
+/* 
+
+*/
