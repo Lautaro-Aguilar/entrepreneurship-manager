@@ -11,7 +11,7 @@ const Components = () => {
   return (
     <Container>
       <Box mt={4}>
-        <Typography variant='h3' color='secondary'>
+        <Typography variant='h3' color='primary'>
           Typhography
         </Typography>
         <Typography variant='h1' color='primary'>
@@ -34,7 +34,7 @@ const Components = () => {
         </Typography>
       </Box>
       <Box mt={4}>
-        <Typography variant='h3' color='secondary'>
+        <Typography variant='h3' color='primary'>
           Button
         </Typography>
         <Box display='flex' gap={2} mb={2}>
