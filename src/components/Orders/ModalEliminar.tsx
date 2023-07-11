@@ -1,8 +1,17 @@
-import React from 'react'
-import { Box, Typography, Modal, List, Button, ListItem, ListItemText, Divider } from '@mui/material'
-import styleModal from './styleModal';
-import { useTheme } from '@emotion/react';
-import SELECTEDORDER from '../../types/SELECTEDORDER';
+import React from "react";
+import {
+  Box,
+  Typography,
+  Modal,
+  List,
+  Button,
+  ListItem,
+  ListItemText,
+  Divider,
+} from "@mui/material";
+import styleModal from "./styleModal";
+import { useTheme } from "@emotion/react";
+import SELECTEDORDER from "../../types/SELECTEDORDER";
 
 type ModalEliminarProps = {
   open: boolean;
@@ -11,10 +20,15 @@ type ModalEliminarProps = {
   handleRemoveSubmit: (order: SELECTEDORDER[]) => void;
 };
 
-function ModalEliminar({ open, setOpen, orders, handleRemoveSubmit }: ModalEliminarProps) {
-  const theme = useTheme()
+function ModalEliminar({
+  open,
+  setOpen,
+  orders,
+  handleRemoveSubmit,
+}: ModalEliminarProps) {
+  const theme = useTheme();
 
-  const closeModal = () => setOpen(false)
+  const closeModal = () => setOpen(false);
 
   return (
     <div>
@@ -34,9 +48,7 @@ function ModalEliminar({ open, setOpen, orders, handleRemoveSubmit }: ModalElimi
               fontWeight={600}
               component='h2'
             >
-              {orders.length > 1
-                ? "Eliminar pedidos "
-                : "Eliminar pedido"}
+              {orders.length > 1 ? "Eliminar pedidos " : "Eliminar pedido"}
             </Typography>
           </Box>
           <Box
@@ -51,18 +63,42 @@ function ModalEliminar({ open, setOpen, orders, handleRemoveSubmit }: ModalElimi
                 ? "Vas a eliminar los siguientes pedidos: "
                 : "Vas a eliminar el siguiente pedido:"}
             </Typography>
-            <List>
+            <List
+              sx={{
+                maxHeight: "200px",
+                overflow: "hidden",
+                overflowY: "auto",
+                marginBottom: 2,
+              }}
+            >
               {orders?.map(({ idpedido, fechaentrega, cliente }, index) => (
                 <div key={index}>
                   <ListItem>
-                    <Typography variant="body2" component="div">
+                    <Typography variant='body2' component='div'>
                       <ListItemText>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                          }}
+                        >
                           <span>ID: {idpedido}</span>
                           <span>FECHA: {fechaentrega.toLocaleString()}</span>
                           <span>CLIENTE: {cliente}</span>
                         </Box>
-                        {index !== orders.length - 1 && <Divider sx={{ width: 340, border: '1.5px solid grey', borderRadius: 10, mt: 1, mb: -1 }} light />}
+                        {index !== orders.length - 1 && (
+                          <Divider
+                            sx={{
+                              width: 340,
+                              border: "1.5px solid grey",
+                              borderRadius: 10,
+                              mt: 1,
+                              mb: -1,
+                            }}
+                            light
+                          />
+                        )}
                       </ListItemText>
                     </Typography>
                   </ListItem>
@@ -88,4 +124,4 @@ function ModalEliminar({ open, setOpen, orders, handleRemoveSubmit }: ModalElimi
   );
 }
 
-export default ModalEliminar
+export default ModalEliminar;

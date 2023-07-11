@@ -121,6 +121,7 @@ function Cards({ orders, handler }: CardsProps) {
                         className='productsList'
                         sx={{
                           maxHeight: "100px",
+                          minHeight: "100px",
                           overflow: "auto",
                           px: 2,
                           pb: 0.5,
