@@ -4,9 +4,11 @@ import ORDER from "../types/ORDER";
 export async function getDashboardInfo({
   initialDate,
   lastDate,
+  mode,
 }: {
   initialDate: string;
   lastDate: string;
+  mode: string;
 }) {
   const errors = [];
 
@@ -88,7 +90,7 @@ export async function getDashboardInfo({
       {
         label: "Ventas",
         data: totalArray,
-        backgroundColor: "#E68F00",
+        backgroundColor: mode === "light" ? "#198a2c" : "#e85d04",
       },
     ],
   };

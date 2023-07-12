@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   List,
   ListItem,
@@ -18,6 +18,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import { useTheme } from "@emotion/react";
+import { ColorModeContext } from "../App";
 
 const links = [
   {
@@ -60,6 +61,8 @@ function DrawerResponsive() {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  const { toggleColorMode, mode } = useContext(ColorModeContext);
 
   const drawer = (
     <div>
@@ -135,6 +138,7 @@ function DrawerResponsive() {
               </Typography>
             </Box>
           </Box>
+          <button onClick={toggleColorMode}>{mode}</button>
         </Toolbar>
       </AppBar>
       <Box

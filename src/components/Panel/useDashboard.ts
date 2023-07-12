@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ORDER from "../../types/ORDER";
 import * as useCases from "../../services/dashboard.useCases";
 import { ChartData } from "chart.js";
 import obtenerFechas from "../../utils/obtenerFechas";
 import { format } from "date-fns";
+import { Theme, useTheme } from "@mui/material";
+import { ColorModeContext } from "../../App";
 
 function useDashboard() {
+  const { mode } = useContext(ColorModeContext);
   const [cardData, setCardData] = useState({
     clientsCount: 0,
     profit: 0,
@@ -28,7 +31,6 @@ function useDashboard() {
 
   const [isWorking, setIsWorking] = useState(true);
   const [errors, setErrors] = useState<any[]>([]);
-
   const handleChangeDates = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setDates({ ...dates, [name]: value });
@@ -40,10 +42,10 @@ function useDashboard() {
       from: format(new Date(dates.from), "MM-dd-yyyy"),
       until: format(new Date(dates.until), "MM-dd-yyyy"),
     };
-
     const { data } = await useCases.getDashboardInitialData(
       newDates.from,
-      newDates.until
+      newDates.until,
+      mode
     );
 
     const {
@@ -75,7 +77,8 @@ function useDashboard() {
       });
       const { data, errors } = await useCases.getDashboardInitialData(
         fechaAnterior,
-        fechaActual
+        fechaActual,
+        mode
       );
 
       const {

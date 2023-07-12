@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material";
-
+// Blue
 /* const lightTheme = createTheme({
   palette: {
     mode: "light",
@@ -80,20 +80,21 @@ import { createTheme } from "@mui/material";
   },
 }); */
 
+// Green
 const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#87c1f8",
+      main: "#198a2c",
     },
     secondary: {
-      main: "#add5fa",
+      main: "#adf0b8",
     },
     info: {
-      main: "#0c71cf",
+      main: "#20b138",
     },
     background: {
-      default: "#e2f0fd",
+      default: "#fbfefb",
     },
   },
   typography: {
@@ -102,7 +103,6 @@ const lightTheme = createTheme({
     fontWeightMedium: 400,
     fontWeightRegular: 300,
     fontWeightLight: 200,
-
     h1: {
       fontWeight: 600,
     },
