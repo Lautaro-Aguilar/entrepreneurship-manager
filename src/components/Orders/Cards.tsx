@@ -1,5 +1,14 @@
-import { Box, Container, Grid, IconButton, Typography } from "@mui/material";
-import { CalendarMonth, CheckRounded } from "@mui/icons-material";
+import {
+  Accordion,
+  AccordionSummary,
+  Box,
+  Container,
+  Grid,
+  IconButton,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { CalendarMonth, CheckRounded, ExpandMore } from "@mui/icons-material";
 import OrderResponse from "../../types/OrderResponse";
 
 type CardsProps = {
@@ -8,25 +17,33 @@ type CardsProps = {
 };
 
 function Cards({ orders, handler }: CardsProps) {
+  const theme = useTheme();
   if (!orders.length) {
     return <Typography>Loading...</Typography>;
   }
+  console.log(theme);
 
   return (
-    <Container maxWidth='xl'>
+    <Container maxWidth='xl' sx={{ marginBottom: 5 }}>
       <Grid
         container
         direction='row'
         columnSpacing={5}
         rowSpacing={5}
-        justifyContent='start'
+        justifyContent={{
+          xs: "center",
+          sm: "center",
+          md: "center",
+          lg: "start",
+          xl: "start",
+        }}
         alignItems='start'
       >
         {orders.length > 0 &&
           orders?.map((order) => {
             if (order.estado === "Pendiente") {
               let productos: any = order.productos;
-              let cantidades: any = order.productos;
+              let cantidades: any = order.cantidades;
 
               if (!Array.isArray(productos)) {
                 productos = productos.split(",");
@@ -117,16 +134,31 @@ function Cards({ orders, handler }: CardsProps) {
                         </Typography>
                       </Box>
 
-                      <Box
+                      <Accordion
                         className='productsList'
+                        defaultExpanded
+                        disableGutters
                         sx={{
-                          maxHeight: "100px",
-                          minHeight: "100px",
-                          overflow: "auto",
-                          px: 2,
-                          pb: 0.5,
+                          backgroundColor: "#fff",
+                          "&:last-of-type": {
+                            borderRadius: 0,
+                          },
+                          maxHeight: 200,
+                          overflow: "hidden",
+                          overflowY: "auto",
                         }}
                       >
+                        <AccordionSummary
+                          expandIcon={<ExpandMore style={{ color: "black" }} />}
+                        >
+                          <Typography
+                            variant='body1'
+                            fontWeight={600}
+                            color='black'
+                          >
+                            Productos
+                          </Typography>
+                        </AccordionSummary>
                         {productos?.map((producto: string, index: number) => (
                           <Box
                             key={index}
@@ -149,7 +181,7 @@ function Cards({ orders, handler }: CardsProps) {
                             </Typography>
                           </Box>
                         ))}
-                      </Box>
+                      </Accordion>
                     </Box>
 
                     <Box

@@ -12,7 +12,7 @@ const Dashboard = () => {
     handleChangeDates,
     isWorking,
     chartBarData,
-    handleBusquedaDatos
+    handleBusquedaDatos,
   } = useDashboard();
 
   return (
