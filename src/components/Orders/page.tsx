@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   Box,
   Button,
@@ -22,6 +22,7 @@ import ModalEstado from "./ModalEstado";
 import useOrders from "./useOrders";
 import Cards from "./Cards";
 import { ExpandMore } from "@mui/icons-material";
+import { AuthContext } from "../Login/AuthProvider";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -44,6 +45,7 @@ function Orders() {
   const [openModalEstado, setOpenModalEstado] = useState(false);
   const [rowsSelected, setRowsSelected] = useState<SELECTEDORDER[]>([]);
   const columns = buildColumns();
+  const authContext = useContext(AuthContext);
 
   const [expanded, setExpanded] = useState(false);
   const handleRowsSelected = (e: any) => {
@@ -72,6 +74,7 @@ function Orders() {
   const { openSnackBar, closeSnackBar, isSnackBarOpen, snackOptions } =
     useSnackBar();
 
+  console.log(AuthContext);
   const {
     orders,
     handleChangeSelection,
@@ -118,7 +121,7 @@ function Orders() {
             <AgGridReact
               rowMultiSelectWithClick
               columnDefs={columns}
-              rowData={orders}
+              rowData={authContext?.user !== null ? orders : undefined}
               gridOptions={{ defaultColDef: { resizable: true, filter: true } }}
               onSelectionChanged={handleChangeSelection}
               rowSelection='multiple'

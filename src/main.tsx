@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/Root";
@@ -6,10 +6,12 @@ import "./App.css";
 import Clientes from "./components/Clientes/page";
 import Orders from "./components/Orders/page";
 import Productos from "./components/Productos/page";
-import Inicio from "./components/Inicio/page";
 import Components from "./components/Components";
 import Dashboard from "./components/Panel/page";
 import { createTheme, ThemeProvider } from "@mui/material";
+import { AuthProvider } from "./components/Login/AuthProvider";
+import Login from "./components/Login/page";
+import Inicio from "./components/Inicio/page";
 
 const router = createBrowserRouter([
   {
@@ -102,7 +104,9 @@ const darkTheme = createTheme({
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider theme={darkTheme}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ThemeProvider>
   </React.StrictMode>
 );
