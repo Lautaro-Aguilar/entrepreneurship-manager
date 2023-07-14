@@ -1,5 +1,4 @@
-import { Box, Button } from "@mui/material"
-
+import { Box, Button } from "@mui/material";
 
 type ButtonsProps = {
   setOpenModalAgregar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,7 +25,7 @@ function Buttons({ setOpenModalAgregar, setOpenModalEliminar }: ButtonsProps) {
         Eliminar
       </Button>
     </Box>
-  )
+  );
 }
 
-export default Buttons
+export default Buttons;

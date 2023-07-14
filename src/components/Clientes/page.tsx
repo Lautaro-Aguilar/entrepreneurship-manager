@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Theme, Typography, useTheme } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import ModalAgregar from "./ModalAgregar";
 import ModalEliminar from "./ModalEliminar";
@@ -44,6 +44,8 @@ function Clientes() {
 
   const columns = buildColumns(handleUpdateClient);
 
+  const theme: Theme = useTheme();
+
   return (
     <Container
       sx={{
@@ -64,7 +66,11 @@ function Clientes() {
       </Typography>
       <Box sx={{ width: "100%", my: 2 }}>
         <Box
-          className='ag-theme-alpine-dark'
+          className={
+            theme.palette.mode === "light"
+              ? "ag-theme-alpine"
+              : "ag-theme-alpine-dark"
+          }
           style={{ height: 400, width: "100%" }}
         >
           <AgGridReact

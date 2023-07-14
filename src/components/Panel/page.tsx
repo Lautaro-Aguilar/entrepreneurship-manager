@@ -1,8 +1,17 @@
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  Theme,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import useDashboard from "./useDashboard";
 import CardList from "./Components/CardList";
 import SellsList from "./Components/SellsList";
 import DataChart from "./Components/DataChart";
+
 
 const Dashboard = () => {
   const {
@@ -15,12 +24,14 @@ const Dashboard = () => {
     handleBusquedaDatos,
   } = useDashboard();
 
+  const theme: Theme = useTheme();
+
   return (
     <Container
       sx={{
         margin: "20px auto",
         padding: "20px 0px",
-        border: "2px solid #e85d04",
+        border: `2px solid ${theme.palette.primary.main}`,
         borderRadius: 4,
       }}
       maxWidth='lg'
@@ -75,6 +86,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-/* 
-
-*/

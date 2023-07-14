@@ -1,5 +1,5 @@
 import { AttachMoneyRounded } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography, useTheme } from "@mui/material";
 
 interface SellsCard {
   customerName?: string;
@@ -8,10 +8,11 @@ interface SellsCard {
 }
 
 const SellsCard = ({ customerName, date, total }: SellsCard) => {
+  const theme: Theme = useTheme();
   return (
     <Box
       sx={{
-        border: "3px solid #E68F00",
+        border: `3px solid ${theme.palette.primary.main}`,
         padding: "10px 16px",
         borderRadius: 3,
         display: "flex",

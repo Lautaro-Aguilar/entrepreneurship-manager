@@ -1,10 +1,16 @@
-import { Box, Skeleton, Typography } from "@mui/material";
+import { Box, Skeleton, Theme, Typography, useTheme } from "@mui/material";
 
 const FakeCard = () => {
+  const theme: Theme = useTheme();
+
   return (
     <Box
       width={300}
-      sx={{ border: "2px solid #E68F00", borderRadius: 3, padding: 2 }}
+      sx={{
+        border: `2px solid ${theme.palette.primary.main}`,
+        borderRadius: 3,
+        padding: 2,
+      }}
     >
       <Box display='flex' justifyContent='space-between'>
         <Typography variant='h6'>
