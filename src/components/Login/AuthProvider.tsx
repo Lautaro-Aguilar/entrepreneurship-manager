@@ -1,10 +1,16 @@
 import { useEffect, useState, createContext, ReactNode } from "react";
 import { Session, Subscription } from "@supabase/supabase-js";
 import supabase from "../../supabase/supabase";
+import useSnackBar from "../shared/hooks/useSnackBar";
 
 interface AuthContextType {
   user: any; // Reemplaza 'any' con el tipo adecuado para tu usuario
-  signIn: (credentials: { email: string; password: string }) => Promise<void>;
+  signIn: (credentials: {
+    email: string;
+    password: string;
+    setIsAlertActive: React.Dispatch<React.SetStateAction<boolean>>;
+    setAlertMessage: React.Dispatch<React.SetStateAction<string | undefined>>;
+  }) => Promise<void>;
   signUp: (credentials: { email: string; password: string }) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (credentials: { email: string }) => Promise<void>;
@@ -17,8 +23,9 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<any>(null); // Reemplaza 'any' con el tipo adecuado para tu usuario
-  let authListener: Subscription | null = null; // Variable para almacenar la suscripción
+  const [user, setUser] = useState<any>(null);
+  const { openSnackBar } = useSnackBar();
+  let authListener: Subscription | null = null;
 
   useEffect(() => {
     authListener = supabase.auth.onAuthStateChange(
@@ -28,7 +35,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     );
 
     return () => {
-      authListener?.unsubscribe; // Cancelar la suscripción al desmontar el componente
+      authListener?.unsubscribe;
     };
   }, []);
 
@@ -36,10 +43,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     email,
     password,
     guest = false,
+    setIsAlertActive,
+    setAlertMessage,
   }: {
     email: string;
     password: string;
     guest?: boolean;
+    setIsAlertActive: React.Dispatch<React.SetStateAction<boolean>>;
+    setAlertMessage: React.Dispatch<React.SetStateAction<string | undefined>>;
   }) => {
     if (guest) {
       const { error } = await supabase.auth.signInWithPassword({
@@ -56,7 +67,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         password,
       });
       if (error) {
-        console.error("Error signing in:", error.message);
+        setIsAlertActive(true);
+        console.log(error);
+        setAlertMessage(error.message);
+        setTimeout(() => {
+          setIsAlertActive(false);
+        }, 6000);
+      } else {
+        openSnackBar("success", "Has iniciado sesión correctamente");
       }
     }
   };

@@ -1,8 +1,8 @@
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import useDashboard from "./useDashboard";
-import CardList from "./components/CardList";
-import SellsList from "./components/SellsList";
-import DataChart from "./components/DataChart";
+import CardList from "./Components/CardList";
+import SellsList from "./Components/SellsList";
+import DataChart from "./Components/DataChart";
 
 const Dashboard = () => {
   const {

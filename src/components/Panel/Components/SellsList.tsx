@@ -1,6 +1,6 @@
 import ORDER from "../../../types/ORDER";
 import { Box, Typography } from "@mui/material";
-import FakeSellCard from "./FakeSellCard";
+import FakeSellCard from "../components/FakeSellCard";
 import formatDate from "../../../utils/formatDate";
 import SellsCard from "./SellsCard";
 

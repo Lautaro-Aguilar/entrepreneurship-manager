@@ -54,7 +54,7 @@ const renderAdditionalInputs = ({
         options={productList}
         value={product}
         getOptionLabel={(option) => option.nombre}
-        onChange={(event, newValue) => {
+        onChange={(_event, newValue) => {
           if (newValue) {
             const updatedProducts = [...products];
             updatedProducts[index].nombre = newValue.nombre;
@@ -201,7 +201,7 @@ function ModalAgregar({ open, setOpen, updateGrid }: ModalAgregarProps) {
             }}
             getOptionLabel={(option) => option.nombre}
             fullWidth
-            onChange={(event, value) => {
+            onChange={(_event, value) => {
               setFormDataOrder({ ...formDataOrder, idcliente: value?.id });
             }}
             renderInput={(params) => <TextField {...params} label='Cliente' />}
