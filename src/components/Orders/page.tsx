@@ -22,7 +22,7 @@ import ModalEstado from "./ModalEstado";
 import useOrders from "./useOrders";
 import Cards from "./Cards";
 import { ExpandMore } from "@mui/icons-material";
-import { AuthContext } from "../Login/AuthProvider";
+import { AuthContext } from "../Inicio/AuthProvider";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;

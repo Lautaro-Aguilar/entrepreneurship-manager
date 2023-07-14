@@ -23,7 +23,7 @@ const links = [
   {
     icono: <HomeIcon />,
     href: "/",
-    title: "Inicio",
+    title: "Iniciar Sesión",
   },
   {
     icono: <PeopleAltIcon />,

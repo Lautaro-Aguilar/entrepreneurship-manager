@@ -2,6 +2,7 @@ import { useEffect, useState, createContext, ReactNode } from "react";
 import { Session, Subscription } from "@supabase/supabase-js";
 import supabase from "../../supabase/supabase";
 import useSnackBar from "../shared/hooks/useSnackBar";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   user: any; // Reemplaza 'any' con el tipo adecuado para tu usuario
@@ -39,6 +40,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     };
   }, []);
 
+  const navigate = useNavigate();
   const signIn = async ({
     email,
     password,
@@ -65,6 +67,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {},
       });
       if (error) {
         setIsAlertActive(true);
@@ -75,6 +78,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         }, 6000);
       } else {
         openSnackBar("success", "Has iniciado sesión correctamente");
+        navigate("/pedidos");
       }
     }
   };

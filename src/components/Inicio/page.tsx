@@ -1,9 +1,10 @@
 import { Alert, Box, Button, TextField, Theme, useTheme } from "@mui/material";
 import imagen from "./imagen.jpg";
-import { useContext, useState } from "react";
-import { AuthContext } from "../Login/AuthProvider";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "./AuthProvider";
 import SnackbarCustom from "../shared/SnackbarCustom";
 import useSnackBar from "../shared/hooks/useSnackBar";
+import { useNavigate } from "react-router-dom";
 
 interface LoginData {
   email: string;
@@ -11,7 +12,9 @@ interface LoginData {
 }
 
 function Inicio() {
+  const navigate = useNavigate();
   const theme: Theme = useTheme();
+  const palette = theme.palette;
   const [isAlertActive, setIsAlertActive] = useState(false);
   const [alertMessage, setAlertMessage] = useState<string>();
   const [loginData, setLoginData] = useState<LoginData>({
@@ -21,6 +24,12 @@ function Inicio() {
   const { closeSnackBar, isSnackBarOpen, snackOptions } = useSnackBar();
 
   const authContext = useContext(AuthContext);
+
+  useEffect(() => {
+    if (authContext && authContext.user !== null) {
+      navigate("/pedidos");
+    }
+  }, [authContext]);
 
   const handleSignIn = async () => {
     await authContext?.signIn({
@@ -37,7 +46,6 @@ function Inicio() {
     const { name, value } = event.target;
     setLoginData({ ...loginData, [name]: value });
   };
-
   return (
     <Box
       margin='0px auto'
@@ -83,7 +91,8 @@ function Inicio() {
             justifyContent: "center",
             gap: 2.5,
             p: 5,
-            backgroundColor: theme.palette.grey[700],
+            backgroundColor:
+              palette.mode === "dark" ? palette.grey[900] : palette.grey[100],
             borderRadius: { xs: "10px", lg: "0px 10px 10px 0px" },
             minWidth: "55%",
           }}
@@ -109,6 +118,25 @@ function Inicio() {
             name='email'
             onChange={(event) => handleChange(event)}
             variant='outlined'
+            InputLabelProps={{
+              style: { fontWeight: 500 },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: theme.palette.primary.main,
+              },
+              "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                {
+                  borderColor: theme.palette.primary.main,
+                },
+              "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                {
+                  borderColor: theme.palette.primary.main,
+                },
+            }}
             color='primary'
           />
           <TextField
@@ -118,6 +146,25 @@ function Inicio() {
             onChange={(event) => handleChange(event)}
             variant='outlined'
             color='primary'
+            InputLabelProps={{
+              style: { fontWeight: 500 },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: theme.palette.primary.main,
+              },
+              "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                {
+                  borderColor: theme.palette.primary.main,
+                },
+              "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                {
+                  borderColor: theme.palette.primary.main,
+                },
+            }}
           />
           <Button
             variant='contained'

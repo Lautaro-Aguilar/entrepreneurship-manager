@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Root from "./routes/Root";
 import "./App.css";
 import Clientes from "./components/Clientes/page";
@@ -9,42 +9,8 @@ import Productos from "./components/Productos/page";
 import Components from "./components/Components";
 import Dashboard from "./components/Panel/page";
 import { createTheme, ThemeProvider } from "@mui/material";
-import { AuthProvider } from "./components/Login/AuthProvider";
-import Login from "./components/Login/page";
+import { AuthProvider } from "./components/Inicio/AuthProvider";
 import Inicio from "./components/Inicio/page";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-    children: [
-      {
-        index: true,
-        element: <Inicio />,
-      },
-      {
-        path: "/Clientes",
-        element: <Clientes />,
-      },
-      {
-        path: "/Pedidos",
-        element: <Orders />,
-      },
-      {
-        path: "/Productos",
-        element: <Productos />,
-      },
-      {
-        path: "/Components",
-        element: <Components />,
-      },
-      {
-        path: "/Dashboard",
-        element: <Dashboard />,
-      },
-    ],
-  },
-]);
 
 const darkTheme = createTheme({
   palette: {
@@ -101,12 +67,29 @@ const darkTheme = createTheme({
   },
 });
 
+const App = () => {
+  return (
+    <React.StrictMode>
+      <Router>
+        <ThemeProvider theme={darkTheme}>
+          <AuthProvider>
+            <Routes>
+              <Route path='/' element={<Root />}>
+                <Route index element={<Inicio />} />
+                <Route path='/Clientes' element={<Clientes />} />
+                <Route path='/Pedidos' element={<Orders />} />
+                <Route path='/Productos' element={<Productos />} />
+                <Route path='/Components' element={<Components />} />
+                <Route path='/Dashboard' element={<Dashboard />} />
+              </Route>
+            </Routes>
+          </AuthProvider>
+        </ThemeProvider>
+      </Router>
+    </React.StrictMode>
+  );
+};
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <ThemeProvider theme={darkTheme}>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
-    </ThemeProvider>
-  </React.StrictMode>
+  <App />
 );
