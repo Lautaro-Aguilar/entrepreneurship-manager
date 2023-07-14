@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import CUSTOMER from "../../../types/CUSTOMER";
 import * as useCases from "../../../services/customers.useCases";
 import { AlertColor } from "@mui/material";
+import { format } from "date-fns";
 
 interface Params {
   clients: CUSTOMER[];
@@ -15,7 +16,7 @@ export default function useAddClient({
   openSnackBar,
 }: Params) {
   const [isOpenModalAgregar, setIsOpenModalAgregar] = useState(false);
-  const [client, setClient] = useState<CUSTOMER>({
+  const [_client, setClient] = useState<CUSTOMER>({
     nombre: "",
     apellido: "",
     direccion: "",
@@ -36,7 +37,13 @@ export default function useAddClient({
 
   const handleSubmitAdd = (client: CUSTOMER) => {
     if (client.nombre !== "" || client.apellido !== "") {
-      useCases.create(client).then((response) => {
+      const fechaInsertado = format(new Date(), "dd MMM yyyy");
+      const clientWithFecha = {
+        ...client,
+        inserted_at: fechaInsertado,
+      };
+
+      useCases.create(clientWithFecha).then((_response) => {
         openSnackBarAdd();
         setClient({
           nombre: "",
@@ -44,7 +51,9 @@ export default function useAddClient({
           direccion: "",
           telefono: "",
         });
-        updateClients([...clients, client]);
+
+        updateClients([...clients, clientWithFecha])
+
         closeModalAgregar();
         openSnackBar("success", "Cliente agregado correctamente 👍");
       });

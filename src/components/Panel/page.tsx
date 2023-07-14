@@ -8,9 +8,10 @@ import {
   useTheme,
 } from "@mui/material";
 import useDashboard from "./useDashboard";
-import DataChart from "./Components/DataChart";
-import SellsList from "./Components/SellsList";
 import CardList from "./Components/CardList";
+import SellsList from "./Components/SellsList";
+import DataChart from "./Components/DataChart";
+
 
 const Dashboard = () => {
   const {
@@ -85,6 +86,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-/* 
-
-*/
