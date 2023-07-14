@@ -11,13 +11,21 @@ import {
   Typography,
   ListItemIcon,
   ListItemButton,
+  Theme,
+  useTheme,
 } from "@mui/material";
-import { AttachMoney, BookmarkAdded, Menu, Science } from "@mui/icons-material";
+import {
+  AttachMoney,
+  BookmarkAdded,
+  Menu,
+  Science,
+  Brightness5,
+  Brightness3,
+} from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import { useTheme } from "@emotion/react";
 import { ColorModeContext } from "../App";
 
 const links = [
@@ -54,7 +62,7 @@ const links = [
 ];
 
 function DrawerResponsive() {
-  const theme: any = useTheme();
+  const theme: Theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const drawerWidth = 240;
 
@@ -103,7 +111,7 @@ function DrawerResponsive() {
       >
         <Toolbar>
           <IconButton
-            color='inherit'
+            color='primary'
             aria-label='open drawer'
             edge='start'
             onClick={handleDrawerToggle}
@@ -138,7 +146,15 @@ function DrawerResponsive() {
               </Typography>
             </Box>
           </Box>
-          <button onClick={toggleColorMode}>{mode}</button>
+          <Box display='flex' flex={1} justifyContent='flex-end'>
+            <IconButton onClick={toggleColorMode}>
+              {mode === "light" ? (
+                <Brightness5 color='primary' />
+              ) : (
+                <Brightness3 color='primary' />
+              )}
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
       <Box
@@ -150,7 +166,7 @@ function DrawerResponsive() {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             display: { xs: "block", sm: "none" },
