@@ -1,27 +1,46 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { ThemeProvider } from "@emotion/react";
 import { RouterProvider } from "react-router-dom";
 import Router from "./routes/Router";
 import lightTheme from "./styles/lightTheme";
-import { createContext, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import darkTheme from "./styles/darkTheme";
 
-export const ColorModeContext = createContext({
-  toggleColorMode: () => {},
+interface ThemeProps {
+  toggleColorMode: () => void;
+  mode: string;
+}
+
+export const ColorModeContext = createContext<ThemeProps>({
+  toggleColorMode: () => null,
   mode: "",
 });
 
 function App() {
-  const [mode, setMode] = useState<"light" | "dark">("light");
+  const [mode, setMode] = useState<string>("light");
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+        setMode((prevMode) => {
+          const result = prevMode === "light" ? "dark" : "light";
+          localStorage.setItem("mode", result);
+          return result;
+        });
       },
       mode,
     }),
     [mode]
   );
+
+  useEffect(() => {
+    const modeInMemory = localStorage.getItem("mode");
+    if (!modeInMemory) {
+      console.log("no hay valor en memoria: ", modeInMemory);
+      localStorage.setItem("mode", "light");
+    }
+    if (modeInMemory !== null) {
+      setMode(modeInMemory);
+    }
+  }, []);
 
   const theme = useMemo(() => {
     if (mode === "light") {
